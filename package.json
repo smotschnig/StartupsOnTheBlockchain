@@ -1,7 +1,7 @@
 {
   "name": "startup",
   "version": "1.0.0",
-  "description": "a blockchain-based startup webplattform",
+  "description": "a blockchain-based startup webplatform",
   "main": "index.js",
   "scripts": {
     "test": "mocha",
