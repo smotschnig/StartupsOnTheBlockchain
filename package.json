@@ -2,10 +2,10 @@
   "name": "startup",
   "version": "1.0.0",
   "description": "a blockchain-based startup webplatform",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "mocha",
-    "dev": "node server.js"
+    "start": "node server.js"
   },
   "keywords": [
     "react",

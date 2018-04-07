@@ -1,18 +1,12 @@
 import React from 'react'
 import { Card } from 'semantic-ui-react'
 
-const cardStyle = {
-  fontSize: '1.2rem',
-  lineHeight: '1.6',
-  color: '#fff'
-}
-
 const items = [
   {
     href: '#card-example-link-card',
     header: 'Project Report - April',
     description: 'Leverage agile frameworks to provide a robust synopsis for high level overviews.',
-    meta: 'ROI: 30%',
+    meta: 'ROI: 30%'
   },
   {
     href: '#card-example-link-card',
@@ -29,7 +23,7 @@ const items = [
 ]
 
 const Cards = () => (
-  <Card.Group style={cardStyle} itemsPerRow={1} items={items} />
+  <Card.Group itemsPerRow={1} items={items} />
 )
 
 export default Cards;
