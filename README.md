@@ -10,7 +10,7 @@ a blockchain-based startup webplatform
 * Move to folder ethereum: __`cd ethereum`__
 * Compile Contract: __`node compile.js`__
 * Deploy Contract: __`node deploy.js`__
-* Copy __`Contract depoloyed to 0x000000`__ address to the clipboard
+* Copy __`Contract depolyed to 0x000000`__ address to the clipboard
 
 * Create new folder in the root directory: __`mkdir config`__
 * Add new file in this directory: __`address.js`__
