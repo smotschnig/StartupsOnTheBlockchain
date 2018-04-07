@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { Button, Card, Grid } from 'semantic-ui-react';
-import Layout from '../components/Layout';
-import factory from '../ethereum/factory';
 import { Link } from '../routes';
+import factory from '../ethereum/factory';
+import Layout from '../components/Layout';
 import Cards from '../components/Cards';
+
 
 class StartUp extends Component {
 
@@ -35,7 +36,6 @@ class StartUp extends Component {
     render() {
         return (
             <Layout>
-                <div className="example">Hello World!</div>
                 <h3>Open Projects</h3>
                 <Grid>
                     <Grid.Column width={12}>
@@ -45,7 +45,7 @@ class StartUp extends Component {
                     <Grid.Column width={4}>
                         <Link route="projects/new">
                             <a>
-                                <Button floated="right" content="Create Project" icon="add circle" primary />
+                                <Button primary floated="right" content="Create Project" icon='add circle' />
                             </a>
                         </Link>
                     </Grid.Column>
