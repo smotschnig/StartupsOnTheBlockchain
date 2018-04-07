@@ -14,8 +14,7 @@ a blockchain-based startup webplatform
 
 * Create new folder in the root directory: __`mkdir config`__
 * Add new file in this directory: __`address.js`__
-* Add line: __`module.exports = { address: '0x000000 *(address from clipboard)*'__
-  };
+* Add line: __`module.exports = { address: '0x000000 (address from clipboard)'};`__
   
 * Start Server by __`npm run start`__
 
