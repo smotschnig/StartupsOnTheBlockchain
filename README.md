@@ -3,7 +3,7 @@ a blockchain-based startup webplatform
 
 #### How to get started?
 
-* Clone Repository: __`https://github.com/smotschnig/StartupOnTheChain.git`__
+* Clone Repository: __`git clone https://github.com/smotschnig/StartupOnTheChain.git`__
 * Open folder: __`StartupOnTheChain`__
 * Run: __`npm install`__
 * Start Server by __`npm run start`__
