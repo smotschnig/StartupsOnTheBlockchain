@@ -1,5 +1,5 @@
 # StartupOnTheChain
-a blockchain-based startup webplattform
+a blockchain-based startup webplatform
 
 #### How to get started?
 
