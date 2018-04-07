@@ -9,14 +9,17 @@
   },
   "keywords": [
     "react",
-    "reactstrap",
+    "react-dom",
+    "semantic-ui",
     "javascript",
     "nextjs",
     "blockchain",
     "solidity",
     "metamask",
     "web3",
-    "ganache"
+    "ganache",
+    "truffle",
+    "mocha"
   ],
   "author": "Sven Motschnig",
   "license": "ISC",
