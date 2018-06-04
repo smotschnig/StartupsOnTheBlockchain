@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+html * {
+    font-family: Roboto, sans-serif;
+}
+
+.Header {
+    margin-top: 10px !important;
+}
+
+.Footer {
+    margin-top: 20px !important;
+    padding: 2px !important;
+}
+
+.FooterCopyright {
+    font-size: 105%;
+}
+
+.description .ui.card > .image, .ui.cards > .card > .image {
+    width: 7.5em;
+    position: absolute;
+    right: 3.25em;
+    bottom: .75em;
+}
+
+.ui.card > .content > .header + .description, 
+.ui.card > .content > .meta + .description, 
+.ui.cards > .card > .content > .header + .description, 
+.ui.cards > .card > .content > .meta + .description {
+    margin-bottom: 1.5em;
+}

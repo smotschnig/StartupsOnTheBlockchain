@@ -47,3 +47,8 @@ contract Project {
     }
     
 }
+
+contract Freelancer {
+    string lName;
+    uint age;
+}

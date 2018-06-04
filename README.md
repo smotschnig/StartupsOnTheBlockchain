@@ -1,10 +1,10 @@
-# StartupOnTheChain
+# StartupsOnTheBlockchain
 a blockchain-based startup webplatform
 
 #### How to get started?
 
-* Clone Repository: __`git clone https://github.com/smotschnig/StartupOnTheChain.git`__
-* Open folder: __`cd StartupOnTheChain`__
+* Clone Repository: __`git clone https://github.com/smotschnig/StartupsOnTheBlockchain.git`__
+* Open folder: __`cd StartupsOnTheBlockchain`__
 * Run: __`npm install`__
 
 * Move to folder ethereum: __`cd ethereum`__
