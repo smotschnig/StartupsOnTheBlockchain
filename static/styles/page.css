@@ -17,11 +17,8 @@ html * {
     font-size: 105%;
 }
 
-.description .ui.card > .image, .ui.cards > .card > .image {
-    width: 7.5em;
-    position: absolute;
-    right: 3.25em;
-    bottom: .75em;
+.ui.card > .content > .header {
+    font-size: 1.15em !important;
 }
 
 .ui.card > .content > .header + .description, 
