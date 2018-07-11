@@ -1,20 +1,3 @@
-// const { createServer } = require('http');
-// const next = require('next');
-
-// const app = next({
-//     dev: process.env.NODE_ENV !== 'production'
-// });
-
-// const routes = require('./routes');
-// const handler = routes.getRequestHandler(app);
-
-// app.prepare().then(() => {
-//     createServer(handler).listen(3000, (err) => {
-//         if (err) throw err;
-//         console.log('Ready on localhost:3000');
-//     });
-// });
-
 const express = require('express');
 const next = require('next');
 const { parse } = require('url');
@@ -25,9 +8,8 @@ const PORT = process.env.PORT || 3000;
 const app = next({ dir: '.', dev });
 const handle = app.getRequestHandler();
 
-const getRoutes = require('./routes');
+const routes = require('./routes');
 
-const routes = getRoutes;
 app.prepare().then(() => {
     const server = express();
     server.get('*', (req, res) => {
