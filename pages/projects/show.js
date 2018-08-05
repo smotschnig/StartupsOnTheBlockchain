@@ -1,13 +1,22 @@
 import React, { Component } from 'react';
-import { Card, Grid, Button, TextArea, Form, Label, Icon } from 'semantic-ui-react';
+import { Card, Grid, Button, TextArea, Form, Label, Icon, Rating } from 'semantic-ui-react';
 import Layout from '../../components/Layout';
 import Project from '../../ethereum/project';
+import Profile from '../../ethereum/profile';
 import { Link } from '../../routes';
 
 class ProjectShow extends Component {
     static async getInitialProps(props) {
         const project = Project(props.query.address);
+        console.log('PROJECT', project);
         const summary = await project.methods.getSummary().call();
+
+        const user = Profile(props.query.address);
+        console.log('USER', user);
+        user.methods.countInstructors().call().then((res) => {
+            console.log('USERDATA', userData);
+        });
+
 
         return {
             address: props.query.address,
@@ -73,10 +82,13 @@ class ProjectShow extends Component {
                         </Grid.Column>
                     </Grid.Row>
                     <Grid.Row>
-                        <Grid.Column width={16}>
+                        <Grid.Column width={8}>
                             <Label>
                                 <Icon name='address card' />{this.props.manager}
                             </Label>
+                        </Grid.Column>
+                        <Grid.Column width={8}>
+                            <Rating icon='star' defaultRating={3} maxRating={5} disabled size='small' /> ({this.props.pWage})
                         </Grid.Column>
                     </Grid.Row>
                     <Grid.Row>

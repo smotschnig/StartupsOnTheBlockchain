@@ -13,8 +13,9 @@ html * {
     padding: 2px !important;
 }
 
-.FooterCopyright {
+.CopyrightStartup {
     font-size: 105%;
+    word-wrap: break-word !important;
 }
 
 .ui.card > .content > .header {
@@ -26,4 +27,8 @@ html * {
 .ui.cards > .card > .content > .header + .description, 
 .ui.cards > .card > .content > .meta + .description {
     margin-bottom: 1.5em;
+}
+
+.ui.vertical.menu {
+    width: 100%;
 }

@@ -1,24 +1,24 @@
 import React, { Component } from 'react';
 import Layout from '../../components/Layout';
-import { Button, Form, Input, Message } from 'semantic-ui-react';
+import { Button, Form, Input, Message, Icon } from 'semantic-ui-react';
 import profile from '../../ethereum/profile';
 import web3 from '../../ethereum/web3';
 import { Router } from '../../routes';
 
 class UserProfile extends Component {
-    static async getInitialProps() {
-        console.log('profile', profile);
+    // static async getInitialProps() {
+    //     // console.log('profile', profile);
 
-        const projects = await profile.methods.getInstructors().call();
-        const accounts = await web3.eth.getAccounts();
+    //     // const projects = await profile.methods.getInstructors().call();
+    //     // const accounts = await web3.eth.getAccounts();
 
-        console.log("accounts", accounts[0]);
-        console.log("projects", projects);
+    //     // console.log("accounts", accounts[0]);
+    //     // console.log("projects", projects);
 
-        return {
-            projects
-        };
-    }
+    //     // return {
+    //     //     projects
+    //     // };
+    // }
 
     state = {
         age: '',
@@ -85,7 +85,7 @@ class UserProfile extends Component {
                         />
                     </Form.Field>
                     <Message error header='Error!' content={this.state.errorMessage.split('\n')[0]} />
-                    <Button loading={this.state.loading} primary type='submit'>Create!</Button>
+                    <Button loading={this.state.loading} type='submit' content='Update' icon='refresh' primary />
                 </Form>
             </Layout>
         )

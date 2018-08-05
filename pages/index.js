@@ -5,6 +5,25 @@ import factory from '../ethereum/factory';
 import Layout from '../components/Layout';
 
 class StartupIndex extends Component {
+    // constructor(props) {
+    //     super(props);
+
+    //     this.state = {
+    //         data: {
+    //             address: '',
+    //             title: ''
+    //         }
+    //     };
+    // }
+
+    // componentDidMount() {
+    //     const items = this.props.projects.slice(0).reverse().map(address => {
+    //         this.getProjectTitle(address).then((title) => {
+    //             this.setState({ data: { address, title } });
+    //         });
+    //     });
+    // }
+
     static async getInitialProps() {
         const projects = await factory.methods.getDeployedProjects().call();
         return {
@@ -12,31 +31,42 @@ class StartupIndex extends Component {
         };
     }
 
-    async getProjectTitle(address) {
-        let title;
-        try {
-            title = await factory.methods.projectTitle(address).call();
-        } catch (err) {
-            console.log('err');
-        }
-        return title;
-    }
+    // getProjectTitle(address) {
+    //     return factory.methods.getDeployedProjects(address).call();
+    // }
+
+    // renderProjects() {
+    //     const items = Object.entries(this.state.data).map(() => {
+    //         return {
+    //             meta: this.state.data.address,
+    //             color: 'green',
+    //             description: (
+    //                 <Link route={`/projects/${this.state.data.address}`}>
+    //                     <a>View Project</a>
+    //                 </Link>
+    //             ),
+    //             header: factory.methods.projectTitle(address).call(),
+    //             fluid: true,
+    //             style: { overflowWrap: 'break-word' }
+    //         };
+    //     }, );
+    //     return <Card.Group items={items} />
+    // }
 
     renderProjects() {
         const items = this.props.projects.map(address => {
             return {
                 header: address,
-                color: 'green',
+                meta: address,
                 description: (
                     <Link route={`/projects/${address}`}>
                         <a>View Project</a>
                     </Link>
                 ),
-                meta: console.log('call ', this.getProjectTitle(address)),
                 fluid: true,
                 style: { overflowWrap: 'break-word' }
             };
-        }, );
+        });
         return <Card.Group items={items} />
     }
 
@@ -44,11 +74,11 @@ class StartupIndex extends Component {
         return (
             <Layout>
                 <h3>Open Projects</h3>
-                <Link route="projects/new">
+                {/* <Link route="projects/new">
                     <a>
-                        <Button floated="right" content="Create Project" icon='add circle' primary />
+                        <Button floated="right" content='New Project' icon='add circle' primary />
                     </a>
-                </Link>
+                </Link> */}
                 {this.renderProjects()}
             </Layout >
         );

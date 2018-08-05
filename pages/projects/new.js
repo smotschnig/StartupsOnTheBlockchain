@@ -89,7 +89,7 @@ class ProjectNew extends Component {
                         />
                     </Form.Field>
                     <Message error header='Error!' content={this.state.errorMessage.split('\n')[0]} />
-                    <Button loading={this.state.loading} primary type='submit'>Create!</Button>
+                    <Button loading={this.state.loading} primary type='submit' icon='add circle' content='Add Project' />
                 </Form>
             </Layout>
         );

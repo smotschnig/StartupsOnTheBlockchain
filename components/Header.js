@@ -1,15 +1,22 @@
-import React, { Component } from 'react'
-import { Menu } from 'semantic-ui-react'
+import React from 'react'
+import { Grid, Menu, Icon } from 'semantic-ui-react'
 import { Link } from '../routes';
 
 export default () => {
     return (
-        <Menu className="Header">
-            <Link route="/"><a className="item">StartupsOnTheBlockchain</a></Link>
-            <Menu.Menu position="right">
-            <Link route="/projects/new"><a className="item">New Project</a></Link>
-            <Link route="/profile"><a className="item">Profile</a></Link>
-            </Menu.Menu>
-        </Menu>
+        <Grid>
+            <Grid.Row>
+                <Grid.Column width={16}>
+                    <Menu className="Header">
+                        <Link route="/"><a className="item"><Icon name="chain" />StartupsOnTheBlockchain</a></Link>
+                        <Menu.Menu position="right">
+                            <Link route="/projects/new"><a className="item"><Icon name="plus circle" />New Project</a></Link>
+                            <Link route="/information"><a className="item"><Icon name="info circle" />Information</a></Link>
+                            <Link route="/profile"><a className="item"><Icon name="user circle" />Profile</a></Link>
+                        </Menu.Menu>
+                    </Menu>
+                </Grid.Column>
+            </Grid.Row>
+        </Grid>
     );
 };

@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { Container } from 'semantic-ui-react';
+import { Container, Grid, Menu } from 'semantic-ui-react';
 import Head from 'next/head';
 import Header from './Header';
 import Footer from './Footer';
+import VerticalMenu from './VerticalMenu';
 
 export default (props) => {
     return (
@@ -13,7 +14,18 @@ export default (props) => {
                 <link rel="stylesheet" href="/static/styles/page.css" type="text/css" />
             </Head>
             <Header />
-            {props.children}
+
+            <Grid columns={2}>
+                <Grid.Row>
+                    <Grid.Column width={13}>
+                        {props.children}
+                    </Grid.Column>
+                    <Grid.Column float='right' width={3}>
+                        <VerticalMenu />
+                    </Grid.Column>
+                </Grid.Row>
+            </Grid>
+
             <Footer />
         </Container>
     );
