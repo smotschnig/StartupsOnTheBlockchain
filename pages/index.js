@@ -5,68 +5,37 @@ import factory from '../ethereum/factory';
 import Layout from '../components/Layout';
 
 class StartupIndex extends Component {
-    // constructor(props) {
-    //     super(props);
-
-    //     this.state = {
-    //         data: {
-    //             address: '',
-    //             title: ''
-    //         }
-    //     };
-    // }
-
-    // componentDidMount() {
-    //     const items = this.props.projects.slice(0).reverse().map(address => {
-    //         this.getProjectTitle(address).then((title) => {
-    //             this.setState({ data: { address, title } });
-    //         });
-    //     });
-    // }
 
     static async getInitialProps() {
-        const projects = await factory.methods.getDeployedProjects().call();
+        const addresses = await factory.methods.getDeployedProjects().call();
+        let projects = [];
+        for (let i = 0; i < addresses.length; i++) {
+            projects.push({
+                address: addresses[i],
+                title: await factory.methods.projectTitle(addresses[i]).call()
+            });
+        }
+
         return {
             projects
         };
     }
 
-    // getProjectTitle(address) {
-    //     return factory.methods.getDeployedProjects(address).call();
-    // }
-
-    // renderProjects() {
-    //     const items = Object.entries(this.state.data).map(() => {
-    //         return {
-    //             meta: this.state.data.address,
-    //             color: 'green',
-    //             description: (
-    //                 <Link route={`/projects/${this.state.data.address}`}>
-    //                     <a>View Project</a>
-    //                 </Link>
-    //             ),
-    //             header: factory.methods.projectTitle(address).call(),
-    //             fluid: true,
-    //             style: { overflowWrap: 'break-word' }
-    //         };
-    //     }, );
-    //     return <Card.Group items={items} />
-    // }
-
     renderProjects() {
-        const items = this.props.projects.map(address => {
+        const items = this.props.projects.slice(0).reverse().map(project => {
             return {
-                header: address,
-                meta: address,
+                meta: project.address,
+                color: 'green',
                 description: (
-                    <Link route={`/projects/${address}`}>
+                    <Link route={`/projects/${project.address}`}>
                         <a>View Project</a>
                     </Link>
                 ),
+                header: project.title,
                 fluid: true,
                 style: { overflowWrap: 'break-word' }
             };
-        });
+        }, );
         return <Card.Group items={items} />
     }
 
