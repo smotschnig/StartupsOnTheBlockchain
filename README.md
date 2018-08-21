@@ -14,8 +14,8 @@ You have to install Metamask connected with a Rinkeby-Account to use the webplat
 #### How to compile and deploy own contract?
 
 * Move to folder ethereum: __`cd ethereum`__
-* Open file: __`node compile.js`__
-* Deploy Contract: __`node deploy.js`__
+* Compile contract: __`node compile.js`__
+* Deploy contract: __`node deploy.js`__
 * Copy __`Contract depolyed to 0x000000`__ address to the clipboard
 
 * Open the config folder in the root directory: __`cd config`__
