@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Button, Form, Input, Message, TextArea } from 'semantic-ui-react';
+import { DateInput } from 'semantic-ui-calendar-react';
 import Layout from '../../components/Layout';
 import factory from '../../ethereum/factory';
 import web3 from '../../ethereum/web3';
@@ -7,8 +8,6 @@ import { Router } from '../../routes';
 
 class ProjectNew extends Component {
     static async getInitialProps() {
-        console.log('factory', factory);
-
         const projects = await factory.methods.getDeployedProjects().call();
 
         return {
@@ -17,12 +16,12 @@ class ProjectNew extends Component {
     }
 
     state = {
-        Startup: '',
-        Title: '',
-        Deadline: '',
-        Description: '',
-        Wage: '',
-        Date: '',
+        startup: '',
+        title: '',
+        deadline: '',
+        description: '',
+        wage: '',
+        date: '',
         errorMessage: '',
         loading: false
     };
@@ -35,7 +34,7 @@ class ProjectNew extends Component {
         try {
             const accounts = await web3.eth.getAccounts();
             await factory.methods
-                .createProject(this.state.Startup, this.state.Title, this.state.Deadline, this.state.Description, this.state.Wage, this.state.Date)
+                .createProject(this.state.startup, this.state.title, this.state.deadline, this.state.description, this.state.wage, this.state.date)
                 .send({
                     from: accounts[0]
                 });
@@ -44,8 +43,14 @@ class ProjectNew extends Component {
             this.setState({ errorMessage: err.message });
         }
 
-        this.setState({ loading: false});
-    };
+        this.setState({ loading: false });
+    }
+
+    handleChange = (event, { name, value }) => {
+        if (this.state.hasOwnProperty(name)) {
+            this.setState({ [name]: value });
+        }
+    }
 
     render() {
         return (
@@ -55,29 +60,34 @@ class ProjectNew extends Component {
                     <Form.Field>
                         <label>Name of Startup</label>
                         <Input
-                            value={this.state.Startup}
-                            onChange={event => this.setState({ Startup: event.target.value })}
+                            value={this.state.startup}
+                            onChange={event => this.setState({ startup: event.target.value })}
                         />
                     </Form.Field>
                     <Form.Field>
                         <label>Title of Job </label>
                         <Input
-                            value={this.state.Title}
-                            onChange={event => this.setState({ Title: event.target.value })}
+                            value={this.state.title}
+                            onChange={event => this.setState({ title: event.target.value })}
                         />
                     </Form.Field>
                     <Form.Field>
+                        {/* TODO: Datum nur in Zukunft || Vergleich mit moment now */}
                         <label>Deadline</label>
-                        <Input
-                            value={this.state.Deadline}
-                            onChange={event => this.setState({ Deadline: event.target.value })}
+                        <DateInput
+                            name="deadline"
+                            placeholder="Date"
+                            value={this.state.deadline}
+                            iconPosition="left"
+                            onChange={this.handleChange}
+                            dateFormat="DD.MM.YYYY"
                         />
                     </Form.Field>
                     <Form.Field>
                         <label>Description</label>
                         <textarea
-                            value={this.state.Description}
-                            onChange={event => this.setState({ Description: event.target.value })}
+                            value={this.state.description}
+                            onChange={event => this.setState({ description: event.target.value })}
                         />
                     </Form.Field>
                     <Form.Field>
@@ -85,8 +95,8 @@ class ProjectNew extends Component {
                         <Input
                             label='wei'
                             labelPosition='right'
-                            value={this.state.Wage}
-                            onChange={event => this.setState({ Wage: event.target.value })}
+                            value={this.state.wage}
+                            onChange={event => this.setState({ wage: event.target.value })}
                         />
                     </Form.Field>
                     <Message error header='Error!' content={this.state.errorMessage.split('\n')[0]} />

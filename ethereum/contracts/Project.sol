@@ -2,11 +2,15 @@ pragma solidity ^0.4.2;
 
 contract ProjectFactory {
     address[] public deployedProjects;
+    mapping(address => string) public projectStartup;
     mapping(address => string) public projectTitle;
+    mapping(address => uint) public projectDate;
 
     function createProject(string startup, string title, string deadline, string description, uint wage, uint date) public {
-        address newProject = new Project(startup, title, deadline, description, wage, date, msg.sender);
+        address newProject = new Project(startup, title, deadline, description, wage, now, msg.sender);
+        projectStartup[newProject] = startup;
         projectTitle[newProject] = title;
+        projectDate[newProject] = now;
         deployedProjects.push(newProject);
     }
     
@@ -23,8 +27,8 @@ contract Project {
     string public title;
     string public deadline;
     string public description;
-    uint public date;
     uint public wage;
+    uint public date;
 
     modifier restricted() {
         require(msg.sender == manager);
@@ -38,7 +42,7 @@ contract Project {
         deadline = _deadline;
         description = _description;
         wage = _wage;
-        date = now;
+        date = _date;
     }
 
     function getSummary() public view returns (string, string, string, string, uint, uint, address) {

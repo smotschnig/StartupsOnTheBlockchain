@@ -2,14 +2,12 @@ import React, { Component } from 'react';
 import { Card, Grid, Button, TextArea, Form, Label, Icon, Rating } from 'semantic-ui-react';
 import Layout from '../../components/Layout';
 import Project from '../../ethereum/project';
-import Profile from '../../ethereum/profile';
 import { Link } from '../../routes';
 import moment from 'moment';
 
 class ProjectShow extends Component {
     static async getInitialProps(props) {
         const project = Project(props.query.address);
-
         const summary = await project.methods.getSummary().call();
 
         return {
@@ -84,7 +82,7 @@ class ProjectShow extends Component {
                         <Grid.Column width={16}>
                             <h4>Aufgabenbeschreibung:</h4>
                             <Form>
-                                <TextArea readOnly disabled autoHeight defaultValue={this.props.pDescription} />
+                                <TextArea readOnly disabled autoHeight defaultValue={this.props.Description} />
                             </Form>
                         </Grid.Column>
                     </Grid.Row>
@@ -95,7 +93,7 @@ class ProjectShow extends Component {
                             </Label>
                         </Grid.Column>
                         <Grid.Column width={8}>
-                            <Rating icon='star' defaultRating={3} maxRating={5} disabled size='small' /> ({this.props.pWage})
+                            <Rating icon='star' defaultRating={3} maxRating={5} disabled size='small' /> ({this.props.Wage})
                         </Grid.Column>
                     </Grid.Row>
                     <Grid.Row>
