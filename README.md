@@ -19,8 +19,8 @@ You have to install Metamask connected with a Rinkeby-Account to use the webplat
 * Copy __`Contract depolyed to 0x000000`__ address to the clipboard
 
 * Open the config folder in the root directory: __`cd config`__
-* Open address file in this directory: __`address.js`__
-* Update address line: __`module.exports = { address: '0x000000' (address from clipboard)};`__
+* Open following file in this directory: __`address.js`__
+* Update address in second line: __`module.exports = { address: '0x000000' (address from clipboard)};`__
   
 If there are problems with npm install on Windows, you have to install additional dependencies globally.
 * Run: __`npm install --global --production windows-build-tools`__
