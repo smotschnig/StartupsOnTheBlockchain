@@ -3,7 +3,6 @@ import { Container, Grid, Menu } from 'semantic-ui-react';
 import Head from 'next/head';
 import Header from './Header';
 import Footer from './Footer';
-import VerticalMenu from './VerticalMenu';
 
 export default (props) => {
     return (
@@ -17,11 +16,8 @@ export default (props) => {
 
             <Grid columns={2}>
                 <Grid.Row>
-                    <Grid.Column width={13}>
+                    <Grid.Column width={16}>
                         {props.children}
-                    </Grid.Column>
-                    <Grid.Column float='right' width={3}>
-                        <VerticalMenu />
                     </Grid.Column>
                 </Grid.Row>
             </Grid>

@@ -9,6 +9,7 @@ class StartupIndex extends Component {
     static async getInitialProps() {
         const addresses = await factory.methods.getDeployedProjects().call();
         let projects = [];
+
         for (let i = 0; i < addresses.length; i++) {
             projects.push({
                 address: addresses[i],
@@ -35,7 +36,7 @@ class StartupIndex extends Component {
                 fluid: true,
                 style: { overflowWrap: 'break-word' }
             };
-        }, );
+        });
         return <Card.Group items={items} />
     }
 

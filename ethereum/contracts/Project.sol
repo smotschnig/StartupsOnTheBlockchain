@@ -3,9 +3,9 @@ pragma solidity ^0.4.2;
 contract ProjectFactory {
     address[] public deployedProjects;
     mapping(address => string) public projectTitle;
-    
-    function createProject(string startup, string title, string deadline, string description, uint wage) public {
-        address newProject = new Project(startup, title, deadline, description, wage, msg.sender);
+
+    function createProject(string startup, string title, string deadline, string description, uint wage, uint date) public {
+        address newProject = new Project(startup, title, deadline, description, wage, date, msg.sender);
         projectTitle[newProject] = title;
         deployedProjects.push(newProject);
     }
@@ -19,40 +19,56 @@ contract ProjectFactory {
  
 contract Project {
     address public manager;
-    string public pStartup;
-    string public pTitle;
-    string public pDeadline;
-    string public pDescription;
-    uint public pWage;
+    string public startup;
+    string public title;
+    string public deadline;
+    string public description;
+    uint public date;
+    uint public wage;
 
     modifier restricted() {
         require(msg.sender == manager);
         _;
     }
 
-    constructor(string startup, string title, string deadline, string description, uint wage, address creator) public {
-        manager = creator;
-        pStartup = startup;
-        pTitle = title;
-        pDeadline = deadline;
-        pDescription = description;
-        pWage = wage;
+    constructor(string _startup, string _title, string _deadline, string _description, uint _wage, uint _date, address _creator) public {
+        manager = _creator;
+        startup = _startup;
+        title = _title;
+        deadline = _deadline;
+        description = _description;
+        wage = _wage;
+        date = now;
     }
 
-    function getSummary() public view returns (string, string, string, string, uint, address) {
+    function getSummary() public view returns (string, string, string, string, uint, uint, address) {
         return (
-            pStartup,
-            pTitle,
-            pDeadline,
-            pDescription,
-            pWage,
+            startup,
+            title,
+            deadline,
+            description,
+            wage,
+            date,
             manager
         );
     }
 
 }
 
-contract Profile {
+contract Owned {
+    address owner;
+    
+    constructor() public {
+        owner = msg.sender;
+    }
+    
+    modifier onlyOwner {
+        require(msg.sender == owner);
+        _;
+    }
+}
+
+contract Profile is Owned {
     struct Instructor {
         uint age;
         string fName;
@@ -70,7 +86,7 @@ contract Profile {
         string training
     ); 
     
-    function setInstructor(address _address, uint _age, string _fName, string _lName, string _training) public {
+    function setInstructor(address _address, uint _age, string _fName, string _lName, string _training) onlyOwner public {
         var instructor = instructors[_address];
         
         instructor.age = _age;
@@ -86,8 +102,13 @@ contract Profile {
         return instructorAccounts;
     }
     
-    function getInstructor(address _address) view public returns(uint, string, string, string) {
-        return (instructors[_address].age, instructors[_address].fName, instructors[_address].lName, instructors[_address].training);
+    function getInstructor(address _address) public view returns(uint, string, string, string) {
+        return (
+            instructors[_address].age, 
+            instructors[_address].fName, 
+            instructors[_address].lName, 
+            instructors[_address].training
+        );
     }
     
     function countInstructors() view public returns (uint) {

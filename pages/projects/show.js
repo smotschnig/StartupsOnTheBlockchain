@@ -4,58 +4,66 @@ import Layout from '../../components/Layout';
 import Project from '../../ethereum/project';
 import Profile from '../../ethereum/profile';
 import { Link } from '../../routes';
+import moment from 'moment';
 
 class ProjectShow extends Component {
     static async getInitialProps(props) {
         const project = Project(props.query.address);
-        console.log('PROJECT', project);
+
         const summary = await project.methods.getSummary().call();
-
-        const user = Profile(props.query.address);
-        console.log('USER', user);
-        user.methods.countInstructors().call().then((res) => {
-            console.log('USERDATA', userData);
-        });
-
 
         return {
             address: props.query.address,
-            pStartup: summary[0],
-            pTitle: summary[1],
-            pDeadline: summary[2],
-            pDescription: summary[3],
-            pWage: summary[4],
-            manager: summary[5]
+            Startup: summary[0],
+            Title: summary[1],
+            Deadline: summary[2],
+            Description: summary[3],
+            Wage: summary[4],
+            Date: summary[5],
+            manager: summary[6]
         };
+    }
+
+    timeConverter(timestamp) {
+        var date = moment.unix(timestamp);
+        return date.format("DD.MM.YYYY - HH:mm:ss");
     }
 
     renderCards() {
         const {
-            pStartup,
-            pTitle,
-            pDeadline,
-            pWage
+            Startup,
+            Title,
+            Deadline,
+            Wage,
+            Date
         } = this.props;
+
+        const convertedDate = this.timeConverter(Date);
 
         const items = [
             {
-                header: pTitle,
+                header: Title,
                 extra: 'Gesuchte Berufsbezeichnung',
                 style: { overflowWrap: 'break-word' },
             },
             {
-                header: pStartup,
+                header: Startup,
                 extra: 'Name des Startup-Unternehmen',
                 style: { overflowWrap: 'break-word' }
             },
             {
-                header: pDeadline,
+                header: Deadline,
                 extra: 'Deadline',
                 style: { overflowWrap: 'break-word' }
             },
             {
-                header: pWage,
+                header: Wage,
                 extra: 'Höhe der Vergütung',
+                style: { overflowWrap: 'break-word' },
+            },
+            {
+                header: convertedDate,
+                extra: 'Datum der Erzeugung',
                 style: { overflowWrap: 'break-word' },
             }
         ];
@@ -66,7 +74,6 @@ class ProjectShow extends Component {
         return (
             <Layout>
                 <h3>Project Show</h3>
-                {console.log('prop', this.props.pDescription)}
                 <Grid>
                     <Grid.Row>
                         <Grid.Column width={16}>

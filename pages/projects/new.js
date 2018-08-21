@@ -17,11 +17,12 @@ class ProjectNew extends Component {
     }
 
     state = {
-        pStartup: '',
-        pTitle: '',
-        pDeadline: '',
-        pDescription: '',
-        pWage: '',
+        Startup: '',
+        Title: '',
+        Deadline: '',
+        Description: '',
+        Wage: '',
+        Date: '',
         errorMessage: '',
         loading: false
     };
@@ -34,7 +35,7 @@ class ProjectNew extends Component {
         try {
             const accounts = await web3.eth.getAccounts();
             await factory.methods
-                .createProject(this.state.pStartup, this.state.pTitle, this.state.pDeadline, this.state.pDescription, this.state.pWage)
+                .createProject(this.state.Startup, this.state.Title, this.state.Deadline, this.state.Description, this.state.Wage, this.state.Date)
                 .send({
                     from: accounts[0]
                 });
@@ -43,7 +44,7 @@ class ProjectNew extends Component {
             this.setState({ errorMessage: err.message });
         }
 
-        this.setState({ loading: false });
+        this.setState({ loading: false});
     };
 
     render() {
@@ -54,29 +55,29 @@ class ProjectNew extends Component {
                     <Form.Field>
                         <label>Name of Startup</label>
                         <Input
-                            value={this.state.pStartup}
-                            onChange={event => this.setState({ pStartup: event.target.value })}
+                            value={this.state.Startup}
+                            onChange={event => this.setState({ Startup: event.target.value })}
                         />
                     </Form.Field>
                     <Form.Field>
                         <label>Title of Job </label>
                         <Input
-                            value={this.state.pTitle}
-                            onChange={event => this.setState({ pTitle: event.target.value })}
+                            value={this.state.Title}
+                            onChange={event => this.setState({ Title: event.target.value })}
                         />
                     </Form.Field>
                     <Form.Field>
                         <label>Deadline</label>
                         <Input
-                            value={this.state.pDeadline}
-                            onChange={event => this.setState({ pDeadline: event.target.value })}
+                            value={this.state.Deadline}
+                            onChange={event => this.setState({ Deadline: event.target.value })}
                         />
                     </Form.Field>
                     <Form.Field>
                         <label>Description</label>
                         <textarea
-                            value={this.state.pDescription}
-                            onChange={event => this.setState({ pDescription: event.target.value })}
+                            value={this.state.Description}
+                            onChange={event => this.setState({ Description: event.target.value })}
                         />
                     </Form.Field>
                     <Form.Field>
@@ -84,8 +85,8 @@ class ProjectNew extends Component {
                         <Input
                             label='wei'
                             labelPosition='right'
-                            value={this.state.pWage}
-                            onChange={event => this.setState({ pWage: event.target.value })}
+                            value={this.state.Wage}
+                            onChange={event => this.setState({ Wage: event.target.value })}
                         />
                     </Form.Field>
                     <Message error header='Error!' content={this.state.errorMessage.split('\n')[0]} />

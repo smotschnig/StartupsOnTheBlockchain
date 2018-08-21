@@ -2,6 +2,10 @@
   "name": "startup",
   "version": "1.0.0",
   "description": "a blockchain-based startup webplatform",
+  "engines": {
+    "node": "8.9.4",
+    "npm": "6.2.0"
+  },
   "main": "server.js",
   "scripts": {
     "test": "mocha",
@@ -30,16 +34,28 @@
     "@zeit/next-css": "^0.1.5",
     "express": "^4.16.3",
     "fs-extra": "^5.0.0",
-    "ganache-cli": "^6.1.0",
+    "ganache-cli": "^6.1.8",
     "mocha": "^5.2.0",
+    "moment": "^2.22.2",
     "next": "^5.1.0",
     "next-routes": "^1.4.2",
-    "react": "^16.4.1",
-    "react-dom": "^16.4.1",
-    "semantic-ui-css": "^2.3.2",
+    "react": "^16.4.2",
+    "react-dom": "^16.4.2",
+    "semantic-ui-css": "^2.3.3",
     "semantic-ui-react": "^0.79.1",
-    "solc": "^0.4.22",
+    "solc": "^0.4.24",
     "truffle-hdwallet-provider": "0.0.3",
-    "web3": "^1.0.0-beta.33"
+    "web3": "^1.0.0-beta.33",
+    "web3-core-helpers": "^1.0.0-beta.35",
+    "web3-core-method": "^1.0.0-beta.35",
+    "web3-core-promievent": "^1.0.0-beta.35",
+    "web3-core-subscriptions": "^1.0.0-beta.35",
+    "web3-eth-abi": "^1.0.0-beta.35",
+    "web3-eth-iban": "^1.0.0-beta.35",
+    "web3-providers-http": "^1.0.0-beta.35",
+    "web3-providers-ipc": "^1.0.0-beta.35",
+    "web3-utils": "^1.0.0-beta.35",
+    "websocket": "^1.0.26",
+    "xhr-request-promise": "^0.1.2"
   }
 }
