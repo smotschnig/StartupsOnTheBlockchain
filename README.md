@@ -6,7 +6,8 @@ a blockchain-based startup webplatform
 * Clone Repository: __`git clone https://github.com/smotschnig/StartupsOnTheBlockchain.git`__
 * Open folder: __`cd StartupsOnTheBlockchain`__
 * Run: __`npm install`__
-* Start Server by: __`npm run dev`__
+* Build: __`npm run build`__
+* Start Server by: __`npm run start`__
 
 After that you can visit the webplatform at __`http://localhost:3000`__ or you may change the port in the __`server.js`__ file.
 You have to install Metamask connected with a Rinkeby-Account to use the webplatform correctly. 
