@@ -3,28 +3,25 @@ pragma solidity ^0.4.2;
 contract Factory {
     address[] public deployedProjects;
     address[] public deployedProfiles;
-    mapping(address => ProjectInitializer) public projects;
-
-    /* don't repeat yourself - no better solution found yet */
+    mapping(address => ProjectInitializer) public projectMap;
+    
+    /* Bisschen uncool mit doppelter Ausführung (siehe contract ProjectInstance), aber sonst keine besser Möglichkeit gefunden die Startseite ordentlich aufzulisten */
     struct ProjectInitializer {
         string startup;
         string title;
         uint wage;
-        uint date;
     }
 
-    /* creates new Project by calling the constructor and also adds the same data to the Initializer for the landing page */
-    function createProject(string _startup, string _title, uint _deadline, string _description, uint _wage) public {
-        address newProject = new ProjectInstance(_startup, _title, _deadline, _description, _wage, now, msg.sender);
+    function createProject(string startup, string title, uint deadline, string description, uint wage) public {
+        address newProject = new ProjectInstance(startup, title, deadline, description, wage, now, msg.sender);
         
         ProjectInitializer memory newProjectInitializer = ProjectInitializer({
-           startup: _startup,
-           title: _title,
-           wage: _wage,
-           date: now
+           startup: startup,
+           title: title,
+           wage: wage
         });
-
-        projects[newProject] = newProjectInitializer;
+        
+        projectMap[newProject] = newProjectInitializer;
         deployedProjects.push(newProject);
     }
     
@@ -32,19 +29,8 @@ contract Factory {
         return deployedProjects;
     }
     
-    /* gets all Projects to list on the landing page */
-    function getProjects(address _address) view public returns(string, string, uint, uint) {
-        return (
-            projects[_address].startup,
-            projects[_address].title,
-            projects[_address].wage,
-            projects[_address].date
-        );
-    }
-    
-        /* creates new Profile for every new user */
-    function createProfile(string _fName, string _lName, uint _birthDate, string _education, string _experience, string _skills) public {
-        address newProfile = new ProfileInstance(_fName, _lName, _birthDate, _education, _experience, _skills, msg.sender);
+    function createProfile(string fName, string lName, uint birthDate, string education, string experience, string skills) public {
+        address newProfile = new ProfileInstance(fName, lName, birthDate, education, experience, skills, now, msg.sender);
         deployedProfiles.push(newProfile);
     }
     
@@ -53,6 +39,7 @@ contract Factory {
             deployedProfiles
         );
     }
+
 }
 
 contract ProjectInstance {
@@ -103,6 +90,11 @@ contract ProjectInstance {
         requesterCount++;
         
         requesterList.push(msg.sender);
+        
+    }
+    
+    function chooseFreelancer() {
+        
     }
     
     function finalizeProject() public {
@@ -114,14 +106,15 @@ contract ProjectInstance {
     function getRequesterList() public view returns (address[]) {
         return requesterList;
     }
+
 }
 
 contract ProfileInstance {
     address public manager;
+    ProfileInstructor public profile;
+    mapping (address => ProfileInstructor) instructors;
     uint public rating;
-    uint public date;
-    ProfileInstructor private profile;
-    
+        
     struct ProfileInstructor {
         string fName;
         string lName;
@@ -129,6 +122,7 @@ contract ProfileInstance {
         string education;
         string experience;
         string skills;
+        uint date;
     }
     
     modifier restricted {
@@ -136,9 +130,17 @@ contract ProfileInstance {
         _;
     }
     
-    constructor(string _fName, string _lName, uint _birthDate, string _education, string _experience, string _skills, address _manager) public {
+    event instructorInfo(
+        string fName,
+        string lName,
+        uint birthDate,
+        string education,
+        string experience,
+        string skills
+    ); 
+    
+    constructor(string _fName, string _lName, uint _birthDate, string _education, string _experience, string _skills, uint _date, address _manager) public {
         manager = _manager;
-        date = now;
         
         ProfileInstructor memory newProfileInstructor = ProfileInstructor({
             fName: _fName, 
@@ -146,7 +148,8 @@ contract ProfileInstance {
             birthDate: _birthDate, 
             education: _education, 
             experience: _experience, 
-            skills: _skills
+            skills: _skills, 
+            date: _date
         });
         profile = newProfileInstructor;
     }
@@ -158,19 +161,9 @@ contract ProfileInstance {
             birthDate: _birthDate, 
             education: _education, 
             experience: _experience, 
-            skills: _skills
+            skills: _skills, 
+            date: now
         });
         profile = newProfileInstructor;
-    }
-    
-    function getInstructor() view public returns(string, string, uint, string, string, string) {
-        return (
-            profile.fName,
-            profile.lName,
-            profile.birthDate,
-            profile.education,
-            profile.experience,
-            profile.skills
-        );
     }
 }

@@ -21,7 +21,6 @@ class ProjectNew extends Component {
         deadline: '',
         description: '',
         wage: '',
-        date: '',
         errorMessage: '',
         loading: false
     };
@@ -33,8 +32,9 @@ class ProjectNew extends Component {
 
         try {
             const accounts = await web3.eth.getAccounts();
+
             await factory.methods
-                .createProject(this.state.startup, this.state.title, this.state.deadline, this.state.description, this.state.wage, this.state.date)
+                .createProject(this.state.startup, this.state.title, this.state.deadline, this.state.description, this.state.wage)
                 .send({
                     from: accounts[0]
                 });

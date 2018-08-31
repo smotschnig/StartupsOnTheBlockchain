@@ -1,5 +1,5 @@
 import web3 from './web3';
-import Project from './build/Project.json';
+import Project from './build/ProjectInstance.json';
 
 export default (address) => {
     return new web3.eth.Contract(

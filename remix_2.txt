@@ -1,0 +1,78 @@
+pragma solidity ^0.4.2;
+
+contract ProjectFactory {
+    address[] public deployedProjects;
+
+    function createProject(string startup, string title, uint deadline, string description, uint wage) public {
+        address newProject = new ProjectInstance(startup, title, deadline, description, wage, now, msg.sender);
+        deployedProjects.push(newProject);
+    }
+    
+    function getDeployedProjects() public view returns (address[]) {
+        return deployedProjects;
+    }
+
+}
+
+contract ProjectInstance {
+    address public manager;
+    mapping(address => bool) public requester;
+    address[] public requesterList;
+    uint public requesterCount;
+    Project public projects;
+    
+    struct Project {
+        string startup;
+        string title;
+        uint deadline;
+        string description;
+        uint wage;
+        uint date;
+        bool finalize;
+        mapping(address => bool) requests;
+    }
+    
+    modifier restricted() {
+        require(msg.sender == manager);
+        _;
+    }
+
+    constructor(string _startup, string _title, uint _deadline, string _description, uint _wage, uint _date, address _manager) public {
+        manager = _manager;
+        Project memory newProject = Project({
+           startup: _startup,
+           title: _title,
+           deadline: _deadline,
+           description: _description,
+           wage: _wage,
+           date: _date,
+           finalize: false
+        });
+        projects = newProject;
+    }
+
+    function setRequest() public {
+        Project storage project = projects;
+        
+        require(msg.sender != manager);
+        require(!requester[msg.sender]);
+        requester[msg.sender] = true;
+
+        project.requests[msg.sender] = true;
+        requesterCount++;
+        
+        requesterList.push(msg.sender);
+        
+    }
+    
+    function finalizeProject() public {
+        Project storage project = projects;
+        
+        project.finalize = true;
+    }
+    
+    function getRequesterList() public view returns (address[]) {
+        return requesterList;
+    }
+
+}

@@ -13,7 +13,6 @@ export default (props) => {
                 <link rel="stylesheet" href="/static/styles/page.css" type="text/css" />
             </Head>
             <Header />
-
             <Grid columns={2}>
                 <Grid.Row>
                     <Grid.Column width={16}>
@@ -21,7 +20,6 @@ export default (props) => {
                     </Grid.Column>
                 </Grid.Row>
             </Grid>
-
             <Footer />
         </Container>
     );

@@ -1,86 +1,69 @@
 import React, { Component } from 'react';
-import { Button, Card, Grid } from 'semantic-ui-react';
-import { Link } from '../routes';
-import factory from '../ethereum/factory';
-import Project from '../ethereum/project';
 import Layout from '../components/Layout';
+import { Card } from 'semantic-ui-react';
+import { Link } from '../routes';
 import moment from 'moment';
 import _ from 'lodash';
+import factory from '../ethereum/factory';
+
 
 class StartupIndex extends Component {
     static async getInitialProps() {
         const addresses = await factory.methods.getDeployedProjects().call();
         let projects = [];
 
+        // Iteration über alle addresses
+        // getProjects returns (string, string, uint, uint)
+        // z.B.
+        // 0: string: Startup300 // Name des Startups
+        // 1: string: Webdeveloper (m/w) // Title der Berufsbezeichnung
+        // 2: uint: 1312312 // Deadline als Integer
+        // 3: uint: 1231233 // Date als Integer (Erstelldatum des Contracts)
         for (let i = 0; i < addresses.length; i++) {
             projects.push({
-                address: addresses[i],
-                title: await factory.methods.projectTitle(addresses[i]).call(),
-                date: await factory.methods.projectDate(addresses[i]).call(),
-                startup: await factory.methods.projectStartup(addresses[i]).call()
+                projects: await factory.methods.getProject(addresses[i]).call()
             });
         }
+
+        console.log('projects', projects);
 
         return {
             projects
         };
     }
 
-    timeConverter(timestamp) {
-        var date = moment.unix(timestamp);
-        return date.format("DD.MM.YYYY - HH:mm:ss");
-    }
+    // timeConverter(timestamp) {
+    //     var date = moment.unix(timestamp);
+    //     return date.format("DD.MM.YYYY - HH:mm:ss");
+    // }
 
     renderProjects() {
-        var key;
-        const items = this.props.projects.slice(0).reverse().map(project => {
-            const { title, address, date, startup } = project;
-            key = address;
-            return {
-                header: title,
-                meta: startup,
-                description: (
-                    <Link route={`/projects/${address}`}>
-                        <a>View Project</a>
-                    </Link>
-                ),
-                extra: this.timeConverter(date),
-                color: 'green',
-                fluid: true,
-                style: { overflowWrap: 'break-word' },
-                key: address
-            };
-        });
-        return <Card.Group key={key} items={items} />
-
-        // ALTERNATIVE: GLEICHES ERGEBNIS
-        // return (this.props.projects.slice(0).reverse().map((project) => (
-        //     <Card.Group key={project.address}>
-        //         <Card
-        //             header={project.title}
-        //             meta={project.startup + "" + project.rating}
-        //             description={(
-        //                 <Link route={`/projects/${project.address}`}>
-        //                     <a>View Project</a>
-        //                 </Link>
-        //             )}
-        //             extra={this.timeConverter(project.date)}
-        //             fluid
-        //             color='green'
-        //         />
-        //     </Card.Group>
-        // )));
+        // var key;
+        // const items = this.props.projects.slice(0).reverse().map(project => {
+        //     const { title } = project;
+        //     key = title;
+        //     return {
+        //         header: title,
+        //         meta: title,
+        //         description: (
+        //             <Link route={`/projects/${title}`}>
+        //                 <a>View Project</a>
+        //             </Link>
+        //         ),
+        //         extra: title,
+        //         color: 'green',
+        //         fluid: true,
+        //         style: { overflowWrap: 'break-word' },
+        //         key: title
+        //     };
+        // });
+        // return <Card.Group key={key} items={items} />
     }
 
     render() {
         return (
             <Layout>
                 <h3>Open Projects</h3>
-                {/* <Link route="projects/new">
-                    <a>
-                        <Button floated="right" content='New Project' icon='add circle' primary />
-                    </a>
-                </Link> */}
                 {this.renderProjects()}
             </Layout >
         );
