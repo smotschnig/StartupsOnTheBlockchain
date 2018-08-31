@@ -6,7 +6,6 @@ class Information extends Component {
         return (
             <Layout>
                 <h3>Information</h3>
-
                 <p>
                     Die Webplattform ist optimiert für eine <b>1920x1080</b> (FullHD) Auflösung. Eine Mobile-Version wird momentan nicht angeboten.
                     Um die Webplattform vollständig nutzen zu könnnen wird entweder <b>MetaMask</b> (Chrome Extension) oder <b>Cipher</b> (Browser) benötigt.

@@ -9,18 +9,16 @@ contract Factory {
     struct ProjectInitializer {
         string startup;
         string title;
-        uint wage;
         uint date;
     }
 
     /* creates new Project by calling the constructor and also adds the same data to the Initializer for the landing page */
-    function createProject(string _startup, string _title, uint _deadline, string _description, uint _wage) public {
+    function createProject(string _startup, string _title, string _deadline, string _description, uint _wage) public {
         address newProject = new ProjectInstance(_startup, _title, _deadline, _description, _wage, now, msg.sender);
         
         ProjectInitializer memory newProjectInitializer = ProjectInitializer({
            startup: _startup,
            title: _title,
-           wage: _wage,
            date: now
         });
 
@@ -33,17 +31,16 @@ contract Factory {
     }
     
     /* gets all Projects to list on the landing page */
-    function getProjects(address _address) view public returns(string, string, uint, uint) {
+    function getProjects(address _address) view public returns(string startup, string title, uint date) {
         return (
             projects[_address].startup,
             projects[_address].title,
-            projects[_address].wage,
             projects[_address].date
         );
     }
     
         /* creates new Profile for every new user */
-    function createProfile(string _fName, string _lName, uint _birthDate, string _education, string _experience, string _skills) public {
+    function createProfile(string _fName, string _lName, string _birthDate, string _education, string _experience, string _skills) public {
         address newProfile = new ProfileInstance(_fName, _lName, _birthDate, _education, _experience, _skills, msg.sender);
         deployedProfiles.push(newProfile);
     }
@@ -65,7 +62,7 @@ contract ProjectInstance {
     struct Project {
         string startup;
         string title;
-        uint deadline;
+        string deadline;
         string description;
         uint wage;
         uint date;
@@ -78,7 +75,7 @@ contract ProjectInstance {
         _;
     }
 
-    constructor(string _startup, string _title, uint _deadline, string _description, uint _wage, uint _date, address _manager) public {
+    constructor(string _startup, string _title, string _deadline, string _description, uint _wage, uint _date, address _manager) public {
         manager = _manager;
         Project memory newProject = Project({
            startup: _startup,
@@ -90,6 +87,18 @@ contract ProjectInstance {
            finalize: false
         });
         project = newProject;
+    }
+    
+    function getSummary() view public returns(string, string, string, string, uint, uint, address) {
+        return (
+            project.startup,
+            project.title,
+            project.deadline,
+            project.description,
+            project.wage,
+            project.date,
+            manager
+        );
     }
 
     function setRequest() public {
@@ -125,7 +134,7 @@ contract ProfileInstance {
     struct ProfileInstructor {
         string fName;
         string lName;
-        uint birthDate;
+        string birthDate;
         string education;
         string experience;
         string skills;
@@ -136,7 +145,7 @@ contract ProfileInstance {
         _;
     }
     
-    constructor(string _fName, string _lName, uint _birthDate, string _education, string _experience, string _skills, address _manager) public {
+    constructor(string _fName, string _lName, string _birthDate, string _education, string _experience, string _skills, address _manager) public {
         manager = _manager;
         date = now;
         
@@ -151,7 +160,7 @@ contract ProfileInstance {
         profile = newProfileInstructor;
     }
     
-    function setInstructor(string _fName, string _lName, uint _birthDate, string _education, string _experience, string _skills) restricted public {
+    function setInstructor(string _fName, string _lName, string _birthDate, string _education, string _experience, string _skills) restricted public {
         ProfileInstructor memory newProfileInstructor = ProfileInstructor({
             fName: _fName, 
             lName: _lName, 
@@ -163,7 +172,7 @@ contract ProfileInstance {
         profile = newProfileInstructor;
     }
     
-    function getInstructor() view public returns(string, string, uint, string, string, string) {
+    function getInstructor() view public returns(string, string, string, string, string, string) {
         return (
             profile.fName,
             profile.lName,

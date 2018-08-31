@@ -6,7 +6,6 @@ import moment from 'moment';
 import _ from 'lodash';
 import factory from '../ethereum/factory';
 
-
 class StartupIndex extends Component {
     static async getInitialProps() {
         const addresses = await factory.methods.getDeployedProjects().call();
@@ -21,43 +20,43 @@ class StartupIndex extends Component {
         // 3: uint: 1231233 // Date als Integer (Erstelldatum des Contracts)
         for (let i = 0; i < addresses.length; i++) {
             projects.push({
-                projects: await factory.methods.getProject(addresses[i]).call()
+                address: addresses[i],
+                projects: await factory.methods.getProjects(addresses[i]).call()
             });
         }
-
-        console.log('projects', projects);
 
         return {
             projects
         };
     }
 
-    // timeConverter(timestamp) {
-    //     var date = moment.unix(timestamp);
-    //     return date.format("DD.MM.YYYY - HH:mm:ss");
-    // }
+    timeConverter(timestamp) {
+        var date = moment.unix(timestamp);
+        return date.format("DD.MM.YYYY - HH:mm:ss");
+    }
 
     renderProjects() {
-        // var key;
-        // const items = this.props.projects.slice(0).reverse().map(project => {
-        //     const { title } = project;
-        //     key = title;
-        //     return {
-        //         header: title,
-        //         meta: title,
-        //         description: (
-        //             <Link route={`/projects/${title}`}>
-        //                 <a>View Project</a>
-        //             </Link>
-        //         ),
-        //         extra: title,
-        //         color: 'green',
-        //         fluid: true,
-        //         style: { overflowWrap: 'break-word' },
-        //         key: title
-        //     };
-        // });
-        // return <Card.Group key={key} items={items} />
+        var key;
+        const items = this.props.projects.slice(0).reverse().map(p => {
+            const { startup, title, date } = p.projects;
+            const { address } = p;
+            key = address;
+            return {
+                header: title,
+                meta: startup,
+                description: (
+                    <Link route={`/projects/${address}`}>
+                        <a>View Project</a>
+                    </Link>
+                ),
+                extra: this.timeConverter(date),
+                color: 'green',
+                fluid: true,
+                style: { overflowWrap: 'break-word' },
+                key: address
+            };
+        });
+        return <Card.Group key={key} items={items} />
     }
 
     render() {

@@ -5,6 +5,7 @@ import Project from '../../ethereum/project';
 import { Link } from '../../routes';
 import moment from 'moment';
 
+
 class ProjectShow extends Component {
     static async getInitialProps(props) {
         const project = Project(props.query.address);
