@@ -40,7 +40,7 @@ class StartupIndex extends Component {
         const items = this.props.projects.slice(0).reverse().map(p => {
             const { startup, title, date } = p.projects;
             const { address } = p;
-            key = address;
+            key = address + date;
             return {
                 header: title,
                 meta: startup,
@@ -53,7 +53,6 @@ class StartupIndex extends Component {
                 color: 'green',
                 fluid: true,
                 style: { overflowWrap: 'break-word' },
-                key: address
             };
         });
         return <Card.Group key={key} items={items} />

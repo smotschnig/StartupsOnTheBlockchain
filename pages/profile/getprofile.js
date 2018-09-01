@@ -1,23 +1,23 @@
 import React, { Component } from 'react';
 import Layout from '../../components/Layout';
-import Profile from '../../ethereum/profile';
 import { Card, Grid } from 'semantic-ui-react';
+import factory from '../../ethereum/factory';
+import Profile from '../../ethereum/profile';
 
 class GetProfile extends Component {
     static async getInitialProps(props) {
-        console.log('props', props);
-
-        const profileAddress = props.query.address
+        const managerAddress = props.query.address
+        const profileAddress = await factory.methods.profileDeployedAddress(managerAddress).call();
         const profile = Profile(profileAddress);
-        // const profileData = await profile.methods.getInstructor().call();
+        const profileData = await profile.methods.getInstructor().call();
 
         return {
-            // fName: profileData[0],
-            // lName: profileData[1],
-            // birthDate: profileData[2],
-            // education: profileData[3],
-            // experience: profileData[4],
-            // skills: profileData[5]
+            fName: profileData[0],
+            lName: profileData[1],
+            birthDate: profileData[2],
+            education: profileData[3],
+            experience: profileData[4],
+            skills: profileData[5]
         };
     }
 
@@ -27,7 +27,33 @@ class GetProfile extends Component {
                 header: this.props.fName,
                 extra: 'Vorname',
                 style: { overflowWrap: 'break-word' }
+            },
+            {
+                header: this.props.lName,
+                extra: 'Nachname',
+                style: { overflowWrap: 'break-word' }
+            },
+            {
+                header: this.props.birthDate,
+                extra: 'birthDate',
+                style: { overflowWrap: 'break-word' }
+            },
+            {
+                header: this.props.education,
+                extra: 'Education',
+                style: { overflowWrap: 'break-word' }
+            },
+            {
+                header: this.props.experience,
+                extra: 'Experience',
+                style: { overflowWrap: 'break-word' }
+            },
+            {
+                header: this.props.skills,
+                extra: 'Skills',
+                style: { overflowWrap: 'break-word' }
             }
+
         ]
         return <Card.Group items={items} itemsPerRow={3} />
     }
@@ -38,8 +64,7 @@ class GetProfile extends Component {
                 <Grid>
                     <Grid.Row>
                         <Grid.Column width={16}>
-                            <p>Bla</p>
-                            {/* <p>{this.renderProfile()}</p> */}
+                            {this.renderProfile()}
                         </Grid.Column>
                     </Grid.Row>
                 </Grid>
