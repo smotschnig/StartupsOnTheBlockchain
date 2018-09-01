@@ -5,6 +5,7 @@ contract Factory {
     address[] public deployedProfiles;
     mapping(address => ProjectInitializer) public projects;
     mapping(address => bool) public profileAlreadyExists;
+    mapping(address => address) public profileDeployedAddress;
 
     /* don't repeat yourself - no better solution found yet */
     struct ProjectInitializer {
@@ -45,6 +46,7 @@ contract Factory {
         require(profileAlreadyExists[msg.sender] == false);
         address newProfile = new ProfileInstance(_fName, _lName, _birthDate, _education, _experience, _skills, msg.sender);
         deployedProfiles.push(newProfile);
+        profileDeployedAddress[msg.sender] = newProfile;
         profileAlreadyExists[msg.sender] = true;
     }
     

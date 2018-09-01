@@ -5,7 +5,6 @@ import Project from '../../ethereum/project';
 import { Link } from '../../routes';
 import moment from 'moment';
 
-
 class ProjectShow extends Component {
     static async getInitialProps(props) {
         const project = Project(props.query.address);
@@ -90,7 +89,12 @@ class ProjectShow extends Component {
                     <Grid.Row>
                         <Grid.Column width={8}>
                             <Label>
-                                <Icon name='address card' />{this.props.manager}
+                                <Icon name='address card' />
+                                <Link route={`/profile/users/${this.props.manager}`}>
+                                    <a>
+                                        {this.props.manager}
+                                    </a>
+                                </Link>
                             </Label>
                         </Grid.Column>
                         <Grid.Column width={8}>

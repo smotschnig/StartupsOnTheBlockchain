@@ -28,6 +28,8 @@
 //     });
 // });
 
+
+////////////////////////////////////////////////////
 // const { createServer } = require('http');
 // const next = require('next');
 
@@ -44,7 +46,7 @@
 //         console.log('Ready on localhost:3000');
 //     });
 // });
-
+////////////////////////////////////////////////////
 
 const { createServer } = require('http');
 const next = require('next');
@@ -60,7 +62,6 @@ const app = next({
                     r.options.sourceMaps = false;
                 }
             }
-
             return config;
         }
     }

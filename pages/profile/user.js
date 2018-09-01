@@ -11,10 +11,24 @@ class UserProfile extends Component {
     async componentDidMount() {
         const accounts = await web3.eth.getAccounts();
         const profileExists = await factory.methods.profileAlreadyExists(accounts[0]).call();
+
         if (profileExists) {
-            console.log("existiert");
+            this.setState({ showUpdateButton: true, showCreateButton: false });
+
+            const profileAddress = await factory.methods.profileDeployedAddress(accounts[0]).call();
+            const profile = Profile(profileAddress);
+            const profileData = await profile.methods.getInstructor().call();
+
+            this.setState({
+                fName: profileData[0],
+                lName: profileData[1],
+                birthDate: profileData[2],
+                education: profileData[3],
+                experience: profileData[4],
+                skills: profileData[5]
+            });
         } else {
-            console.log("existiert nicht");
+            this.setState({ showUpdateButton: false, showCreateButton: true });
         }
     }
 
@@ -27,7 +41,7 @@ class UserProfile extends Component {
         skills: '',
         errorMessage: '',
         loading: false,
-        showCreateButton: true,
+        showCreateButton: false,
         showUpdateButton: false
     };
 
@@ -46,9 +60,18 @@ class UserProfile extends Component {
                     .send({
                         from: accounts[0]
                     });
-                this.setState({ showCreateButton: false });
-                Router.pushRoute('/');
             }
+
+            if (profileExists) {
+                const profileAddress = await factory.methods.profileDeployedAddress(accounts[0]).call();
+                const profile = Profile(profileAddress);
+                await profile.methods.setInstructor(this.state.fName, this.state.lName, this.state.birthDate, this.state.education, this.state.experience, this.state.skills)
+                    .send({
+                        from: accounts[0]
+                    });
+            }
+
+            Router.pushRoute('/');
         } catch (err) {
             this.setState({ errorMessage: err.message });
         }
@@ -72,7 +95,7 @@ class UserProfile extends Component {
                         <label>First Name</label>
                         <small>* required</small>
                         <Input
-                            placeholder='John'
+                            placeholder="John"
                             value={this.state.fName}
                             onChange={event => this.setState({ fName: event.target.value })}
                         />
@@ -126,6 +149,7 @@ class UserProfile extends Component {
                     </Form.Field>
                     <Message error header='Error!' content={this.state.errorMessage.split('\n')[0]} />
                     {this.state.showCreateButton ? <Button loading={this.state.loading} type='submit' content='Create Account' icon='check' primary /> : null}
+                    {this.state.showUpdateButton ? <Button loading={this.state.loading} type='submit' content='Update' icon='check' primary /> : null}
                 </Form>
             </Layout>
         );

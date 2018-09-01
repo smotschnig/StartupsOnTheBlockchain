@@ -22,7 +22,6 @@ class Information extends Component {
                     <li>ReactJS</li>
                     <li>Semantic UI React</li>
                     <li>NextJS</li>
-                    <li>ExpressJS</li>
                     <li>Solidity</li>
                     <li>Web3</li>
                     <li>Ganache</li>

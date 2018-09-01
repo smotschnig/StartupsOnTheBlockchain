@@ -1,17 +1,16 @@
 {
-  "name": "startup",
+  "name": "startupsontheblockchain",
   "version": "1.0.0",
   "description": "a blockchain-based startup webplatform",
-  "engines": {
-    "node": "8.9.4",
-    "npm": "6.2.0"
+  "now": {
+    "alias": "sotb-uni-siegen"
   },
   "main": "server.js",
   "scripts": {
     "test": "mocha",
     "dev": "node server.js",
     "build": "next build",
-    "start": "NODE_ENV=production node server.js"
+    "start": "next start"
   },
   "keywords": [
     "react",
@@ -33,7 +32,6 @@
   "license": "ISC",
   "dependencies": {
     "@zeit/next-css": "^0.1.5",
-    "express": "^4.16.3",
     "fs-extra": "^5.0.0",
     "ganache-cli": "^6.1.8",
     "mocha": "^5.2.0",
