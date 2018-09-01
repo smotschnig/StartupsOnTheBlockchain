@@ -42,7 +42,7 @@ class ProjectShow extends Component {
             {
                 header: Title,
                 extra: 'Gesuchte Berufsbezeichnung',
-                style: { overflowWrap: 'break-word' },
+                style: { overflowWrap: 'break-word' }
             },
             {
                 header: Startup,
@@ -57,12 +57,12 @@ class ProjectShow extends Component {
             {
                 header: Wage,
                 extra: 'Höhe der Vergütung',
-                style: { overflowWrap: 'break-word' },
+                style: { overflowWrap: 'break-word' }
             },
             {
                 header: convertedDate,
                 extra: 'Datum der Erzeugung',
-                style: { overflowWrap: 'break-word' },
+                style: { overflowWrap: 'break-word' }
             }
         ];
         return <Card.Group items={items} itemsPerRow={3} />

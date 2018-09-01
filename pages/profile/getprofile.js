@@ -9,9 +9,27 @@ class GetProfile extends Component {
 
         const profileAddress = props.query.address
         const profile = Profile(profileAddress);
-        const profileData = await profile.methods.getInstructor().call();
+        // const profileData = await profile.methods.getInstructor().call();
 
-        return {};
+        return {
+            // fName: profileData[0],
+            // lName: profileData[1],
+            // birthDate: profileData[2],
+            // education: profileData[3],
+            // experience: profileData[4],
+            // skills: profileData[5]
+        };
+    }
+
+    renderProfile() {
+        const items = [
+            {
+                header: this.props.fName,
+                extra: 'Vorname',
+                style: { overflowWrap: 'break-word' }
+            }
+        ]
+        return <Card.Group items={items} itemsPerRow={3} />
     }
 
     render() {
@@ -20,7 +38,8 @@ class GetProfile extends Component {
                 <Grid>
                     <Grid.Row>
                         <Grid.Column width={16}>
-                            <p></p>
+                            <p>Bla</p>
+                            {/* <p>{this.renderProfile()}</p> */}
                         </Grid.Column>
                     </Grid.Row>
                 </Grid>

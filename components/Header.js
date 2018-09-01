@@ -2,34 +2,9 @@ import React, { Component } from 'react';
 import { Grid, Menu, Icon } from 'semantic-ui-react';
 import { Link } from '../routes';
 
-// import web3 from '../ethereum/web3';
-
 class Header extends Component {
-
     constructor(props) {
         super(props);
-    }
-
-    renderNewProjectButton() {
-        if(this.props.address) {
-            return (
-                <Link route="/projects/new">
-                    <a className="item"><Icon name="plus circle" />New Project</a>
-                </Link>
-            ); 
-        }
-        return null;
-    }
-
-    renderProfileButton() {
-        if(this.props.address) {
-            return (
-                <Link route={`/profile/${this.props.address}`}>
-                    <a className="item"><Icon name="user circle" />Profile</a>
-                </Link>
-            );
-        }
-        return null;
     }
 
     render() {
@@ -40,9 +15,9 @@ class Header extends Component {
                         <Menu className="Header">
                             <Link route="/"><a className="item"><Icon name="chain" />StartupsOnTheBlockchain</a></Link>
                             <Menu.Menu position="right">
-                                {this.renderNewProjectButton()}
+                                {this.props.address ? <Link route="/projects/new"><a className="item"><Icon name="plus circle" />New Project</a></Link> : null}
                                 <Link route="/information"><a className="item"><Icon name="info circle" />Information</a></Link>
-                                {this.renderProfileButton()}
+                                {this.props.address ? <Link route={`/profile/${this.props.address}`}><a className="item"><Icon name="user circle" />Profile</a></Link> : null}
                             </Menu.Menu>
                         </Menu>
                     </Grid.Column>

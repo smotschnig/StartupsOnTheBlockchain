@@ -7,11 +7,11 @@ import Footer from './Footer';
 import web3 from '../ethereum/web3';
 
 class Layout extends Component {
-
     constructor(props) {
         super(props);
+
         this.state = {
-            user: undefined
+            address: undefined
         };
     }
 
