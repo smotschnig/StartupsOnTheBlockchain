@@ -4,9 +4,20 @@ import { Button, Form, Input, Message } from 'semantic-ui-react';
 import { Router } from '../../routes';
 import web3 from '../../ethereum/web3';
 import { DateInput } from 'semantic-ui-calendar-react';
-import profile from '../../ethereum/profile';
+import factory from '../../ethereum/factory';
+import Profile from '../../ethereum/profile';
 
 class UserProfile extends Component {
+    async componentDidMount() {
+        const accounts = await web3.eth.getAccounts();
+        const profileExists = await factory.methods.profileAlreadyExists(accounts[0]).call();
+        if (profileExists) {
+            console.log("existiert");
+        } else {
+            console.log("existiert nicht");
+        }
+    }
+
     state = {
         fName: '',
         lName: '',
@@ -15,7 +26,9 @@ class UserProfile extends Component {
         experience: '',
         skills: '',
         errorMessage: '',
-        loading: false
+        loading: false,
+        showCreateButton: true,
+        showUpdateButton: false
     };
 
     onSubmit = async event => {
@@ -25,19 +38,17 @@ class UserProfile extends Component {
 
         try {
             const accounts = await web3.eth.getAccounts();
+            const profileExists = await factory.methods.profileAlreadyExists(accounts[0]).call();
 
-            console.log('fac', profile._address);
-            if (profile._address === undefined) {
-                // {TODO: Create new Contract}
-            } else {
-                await profile.methods
-                    .setInstructor(accounts[0], this.state.fName, this.state.lName, this.state.birthDate, this.state.education, this.state.experience, this.state.skills)
+            if (!profileExists) {
+                await factory.methods
+                    .createProfile(this.state.fName, this.state.lName, this.state.birthDate, this.state.education, this.state.experience, this.state.skills)
                     .send({
                         from: accounts[0]
                     });
+                this.setState({ showCreateButton: false });
+                Router.pushRoute('/');
             }
-            Router.pushRoute('/');
-
         } catch (err) {
             this.setState({ errorMessage: err.message });
         }
@@ -114,7 +125,7 @@ class UserProfile extends Component {
                         />
                     </Form.Field>
                     <Message error header='Error!' content={this.state.errorMessage.split('\n')[0]} />
-                    <Button loading={this.state.loading} type='submit' content='Update' icon='refresh' primary />
+                    {this.state.showCreateButton ? <Button loading={this.state.loading} type='submit' content='Create Account' icon='check' primary /> : null}
                 </Form>
             </Layout>
         );

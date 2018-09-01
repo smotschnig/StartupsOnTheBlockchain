@@ -7,14 +7,6 @@ import web3 from '../../ethereum/web3';
 import { Router } from '../../routes';
 
 class ProjectNew extends Component {
-    static async getInitialProps() {
-        const projects = await factory.methods.getDeployedProjects().call();
-
-        return {
-            projects
-        };
-    }
-
     state = {
         startup: '',
         title: '',

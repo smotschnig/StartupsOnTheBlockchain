@@ -4,6 +4,7 @@ contract Factory {
     address[] public deployedProjects;
     address[] public deployedProfiles;
     mapping(address => ProjectInitializer) public projects;
+    mapping(address => bool) public profileAlreadyExists;
 
     /* don't repeat yourself - no better solution found yet */
     struct ProjectInitializer {
@@ -39,10 +40,12 @@ contract Factory {
         );
     }
     
-        /* creates new Profile for every new user */
+    /* creates new Profile for every new user */
     function createProfile(string _fName, string _lName, string _birthDate, string _education, string _experience, string _skills) public {
+        require(profileAlreadyExists[msg.sender] == false);
         address newProfile = new ProfileInstance(_fName, _lName, _birthDate, _education, _experience, _skills, msg.sender);
         deployedProfiles.push(newProfile);
+        profileAlreadyExists[msg.sender] = true;
     }
     
     function getDeployedProfiles() public view returns (address[]) {
