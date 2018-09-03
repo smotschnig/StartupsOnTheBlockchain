@@ -118,7 +118,7 @@ class ProjectShow extends Component {
                             </Link>
                             <Link route={`/projects/${this.props.address}/requesterList`}>
                                 <a>
-                                    <Button primary>Zeige Bewerber ({(0)})</Button>
+                                    <Button primary>Zeige Bewerberpool ({(0)})</Button>
                                 </a>
                             </Link>
                         </Grid.Column>
