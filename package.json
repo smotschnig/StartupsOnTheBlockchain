@@ -14,7 +14,8 @@
     "test": "mocha",
     "dev": "node server.js",
     "build": "next build",
-    "start": "NODE_ENV=production node server.js"
+    "start": "NODE_ENV=production node server.js",
+    "heroku-postbuild": "next build"
   },
   "keywords": [
     "react",
@@ -36,6 +37,7 @@
   "license": "ISC",
   "dependencies": {
     "@zeit/next-css": "^0.1.5",
+    "express": "^4.16.3",
     "fs-extra": "^5.0.0",
     "ganache-cli": "^6.1.8",
     "mocha": "^5.2.0",
