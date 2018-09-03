@@ -6,28 +6,13 @@ import { Link } from '../../routes';
 import moment from 'moment';
 
 class ProjectShow extends Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            address: 'asd',
-            startup: 'bse',
-            title: 'eee',
-            deadline: '',
-            Description: '',
-            wage: '',
-            date: '',
-            manager: '',
-            requesterNumber: ''
-        }
-    }
-
-    async componentDidMount() {
-        const project = Project(this.props.url.query.address);
+    static async getInitialProps(props) {
+        const project = Project(props.query.address);
         const summary = await project.methods.getSummary().call();
         const requesterNumber = await project.methods.requesterCount().call();
-        this.setState({
-            address: this.props.url.query.address,
+
+        return {
+            address: props.query.address,
             startup: summary[0],
             title: summary[1],
             deadline: summary[2],
@@ -36,7 +21,7 @@ class ProjectShow extends Component {
             date: summary[5],
             manager: summary[6],
             requesterNumber: requesterNumber
-        });
+        };
     }
 
     timeConverter(timestamp) {
@@ -51,7 +36,7 @@ class ProjectShow extends Component {
             deadline,
             wage,
             date
-        } = this.state;
+        } = this.props;
 
         const convertedDate = this.timeConverter(date);
 
@@ -110,7 +95,7 @@ class ProjectShow extends Component {
                         <Grid.Column width={16}>
                             <h4>Projektbeschreibung:</h4>
                             <Form>
-                                <TextArea readOnly disabled autoHeight defaultValue={this.state.description} />
+                                <TextArea readOnly disabled autoHeight defaultValue={this.props.description} />
                             </Form>
                         </Grid.Column>
                     </Grid.Row>
@@ -118,9 +103,9 @@ class ProjectShow extends Component {
                         <Grid.Column width={8}>
                             <Label>
                                 <Icon name='address card' />
-                                <Link route={`/profil/benutzer/${this.state.manager}`}>
+                                <Link route={`/profil/benutzer/${this.props.manager}`}>
                                     <a>
-                                        {this.state.manager}
+                                        {this.props.manager}
                                     </a>
                                 </Link>
                             </Label>
@@ -128,14 +113,14 @@ class ProjectShow extends Component {
                     </Grid.Row>
                     <Grid.Row>
                         <Grid.Column>
-                            <Link route={`/projekt/${this.state.address}/bewerbung`}>
+                            <Link route={`/projekt/${this.props.address}/bewerbung`}>
                                 <a>
                                     <Button primary>Bewerbung einreichen</Button>
                                 </a>
                             </Link>
-                            <Link route={`/projekt/${this.state.address}/bewerberpool`}>
+                            <Link route={`/projekt/${this.props.address}/bewerberpool`}>
                                 <a>
-                                    <Button primary>Bewerberpool ({(this.state.requesterNumber)})</Button>
+                                    <Button primary>Bewerberpool ({(this.props.requesterNumber)})</Button>
                                 </a>
                             </Link>
                         </Grid.Column>
