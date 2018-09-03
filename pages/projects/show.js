@@ -24,7 +24,7 @@ class ProjectShow extends Component {
 
     timeConverter(timestamp) {
         var date = moment.unix(timestamp);
-        return date.format("DD.MM.YYYY - HH:mm:ss");
+        return date.format("DD.MM.YYYY - HH:mm");
     }
 
     renderCards() {
@@ -46,7 +46,7 @@ class ProjectShow extends Component {
             },
             {
                 header: Startup,
-                extra: 'Name des Startup-Unternehmen',
+                extra: 'Name des Startups',
                 style: { overflowWrap: 'break-word' }
             },
             {
@@ -61,7 +61,7 @@ class ProjectShow extends Component {
             },
             {
                 header: convertedDate,
-                extra: 'Datum der Erzeugung',
+                extra: 'Einstellungsdatum',
                 style: { overflowWrap: 'break-word' }
             }
         ];
@@ -71,7 +71,18 @@ class ProjectShow extends Component {
     render() {
         return (
             <Layout>
-                <h3>Project Show</h3>
+                <Grid>
+                    <Grid.Row>
+                        <Grid.Column width={16}>
+                            <Link to="/">
+                                <a>
+                                    <Button size='mini'>Zurück</Button>
+                                </a>
+                            </Link>
+                        </Grid.Column>
+                    </Grid.Row>
+                </Grid>
+                <h3>Projektdetails</h3>
                 <Grid>
                     <Grid.Row>
                         <Grid.Column width={16}>
@@ -80,7 +91,7 @@ class ProjectShow extends Component {
                     </Grid.Row>
                     <Grid.Row>
                         <Grid.Column width={16}>
-                            <h4>Aufgabenbeschreibung:</h4>
+                            <h4>Projektbeschreibung:</h4>
                             <Form>
                                 <TextArea readOnly disabled autoHeight defaultValue={this.props.Description} />
                             </Form>
@@ -97,15 +108,17 @@ class ProjectShow extends Component {
                                 </Link>
                             </Label>
                         </Grid.Column>
-                        <Grid.Column width={8}>
-                            <Rating icon='star' defaultRating={3} maxRating={5} disabled size='small' /> ({this.props.Wage})
-                        </Grid.Column>
                     </Grid.Row>
                     <Grid.Row>
                         <Grid.Column>
-                            <Link route={`/projects/${this.props.address}/requests`}>
+                            <Link route={`/projects/${this.props.address}/request`}>
                                 <a>
-                                    <Button primary>Apply for Project</Button>
+                                    <Button primary>Für Projekt bewerben</Button>
+                                </a>
+                            </Link>
+                            <Link route={`/projects/${this.props.address}/requesterList`}>
+                                <a>
+                                    <Button primary>Zeige Bewerber ({(0)})</Button>
                                 </a>
                             </Link>
                         </Grid.Column>

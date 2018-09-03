@@ -47,18 +47,20 @@ class ProjectNew extends Component {
     render() {
         return (
             <Layout>
-                <h3>Create a Project</h3>
+                <h3>Erstelle ein neues Projekt</h3>
                 <Form onSubmit={this.onSubmit} error={!!this.state.errorMessage}>
                     <Form.Field>
-                        <label>Name of Startup</label>
+                        <label>Name des Startups</label>
                         <Input
+                            placeholder='Firma XY'
                             value={this.state.startup}
                             onChange={event => this.setState({ startup: event.target.value })}
                         />
                     </Form.Field>
                     <Form.Field>
-                        <label>Title of Job </label>
+                        <label>Gesuchte Berufsbezeichnung</label>
                         <Input
+                            placeholder='Webentwickler (m/w)'
                             value={this.state.title}
                             onChange={event => this.setState({ title: event.target.value })}
                         />
@@ -66,9 +68,10 @@ class ProjectNew extends Component {
                     <Form.Field>
                         {/* TODO: Datum nur in Zukunft || Vergleich mit moment now */}
                         <label>Deadline</label>
+                        <small>DD.MM.YYYY</small>
                         <DateInput
+                            placeholder='01.01.2030'
                             name="deadline"
-                            placeholder="Date"
                             value={this.state.deadline}
                             iconPosition="left"
                             onChange={this.handleChange}
@@ -76,15 +79,17 @@ class ProjectNew extends Component {
                         />
                     </Form.Field>
                     <Form.Field>
-                        <label>Description</label>
+                        <label>Projektbeschreibung</label>
                         <textarea
+                            placeholder='Ort, Voraussetzungen, Details,...'
                             value={this.state.description}
                             onChange={event => this.setState({ description: event.target.value })}
                         />
                     </Form.Field>
                     <Form.Field>
-                        <label>Wage</label>
+                        <label>Vergütung</label>
                         <Input
+                            placeholder='20000'
                             label='wei'
                             labelPosition='right'
                             value={this.state.wage}

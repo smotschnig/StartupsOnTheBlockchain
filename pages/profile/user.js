@@ -89,11 +89,11 @@ class UserProfile extends Component {
         return (
             <Layout>
                 {/* TODO: Error Handling */}
-                <h3>User Profile</h3>
+                <h3>Benutzerprofil</h3>
                 <Form onSubmit={this.onSubmit} error={!!this.state.errorMessage}>
                     <Form.Field>
-                        <label>First Name</label>
-                        <small>* required</small>
+                        <label>Vorname</label>
+                        <small>* erforderlich</small>
                         <Input
                             placeholder="John"
                             value={this.state.fName}
@@ -101,8 +101,8 @@ class UserProfile extends Component {
                         />
                     </Form.Field>
                     <Form.Field>
-                        <label>Last Name</label>
-                        <small>* required</small>
+                        <label>Nachname</label>
+                        <small>* erforderlich</small>
                         <Input
                             placeholder='Doe'
                             value={this.state.lName}
@@ -110,8 +110,8 @@ class UserProfile extends Component {
                         />
                     </Form.Field>
                     <Form.Field>
-                        <label>Birth Date</label>
-                        <small>* required</small><br />
+                        <label>Geburtstdatum</label>
+                        <small>* erforderlich</small><br />
                         <small>DD.MM.YYYY</small>
                         <DateInput
                             name="birthDate"
@@ -123,7 +123,7 @@ class UserProfile extends Component {
                         />
                     </Form.Field>
                     <Form.Field>
-                        <label>Education</label>
+                        <label>Ausbildungsinformationen</label>
                         <textarea
                             placeholder="School, Vocationoal Training, Academic Education"
                             value={this.state.education}
@@ -131,7 +131,7 @@ class UserProfile extends Component {
                         />
                     </Form.Field>
                     <Form.Field>
-                        <label>Experience</label>
+                        <label>Sonstige Erfahrungen</label>
                         <textarea
                             placeholder="Work Experience, Further Education, Certificates"
                             value={this.state.experience}
@@ -140,7 +140,7 @@ class UserProfile extends Component {
                     </Form.Field>
                     <Form.Field>
                         <label>Skills</label>
-                        <small>Please use comma separated values.</small>
+                        <small>Bitte durch Kommata getrennte Werte angeben.</small>
                         <Input
                             placeholder='HTML, CSS, JavaScript'
                             value={this.state.skills}

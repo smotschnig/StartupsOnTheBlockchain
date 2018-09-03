@@ -32,36 +32,35 @@ class StartupIndex extends Component {
 
     timeConverter(timestamp) {
         var date = moment.unix(timestamp);
-        return date.format("DD.MM.YYYY - HH:mm:ss");
+        return date.format("DD.MM.YYYY - HH:mm");
     }
 
     renderProjects() {
-        var key;
-        const items = this.props.projects.slice(0).reverse().map(p => {
-            const { startup, title, date } = p.projects;
-            const { address } = p;
-            key = address + date;
+        const items = this.props.projects.slice(0).reverse().map(project => {
+            const { startup, title, date } = project.projects;
+            const { address } = project;
             return {
+                key: address + date,
                 header: title,
                 meta: startup,
                 description: (
                     <Link route={`/projects/${address}`}>
-                        <a>View Project</a>
+                        <a>Projekt ansehen</a>
                     </Link>
                 ),
                 extra: this.timeConverter(date),
                 color: 'green',
                 fluid: true,
-                style: { overflowWrap: 'break-word' },
+                style: { overflowWrap: 'break-word' }
             };
         });
-        return <Card.Group key={key} items={items} />
+        return <Card.Group items={items} />
     }
 
     render() {
         return (
             <Layout>
-                <h3>Open Projects</h3>
+                <h3>Offene Projekte</h3>
                 {this.renderProjects()}
             </Layout >
         );

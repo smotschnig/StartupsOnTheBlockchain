@@ -13,6 +13,11 @@ html * {
     padding: 2px !important;
 }
 
+.metamask-warning {
+    pointer-events:none !important;
+    color: #DC143C !important;
+}
+
 .CopyrightStartup {
     font-size: 105%;
     word-wrap: break-word !important;
