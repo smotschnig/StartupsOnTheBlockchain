@@ -89,7 +89,7 @@ class Request extends Component {
                         />
                     </Form.Field>
                     <Message error header='Error!' content={this.state.errorMessage.split('\n')[0]} />
-                    <Button loading={this.state.loading} type='submit' content='Bewerbung einreichen' icon='check' primary />
+                    <Button loading={this.state.loading} type='submit' content='Bewerbung versenden' icon='check' primary />
                 </Form>
             </Layout>
         );

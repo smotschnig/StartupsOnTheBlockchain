@@ -3,6 +3,7 @@ import Layout from '../../components/Layout';
 import { Grid, Button } from 'semantic-ui-react';
 import { Link } from '../../routes';
 import Project from '../../ethereum/project';
+import { Card } from 'semantic-ui-react';
 
 class RequesterList extends Component {
     constructor(props) {
@@ -17,6 +18,19 @@ class RequesterList extends Component {
         const project = Project(this.props.url.query.address);
         const requesterList = await project.methods.getRequesterList().call();
         this.setState({ requesterList: requesterList });
+    }
+
+    renderRequesterList() {
+        const requester = this.state.requesterList.slice(0).map(requester => {
+            const req = requester
+            return {
+                key: req,
+                header: req,
+                meta: 'Horst',
+                style: { overflowWrap: 'break-word' }
+            };
+        });
+        return <Card.Group items={requester} />
     }
 
     render() {
@@ -34,7 +48,7 @@ class RequesterList extends Component {
                     </Grid.Row>
                 </Grid>
                 <h3>Bewerberpool</h3>
-                <p>{this.state.requesterList}</p>
+                {this.renderRequesterList()}
             </Layout>
         );
     }

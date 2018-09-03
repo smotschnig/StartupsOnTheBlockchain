@@ -19,17 +19,17 @@ class Information extends Component {
                 <ol>
                     <li>Logge dich bei MetaMask ein (Chrome Extensions) - <b>WICHTIG: Rinkeby Testnetzwerk auswählen!</b></li>
                     <li>Aktualisiere ggf. die Seite</li>
-                    <li>Wähle in der Navigation "Profil" aus und erstelle ein neues Profil (oder ändere es nachträglich ab)</li>
+                    <li>Wähle in der Navigation "Profil" aus und erstelle ein neues Profil (Änderungen können dort nachträglich durchgeführt werden)</li>
                     <li>Startup</li>
                     <ul>
                         <li>Um ein neues Projekt anzulegen, wähle in der Navigation "Neues Projekt" aus</li>
                         <li>Nachdem du die benötigten Eingaben getätigt und einen neuen Smart Contract erstellt hast, wird das Projekt auf der Startseite aufgelistet</li>
-                        <li><i>noch offen:</i> Nach Klick auf "Projekt ansehen", kannst du die Projektdetails einsehen - mit Klick auf "Bewerber auswählen", kannst du einen Freelancer aus dem Beberwerpool auswählen</li>
+                        <li><i>noch offen:</i> Nach Klick auf "Projekt ansehen", kannst du die Projektdetails einsehen - mit Klick auf "Bewerberpool", kannst du einen Freelancer aus dem Pool für das Projekt auswählen</li>
                     </ul>
                     <li>Freelancer</li>
                     <ul>
                         <li>Suche dir ein passendes Projekt auf der Startseite aus und betrachte die Details durch ein Klick auf "Projekt ansehen"</li>
-                        <li>Mit Klick auf "für das Projekt bewerben", kannst du dich nach der Eingabe weiterer Details, für das Projekt bewerben</li>
+                        <li>Mit Klick auf "Bewerbung einreichen", kannst du dich nach der Eingabe weiterer Details, für das Projekt bewerben und deine Bewerbung versenden</li>
                     </ul>
                 </ol>
 

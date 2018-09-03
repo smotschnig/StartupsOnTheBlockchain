@@ -113,12 +113,12 @@ class ProjectShow extends Component {
                         <Grid.Column>
                             <Link route={`/projects/${this.props.address}/request`}>
                                 <a>
-                                    <Button primary>Für Projekt bewerben</Button>
+                                    <Button primary>Bewerbung einreichen</Button>
                                 </a>
                             </Link>
                             <Link route={`/projects/${this.props.address}/requesterList`}>
                                 <a>
-                                    <Button primary>Zeige Bewerberpool ({(0)})</Button>
+                                    <Button primary>Bewerberpool ({(0)})</Button>
                                 </a>
                             </Link>
                         </Grid.Column>
