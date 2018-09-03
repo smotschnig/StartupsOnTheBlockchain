@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import Layout from '../../components/Layout';
+import Layout from '../../../components/Layout';
 import { Grid, Button, Input, Message, Form } from 'semantic-ui-react';
-import { Link } from '../../routes';
-import web3 from '../../ethereum/web3';
-import { Router } from '../../routes';
-import Project from '../../ethereum/project';
+import { Link } from '../../../routes';
+import web3 from '../../../ethereum/web3';
+import { Router } from '../../../routes';
+import Project from '../../../ethereum/project';
 
 
 class Request extends Component {
@@ -61,7 +61,7 @@ class Request extends Component {
                 <Grid>
                     <Grid.Row>
                         <Grid.Column width={16}>
-                            <Link to={`/projects/${this.props.url.query.address}`}>
+                            <Link to={`/projekt/${this.props.url.query.address}`}>
                                 <a>
                                     <Button size='mini'>Zurück</Button>
                                 </a>

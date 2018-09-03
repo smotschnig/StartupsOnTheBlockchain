@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import Layout from '../../components/Layout';
+import Layout from '../../../components/Layout';
 import { Grid, Button } from 'semantic-ui-react';
-import { Link } from '../../routes';
-import Project from '../../ethereum/project';
+import { Link } from '../../../routes';
+import Project from '../../../ethereum/project';
 import { Card } from 'semantic-ui-react';
 
 class RequesterList extends Component {
@@ -30,7 +30,7 @@ class RequesterList extends Component {
                 style: { overflowWrap: 'break-word' }
             };
         });
-        return <Card.Group items={requester} />
+        return <Card.Group items={requester} itemsPerRow={1} />
     }
 
     render() {
@@ -39,7 +39,7 @@ class RequesterList extends Component {
                 <Grid>
                     <Grid.Row>
                         <Grid.Column width={16}>
-                            <Link to={`/projects/${this.props.url.query.address}`}>
+                            <Link to={`/projekt/${this.props.url.query.address}`}>
                                 <a>
                                     <Button size='mini'>Zurück</Button>
                                 </a>

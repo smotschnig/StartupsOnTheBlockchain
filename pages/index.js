@@ -44,7 +44,7 @@ class StartupIndex extends Component {
                 header: title,
                 meta: startup,
                 description: (
-                    <Link route={`/projects/${address}`}>
+                    <Link route={`/projekt/${address}`}>
                         <a>Projekt ansehen</a>
                     </Link>
                 ),

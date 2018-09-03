@@ -1,12 +1,12 @@
 const routes = require('next-routes')();
 
 routes
-    .add('/projects/new', '/projects/new')
-    .add('/projects/:address', '/projects/show')
-    .add('/projects/:address/request', '/requests/request')
-    .add('/projects/:address/requesterlist', '/requests/requesterlist')
-    .add('/profile/:address', '/profile/user')
-    .add('/profile/users/:address', '/profile/getprofile')
-    .add('/information', '/information')
+    .add('/projekt/neu', '/projects/new')
+    .add('/projekt/:address', '/projects/show')
+    .add('/projekt/:address/bewerbung', '/projects/requests/request')
+    .add('/projekt/:address/bewerberpool', '/projects/requests/requesterlist')
+    .add('/profil/:address', '/profile/user')
+    .add('/profil/benutzer/:address', '/profile/getprofile')
+    .add('/informationen', '/information')
 
 module.exports = routes;

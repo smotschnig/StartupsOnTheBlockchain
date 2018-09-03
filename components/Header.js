@@ -15,9 +15,9 @@ class Header extends Component {
                         <Menu className="Header">
                             <Link route="/"><a className="item"><Icon name="chain" />StartupsOnTheBlockchain</a></Link>
                             <Menu.Menu position="right">
-                                {this.props.address ? <Link route="/projects/new"><a className="item"><Icon name="plus circle" />Neues Projekt</a></Link> : null}
-                                <Link route="/information"><a className="item"><Icon name="info circle" />Informationen</a></Link>
-                                {this.props.address ? <Link route={`/profile/${this.props.address}`}><a className="item"><Icon name="user circle" />Profil</a></Link> : null}
+                                {this.props.address ? <Link route="/projekt/neu"><a className="item"><Icon name="plus circle" />Neues Projekt</a></Link> : null}
+                                <Link route="/informationen"><a className="item"><Icon name="info circle" />Informationen</a></Link>
+                                {this.props.address ? <Link route={`/profil/${this.props.address}`}><a className="item"><Icon name="user circle" />Profil</a></Link> : null}
                             </Menu.Menu>
                         </Menu>
                     </Grid.Column>

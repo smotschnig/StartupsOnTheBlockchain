@@ -6,20 +6,37 @@ import { Link } from '../../routes';
 import moment from 'moment';
 
 class ProjectShow extends Component {
-    static async getInitialProps(props) {
-        const project = Project(props.query.address);
-        const summary = await project.methods.getSummary().call();
+    constructor(props) {
+        super(props);
 
-        return {
-            address: props.query.address,
-            Startup: summary[0],
-            Title: summary[1],
-            Deadline: summary[2],
-            Description: summary[3],
-            Wage: summary[4],
-            Date: summary[5],
-            manager: summary[6]
-        };
+        this.state = {
+            address: 'asd',
+            startup: 'bse',
+            title: 'eee',
+            deadline: '',
+            Description: '',
+            wage: '',
+            date: '',
+            manager: '',
+            requesterNumber: ''
+        }
+    }
+
+    async componentDidMount() {
+        const project = Project(this.props.url.query.address);
+        const summary = await project.methods.getSummary().call();
+        const requesterNumber = await project.methods.requesterCount().call();
+        this.setState({
+            address: this.props.url.query.address,
+            startup: summary[0],
+            title: summary[1],
+            deadline: summary[2],
+            description: summary[3],
+            wage: summary[4],
+            date: summary[5],
+            manager: summary[6],
+            requesterNumber: requesterNumber
+        });
     }
 
     timeConverter(timestamp) {
@@ -29,40 +46,40 @@ class ProjectShow extends Component {
 
     renderCards() {
         const {
-            Startup,
-            Title,
-            Deadline,
-            Wage,
-            Date
-        } = this.props;
+            startup,
+            title,
+            deadline,
+            wage,
+            date
+        } = this.state;
 
-        const convertedDate = this.timeConverter(Date);
+        const convertedDate = this.timeConverter(date);
 
         const items = [
             {
-                header: Title,
+                header: title,
                 extra: 'Gesuchte Berufsbezeichnung',
-                style: { overflowWrap: 'break-word' }
+                style: { overflowWrap: 'break-word' },
             },
             {
-                header: Startup,
+                header: startup,
                 extra: 'Name des Startups',
-                style: { overflowWrap: 'break-word' }
+                style: { overflowWrap: 'break-word' },
             },
             {
-                header: Deadline,
+                header: deadline,
                 extra: 'Deadline',
-                style: { overflowWrap: 'break-word' }
+                style: { overflowWrap: 'break-word' },
             },
             {
-                header: Wage,
+                header: wage,
                 extra: 'Höhe der Vergütung',
-                style: { overflowWrap: 'break-word' }
+                style: { overflowWrap: 'break-word' },
             },
             {
                 header: convertedDate,
                 extra: 'Einstellungsdatum',
-                style: { overflowWrap: 'break-word' }
+                style: { overflowWrap: 'break-word' },
             }
         ];
         return <Card.Group items={items} itemsPerRow={3} />
@@ -93,7 +110,7 @@ class ProjectShow extends Component {
                         <Grid.Column width={16}>
                             <h4>Projektbeschreibung:</h4>
                             <Form>
-                                <TextArea readOnly disabled autoHeight defaultValue={this.props.Description} />
+                                <TextArea readOnly disabled autoHeight defaultValue={this.state.description} />
                             </Form>
                         </Grid.Column>
                     </Grid.Row>
@@ -101,9 +118,9 @@ class ProjectShow extends Component {
                         <Grid.Column width={8}>
                             <Label>
                                 <Icon name='address card' />
-                                <Link route={`/profile/users/${this.props.manager}`}>
+                                <Link route={`/profil/benutzer/${this.state.manager}`}>
                                     <a>
-                                        {this.props.manager}
+                                        {this.state.manager}
                                     </a>
                                 </Link>
                             </Label>
@@ -111,14 +128,14 @@ class ProjectShow extends Component {
                     </Grid.Row>
                     <Grid.Row>
                         <Grid.Column>
-                            <Link route={`/projects/${this.props.address}/request`}>
+                            <Link route={`/projekt/${this.state.address}/bewerbung`}>
                                 <a>
                                     <Button primary>Bewerbung einreichen</Button>
                                 </a>
                             </Link>
-                            <Link route={`/projects/${this.props.address}/requesterList`}>
+                            <Link route={`/projekt/${this.state.address}/bewerberpool`}>
                                 <a>
-                                    <Button primary>Bewerberpool ({(0)})</Button>
+                                    <Button primary>Bewerberpool ({(this.state.requesterNumber)})</Button>
                                 </a>
                             </Link>
                         </Grid.Column>
