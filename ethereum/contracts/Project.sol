@@ -80,7 +80,9 @@ contract ProjectInstance {
         string description;
         uint wage;
         uint date;
-        bool finalize;
+        bool freelancerHasBeenChoosen;
+        bool finalizedByFreelancer;
+        bool finalizedByStartup;
         mapping(address => bool) requests;
     }
     
@@ -99,16 +101,19 @@ contract ProjectInstance {
     constructor(string _startup, string _title, string _deadline, string _description, uint _wage, uint _date, address _manager) public {
         manager = _manager;
         Project memory newProject = Project({
-           startup: _startup,
-           title: _title,
-           deadline: _deadline,
-           description: _description,
-           wage: _wage,
-           date: _date,
-           finalize: false
+            startup: _startup,
+            title: _title,
+            deadline: _deadline,
+            description: _description,
+            wage: _wage,
+            date: _date,
+            freelancerHasBeenChoosen: false,
+            finalizedByFreelancer: false,
+            finalizedByStartup: false
         });
         project = newProject;
     }
+    
     
     /* returns all information about the project */
     function getSummary() view public returns(string, string, string, string, uint, uint, address) {
@@ -129,7 +134,9 @@ contract ProjectInstance {
         
         require(msg.sender != manager);
         require(!requester[msg.sender]);
-        require(!storedProject.finalize);
+        require(!storedProject.freelancerHasBeenChoosen);
+        require(!storedProject.finalizedByFreelancer);
+        require(!storedProject.finalizedByStartup);
         requester[msg.sender] = true;
 
         storedProject.requests[msg.sender] = true;
@@ -160,28 +167,40 @@ contract ProjectInstance {
     }
     
     /* allows freelancer to finalize the open project */
-    function finalizeProjectAsFreelancer(uint _index) public restricted {
-        Requester storage requesterByIndex = request[_index];
-        require(!requesterByIndex.hasBeenChoosen);
+    function finalizeProjectAsFreelancer(address _address, uint _index, uint _rating) public {
+        ProfileInstance profileInstance;
+        profileInstance = ProfileInstance(_address);
         
-        // Todo: rate startup
+        Requester storage requesterByIndex = request[_index];
+        require(requesterByIndex.hasBeenChoosen);
+        
         Project storage storedProject = project;
-        storedProject.finalize = true;
+        require(!storedProject.finalizedByFreelancer);
+        
+        profileInstance.setRating(_rating);
+        
+        storedProject.finalizedByFreelancer = true;
     }
     
     /* allows startup to finalize the open project */
-    function finalizeProjectAsStartup() public restricted {
-        // Todo: rate freelancer
-        // Todo: send freelancer wage
-        
+    function finalizeProjectAsStartup(address _address, uint _rating) public restricted {
+        ProfileInstance profileInstance;
+        profileInstance = ProfileInstance(_address);
+
         Project storage storedProject = project;
-        storedProject.finalize = true;
+        require(storedProject.finalizedByFreelancer);
+        require(!storedProject.finalizedByStartup);
+        
+        profileInstance.setRating(_rating);
+        
+        storedProject.finalizedByStartup = true;
     }
 }
 
 contract ProfileInstance {
     address public manager;
     uint public rating;
+    uint public ratingsCounter;
     uint public date;
     ProfileInstructor private profile;
     
@@ -237,5 +256,12 @@ contract ProfileInstance {
             profile.experience,
             profile.skills
         );
+    }
+    
+    function setRating(uint _rating) public {
+        require(msg.sender != manager);
+                
+        rating += _rating;
+        ratingsCounter++;
     }
 }

@@ -9,6 +9,9 @@ a blockchain-based startup webplatform
 * Build: __`npm run build`__
 * Start Server by: __`npm run start`__
 
+If you are on a Unix-System you have to change one line in package.json file.
+* Change: __`"start": "SET NODE_ENV=production && node server.js"`__ to: __`"start": "NODE_ENV=production node server.js"`__
+
 After that you can visit the webplatform at __`http://localhost:3000`__ or you may change the port in the __`server.js`__ file.
 You have to install Metamask connected with a Rinkeby-Account to use the webplatform correctly. 
 
