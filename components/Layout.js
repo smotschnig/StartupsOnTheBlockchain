@@ -3,6 +3,7 @@ import { Container, Grid } from 'semantic-ui-react';
 import Head from 'next/head';
 import Header from './Header';
 import Footer from './Footer';
+import RenderLoading from './Loader';
 
 import web3 from '../ethereum/web3';
 
@@ -11,16 +12,20 @@ class Layout extends Component {
         super(props);
 
         this.state = {
-            address: undefined
+            address: undefined,
+            isLoading: true
         };
     }
 
     async componentDidMount() {
         const address = await web3.eth.getAccounts();
-        this.setState({ address: address !== undefined ? address[0] : null });
+        this.setState({
+            address: address !== undefined ? address[0] : null,
+            isLoading: false
+        });
     }
 
-    render() {
+    showContent = () => {
         return (
             <Container>
                 <Head>
@@ -38,6 +43,14 @@ class Layout extends Component {
                 </Grid>
                 <Footer />
             </Container >
+        );
+    }
+
+    render() {
+        return (
+            <div>
+                {this.state.isLoading ? <RenderLoading /> : this.showContent()}
+            </div>
         );
     }
 }
