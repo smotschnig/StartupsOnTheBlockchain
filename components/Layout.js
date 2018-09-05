@@ -12,20 +12,18 @@ class Layout extends Component {
         super(props);
 
         this.state = {
-            address: undefined,
-            isLoading: true
+            address: undefined
         };
     }
 
     async componentDidMount() {
         const address = await web3.eth.getAccounts();
         this.setState({
-            address: address !== undefined ? address[0] : null,
-            isLoading: false
+            address: address !== undefined ? address[0] : null
         });
     }
 
-    showContent = () => {
+    render() {
         return (
             <Container>
                 <Head>
@@ -43,14 +41,6 @@ class Layout extends Component {
                 </Grid>
                 <Footer />
             </Container >
-        );
-    }
-
-    render() {
-        return (
-            <div>
-                {this.state.isLoading ? <RenderLoading /> : this.showContent()}
-            </div>
         );
     }
 }

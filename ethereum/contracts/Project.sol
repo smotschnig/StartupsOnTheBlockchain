@@ -80,7 +80,6 @@ contract ProjectInstance {
         string description;
         uint wage;
         uint date;
-        bool freelancerHasBeenChoosen;
         bool finalizedByFreelancer;
         bool finalizedByStartup;
         mapping(address => bool) requests;
@@ -107,7 +106,6 @@ contract ProjectInstance {
             description: _description,
             wage: _wage,
             date: _date,
-            freelancerHasBeenChoosen: false,
             finalizedByFreelancer: false,
             finalizedByStartup: false
         });
@@ -132,13 +130,12 @@ contract ProjectInstance {
     function setRequest(string _email, string _info) public {
         Project storage storedProject = project;
         
-        require(msg.sender != manager);
+        require(manager != msg.sender);
         require(!requester[msg.sender]);
-        require(!storedProject.freelancerHasBeenChoosen);
         require(!storedProject.finalizedByFreelancer);
         require(!storedProject.finalizedByStartup);
+        
         requester[msg.sender] = true;
-
         storedProject.requests[msg.sender] = true;
         requesterCount++;
         
@@ -168,6 +165,7 @@ contract ProjectInstance {
     
     /* allows freelancer to finalize the open project */
     function finalizeProjectAsFreelancer(address _address, uint _index, uint _rating) public {
+        /* creates a temporary profile class with the address of the startup-manager */
         ProfileInstance profileInstance;
         profileInstance = ProfileInstance(_address);
         
@@ -184,6 +182,7 @@ contract ProjectInstance {
     
     /* allows startup to finalize the open project */
     function finalizeProjectAsStartup(address _address, uint _rating) public restricted {
+        /* creates a temporary profile class with the address of the freelancer */
         ProfileInstance profileInstance;
         profileInstance = ProfileInstance(_address);
 

@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import Layout from '../../components/Layout';
-import { Card, Grid } from 'semantic-ui-react';
+import { Card, Grid, Button } from 'semantic-ui-react';
 import factory from '../../ethereum/factory';
 import Profile from '../../ethereum/profile';
+import { Link } from '../../routes';
 
 class GetProfile extends Component {
     static async getInitialProps(props) {
-        const managerAddress = props.query.address
+        console.log(props);
+        const managerAddress = props.query.address;
         const profileAddress = await factory.methods.profileDeployedAddress(managerAddress).call();
         const profile = Profile(profileAddress);
         const profileData = await profile.methods.getInstructor().call();
@@ -61,6 +63,17 @@ class GetProfile extends Component {
     render() {
         return (
             <Layout>
+                <Grid>
+                    <Grid.Row>
+                        <Grid.Column width={16}>
+                            <Link to={`/projekt/${this.props.manager}`}>
+                                <a>
+                                    <Button size='mini'>Zurück</Button>
+                                </a>
+                            </Link>
+                        </Grid.Column>
+                    </Grid.Row>
+                </Grid>
                 <Grid>
                     <Grid.Row>
                         <Grid.Column width={16}>

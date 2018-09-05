@@ -11,6 +11,8 @@ class Request extends Component {
     constructor(props) {
         super(props);
 
+        console.log(props);
+
         this.state = {
             email: '',
             info: '',
@@ -35,8 +37,20 @@ class Request extends Component {
 
             const accounts = await web3.eth.getAccounts();
             const alreadyRequester = await project.methods.requester(accounts[0]).call();
+            const manager = await project.methods.manager().call();
 
-            if (!alreadyRequester) {
+            console.log(manager);
+            console.log(accounts[0]);
+
+            if (manager === accounts[0]) {
+                this.setState({ errorMessage: 'Sie können sich nicht für Ihr eigenes Projekt bewerben.' });
+            }
+
+            if (alreadyRequester) {
+                this.setState({ errorMessage: 'Ihre Bewerbung liegt bereits vor.' });
+            }
+
+            if (!alreadyRequester && manager !== accounts[0]) {
                 await project.methods.setRequest(this.state.email, this.state.info)
                     .send({
                         from: accounts[0]
@@ -45,13 +59,11 @@ class Request extends Component {
                 Router.pushRoute('/');
             }
 
-            if (alreadyRequester) {
-                this.setState({ errorMessage: 'Bewerbung bereits eingereicht.' });
-            }
-
         } catch (err) {
             this.setState({ errorMessage: err.message });
         }
+
+
         this.setState({ loading: false });
     }
 
