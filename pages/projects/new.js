@@ -14,7 +14,8 @@ class ProjectNew extends Component {
         description: '',
         wage: '',
         errorMessage: '',
-        loading: false
+        loading: false,
+        inputIncomplete: false
     };
 
     onSubmit = async (event) => {
@@ -25,17 +26,23 @@ class ProjectNew extends Component {
         try {
             const accounts = await web3.eth.getAccounts();
 
-            await factory.methods
-                .createProject(this.state.startup, this.state.title, this.state.deadline, this.state.description, this.state.wage)
-                .send({
-                    from: accounts[0]
-                });
-            Router.pushRoute('/');
+            if (this.state.startup === '' || this.state.title === '' || this.state.wage === '') {
+                this.setState({ inputIncomplete: true, errorMessage: 'Eingaben unvollständig.' });
+            }
+
+            if (!this.state.inputIncomplete) {
+                await factory.methods
+                    .createProject(this.state.startup, this.state.title, this.state.deadline, this.state.description, this.state.wage)
+                    .send({
+                        from: accounts[0]
+                    });
+                Router.pushRoute('/');
+            }
         } catch (err) {
             this.setState({ errorMessage: err.message });
         }
 
-        this.setState({ loading: false });
+        this.setState({ loading: false, inputIncomplete: true });
     }
 
     handleChange = (event, { name, value }) => {
@@ -51,6 +58,7 @@ class ProjectNew extends Component {
                 <Form onSubmit={this.onSubmit} error={!!this.state.errorMessage}>
                     <Form.Field>
                         <label>Name des Startups</label>
+                        <small>* erforderlich</small>
                         <Input
                             placeholder='Firma XY'
                             value={this.state.startup}
@@ -59,6 +67,7 @@ class ProjectNew extends Component {
                     </Form.Field>
                     <Form.Field>
                         <label>Gesuchte Berufsbezeichnung</label>
+                        <small>* erforderlich</small>
                         <Input
                             placeholder='Webentwickler (m/w)'
                             value={this.state.title}
@@ -88,6 +97,7 @@ class ProjectNew extends Component {
                     </Form.Field>
                     <Form.Field>
                         <label>Vergütung</label>
+                        <small>* erforderlich</small>
                         <Input
                             placeholder='20000'
                             label='wei'
@@ -96,7 +106,7 @@ class ProjectNew extends Component {
                             onChange={event => this.setState({ wage: event.target.value })}
                         />
                     </Form.Field>
-                    <Message error header='Error!' content={this.state.errorMessage.split('\n')[0]} />
+                    <Message error header='Fehler!' content={this.state.errorMessage.split('\n')[0]} />
                     <Button loading={this.state.loading} primary type='submit' icon='add circle' content='Projekt erstellen' />
                 </Form>
             </Layout>

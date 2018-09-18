@@ -1,8 +1,12 @@
 # StartupsOnTheBlockchain
 a blockchain-based startup webplatform
 
+---
+
 #### Demo (Live-Preview - 05/09/2018)
 <https://startupsontheblockchain-aimlcxvwnl.now.sh/>
+
+---
 
 #### How to get started?
 
@@ -33,21 +37,24 @@ If there are problems with npm install on Windows, you have to install additiona
 * Run: __`npm install --global --production windows-build-tools`__
 * Run: __`npm install --global node-gyp`__
 
-#### ToDo:
+---
 
-##### *must*:
+#### ToDo-List:
+
+##### *must-have*:
 * Als Startup: Freelancer auswählen, Bewerberpool anpassen mit "Wähle Bewerber aus"
 * Wenn Projekt fertig: finalizeProjectAsFreelancer und finalizeProjectAsStartup (+ Wage-Transfer (noch nicht im Back-End)) im Front-End implementieren
 * Möglichkeit bieten, Projekt zu melden (Schlechtleistung, keine Rückmeldungen, etc., gemeldetes Projekt markieren)
 * Abgeschlossene Projekte markieren (entweder ausblenden oder seperate Liste)
 * Bewertungssystem im Front-End implementieren und Durchschnitt berechnen (mit Sternbewertung darstellen)
 * Zurück-Button anpassen beim Betrachten des Manager-Profils im jeweiligen Projekt (Problem: Prop funktioniert bei next-routes nicht, daher wird Profil-Adresse übergeben, nicht aber Projekt-Adresse (Mapping nicht möglich, wenn Startup mehrere Projekte erstellt hat))
+* Code kommentieren
 
-##### *should*:
+##### *should-have*:
 * Loader während Rendering anpassen (aktuell nicht richtig, ComponentDidMount macht Schwierigkeiten)
 * Wenn Freelancer von Startup ausgewählt, Kommunikationsplattform bieten und Projekt nicht als offen (grün) auf Startseite anzeigen
 
-##### *can*:
+##### *could-have*:
 * Front-End anpassen, Semantic UI React optimieren -> Verschönerungen durchführen
-* Code kommentieren, "aufräumen", Wiederholungen in Components packen
+* "code aufräumen", Wiederholungen in Components packen
 * Gas-Limit der Smart Contracts minimieren

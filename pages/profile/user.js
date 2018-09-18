@@ -42,7 +42,8 @@ class UserProfile extends Component {
         errorMessage: '',
         loading: false,
         showCreateButton: false,
-        showUpdateButton: false
+        showUpdateButton: false,
+        inputIncomplete: false
     };
 
     onSubmit = async event => {
@@ -54,12 +55,18 @@ class UserProfile extends Component {
             const accounts = await web3.eth.getAccounts();
             const profileExists = await factory.methods.profileAlreadyExists(accounts[0]).call();
 
-            if (!profileExists) {
+            if (this.state.fName === 'asd' || this.state.lName === '' || this.state.birthDate === '') {
+                this.setState({ inputIncomplete: true, errorMessage: 'Eingaben unvollständig.' });
+            }
+
+            if (!profileExists && !this.state.inputIncomplete) {
                 await factory.methods
                     .createProfile(this.state.fName, this.state.lName, this.state.birthDate, this.state.education, this.state.experience, this.state.skills)
                     .send({
                         from: accounts[0]
                     });
+
+                Router.pushRoute('/');
             }
 
             if (profileExists) {
@@ -71,12 +78,12 @@ class UserProfile extends Component {
                     });
             }
 
-            Router.pushRoute('/');
+
         } catch (err) {
             this.setState({ errorMessage: err.message });
         }
 
-        this.setState({ loading: false });
+        this.setState({ loading: false, inputIncomplete: false });
     };
 
     handleChange = (event, { name, value }) => {
@@ -147,7 +154,7 @@ class UserProfile extends Component {
                             onChange={event => this.setState({ skills: event.target.value })}
                         />
                     </Form.Field>
-                    <Message error header='Error!' content={this.state.errorMessage.split('\n')[0]} />
+                    <Message error header='Fehler!' content={this.state.errorMessage.split('\n')[0]} />
                     {this.state.showCreateButton ? <Button loading={this.state.loading} type='submit' content='Create Account' icon='check' primary /> : null}
                     {this.state.showUpdateButton ? <Button loading={this.state.loading} type='submit' content='Update' icon='check' primary /> : null}
                 </Form>

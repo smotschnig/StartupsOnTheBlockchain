@@ -3,30 +3,77 @@ import Layout from '../../../components/Layout';
 import { Grid, Button } from 'semantic-ui-react';
 import { Link } from '../../../routes';
 import Project from '../../../ethereum/project';
-import { Card } from 'semantic-ui-react';
+import factory from '../../../ethereum/factory';
+import Profile from '../../../ethereum/profile';
+import { Card, Rating } from 'semantic-ui-react';
 
 class RequesterList extends Component {
-    constructor(props) {
-        super(props);
+    // constructor(props) {
+    //     super(props);
 
-        this.state = {
-            requesterList: []
+    //     this.state = {
+    //         requesterList: []
+    //     }
+    // }
+
+    // async componentDidMount() {
+    //     const project = Project(this.props.url.query.address);
+    //     const addresses = await project.methods.getRequesterList().call();
+    //     const requesterList = [];
+
+    //     for (let i = 0; i < addresses.length; i++) {
+    //         const profileAddress = await factory.methods.profileDeployedAddress(addresses[i]).call();
+    //         const profile = Profile(profileAddress);
+    //         console.log(profileAddress);
+
+    //         requesterList.push({
+    //             address: addresses[i],
+    //             rating:  await profile.methods.rating().call()
+    //         });
+    //     }
+
+
+    //     this.setState({ requesterList: requesterList });
+    // }
+
+    static async getInitialProps(props) {
+        const project = Project(props.query.address);
+        const addresses = await project.methods.getRequesterList().call();
+        let requesterList = [];
+
+        for (let i = 0; i < addresses.length; i++) {
+            const profileAddress = await factory.methods.profileDeployedAddress(addresses[i]).call();
+            const profile = Profile(profileAddress);
+
+            requesterList.push({
+                address: addresses[i],
+                rating: await profile.methods.rating().call(),
+                ratingsCounter: await profile.methods.ratingsCounter().call(),
+            });
         }
-    }
 
-    async componentDidMount() {
-        const project = Project(this.props.url.query.address);
-        const requesterList = await project.methods.getRequesterList().call();
-        this.setState({ requesterList: requesterList });
+        return {
+            requesterList
+        };
     }
 
     renderRequesterList() {
-        const requester = this.state.requesterList.slice(0).map(requester => {
-            const req = requester
+        const requester = this.props.requesterList.map(requester => {
+            const rating = <Rating defaultRating={requester.rating} maxRating={5} disabled />
             return {
-                key: req,
-                header: req,
-                meta: 'Horst',
+                key: requester.address,
+                header: requester.address,
+                meta:
+                    (<Rating
+                        defaultRating={requester.rating}
+                        maxRating={5}
+                        disabled
+                    />),
+                extra:
+                    (<Link
+                        route={`/projekt/`}>
+                        <a>Bewerberprofil ansehen</a>
+                    </Link>),
                 style: { overflowWrap: 'break-word' }
             };
         });

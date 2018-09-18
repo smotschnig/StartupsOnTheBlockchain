@@ -21,7 +21,6 @@ beforeEach(async () => {
         .deploy({ data: compiledFactory.bytecode })
         .send({ from: accounts[0], gas: '3000000' });
 
-
     await factory.methods.createProject('startup3000', 'Webdeveloper (m/w)', '45621', 'desc', '200')
         .send({ from: accounts[0], gas: '3000000' });
 
