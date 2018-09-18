@@ -68,10 +68,11 @@ contract Factory {
 contract ProjectInstance {
     address public manager;
     mapping(address => bool) public requester;
-    address[] public requesterList;
     uint public requesterCount;
     Project public project;
-    Requester[] public request;
+        
+    address[] public requesterList;
+    mapping(address => Requester) private requests;
 
     struct Project {
         string startup;
@@ -86,9 +87,9 @@ contract ProjectInstance {
     }
     
     struct Requester {
-        bool hasBeenChoosen;
-        string info;
+        bool hasBeenChosen;
         string email;
+        string info;
         address _address;
     }
     
@@ -112,7 +113,6 @@ contract ProjectInstance {
         project = newProject;
     }
     
-    
     /* returns all information about the project */
     function getSummary() view public returns(string, string, string, string, uint, uint, address) {
         return (
@@ -125,7 +125,16 @@ contract ProjectInstance {
             manager
         );
     }
-
+    
+    /* returns all information about the project */
+    function getApplicantInfo(address _address) view public returns(string, string, bool) {
+        return (
+            requests[_address].email,
+            requests[_address].info,
+            requests[_address].hasBeenChosen
+        );
+    }
+    
     /* allows freelancer to apply to project */
     function setRequest(string _email, string _info) public {
         Project storage storedProject = project;
@@ -142,20 +151,21 @@ contract ProjectInstance {
         requesterList.push(msg.sender);
     
         Requester memory newRequest = Requester({
-           hasBeenChoosen: false,
+           hasBeenChosen: false,
            email: _email,
            info: _info,
            _address: msg.sender
         });
         
-        request.push(newRequest);
+        requests[msg.sender] = newRequest;
+     
     }
     
     /* allows startup to choose a freelancer out of the applicant list for the project */
-    function chooseRequester(uint _index) public restricted {
-        Requester storage requesterByIndex = request[_index];
-        require(!requesterByIndex.hasBeenChoosen);
-        requesterByIndex.hasBeenChoosen = true;
+    function chooseRequester(address _address) public restricted {
+        Requester storage requesterByAddress = requests[_address];
+        require(!requesterByAddress.hasBeenChosen);
+        requesterByAddress.hasBeenChosen = true;
     }
         
     /* returns the requester (freelancer) list as an array */
@@ -164,13 +174,13 @@ contract ProjectInstance {
     }
     
     /* allows freelancer to finalize the open project */
-    function finalizeProjectAsFreelancer(address _address, uint _index, uint _rating) public {
+    function finalizeProjectAsFreelancer(address _address, uint _rating) public {
         /* creates a temporary profile class with the address of the startup-manager */
         ProfileInstance profileInstance;
         profileInstance = ProfileInstance(_address);
         
-        Requester storage requesterByIndex = request[_index];
-        require(requesterByIndex.hasBeenChoosen);
+        Requester storage requesterByAddress = requests[_address];
+        require(requesterByAddress.hasBeenChosen);
         
         Project storage storedProject = project;
         require(!storedProject.finalizedByFreelancer);
