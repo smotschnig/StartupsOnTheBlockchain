@@ -4,8 +4,13 @@ import Layout from '../../components/Layout';
 import Project from '../../ethereum/project';
 import { Link } from '../../routes';
 import moment from 'moment';
+import web3 from '../../ethereum/web3';
 
 class ProjectShow extends Component {
+    state = {
+        address: undefined
+    }
+
     static async getInitialProps(props) {
         const project = Project(props.query.address);
         const summary = await project.methods.getSummary().call();
@@ -17,11 +22,19 @@ class ProjectShow extends Component {
             title: summary[1],
             deadline: summary[2],
             description: summary[3],
-            wage: summary[4],
-            date: summary[5],
-            manager: summary[6],
+            date: summary[4],
+            wage: summary[6],
+            manager: summary[8],
             requesterNumber: requesterNumber
         };
+    }
+
+    // check if user is logged in to metamask
+    async componentDidMount() {
+        const address = await web3.eth.getAccounts();
+        this.setState({
+            address: address !== undefined ? address[0] : null
+        });
     }
 
     timeConverter(timestamp) {
@@ -38,8 +51,12 @@ class ProjectShow extends Component {
             date
         } = this.props;
 
+        // convert date to dd/mm/yyyy - hh/mm
         const convertedDate = this.timeConverter(date);
 
+        // check if deadline is set
+        const validatedDeadline = (deadline === '') ? 'keine Angabe' : deadline;
+        
         const items = [
             {
                 header: title,
@@ -52,12 +69,12 @@ class ProjectShow extends Component {
                 style: { overflowWrap: 'break-word' },
             },
             {
-                header: deadline,
+                header: validatedDeadline,
                 extra: 'Deadline',
                 style: { overflowWrap: 'break-word' },
             },
             {
-                header: wage,
+                header: web3.utils.fromWei(wage, 'ether') + ' (ETH)',
                 extra: 'Höhe der Vergütung',
                 style: { overflowWrap: 'break-word' },
             },
@@ -95,7 +112,9 @@ class ProjectShow extends Component {
                         <Grid.Column width={16}>
                             <h4>Projektbeschreibung:</h4>
                             <Form>
-                                <TextArea readOnly disabled autoHeight defaultValue={this.props.description} />
+                                <TextArea readOnly disabled autoHeight defaultValue=
+                                    {(this.props.description === '') ? 'keine Angabe' : this.props.description}
+                                />
                             </Form>
                         </Grid.Column>
                     </Grid.Row>
@@ -113,11 +132,13 @@ class ProjectShow extends Component {
                     </Grid.Row>
                     <Grid.Row>
                         <Grid.Column>
-                            <Link route={`/projekt/${this.props.address}/bewerbung`}>
-                                <a>
-                                    <Button primary>Bewerbung einreichen</Button>
-                                </a>
-                            </Link>
+                            {this.state.address ?
+                                <Link route={`/projekt/${this.props.address}/bewerbung`}>
+                                    <a>
+                                        <Button primary>Bewerbung einreichen</Button>
+                                    </a>
+                                </Link>
+                                : null}
                             <Link route={`/projekt/${this.props.address}/bewerberpool`}>
                                 <a>
                                     <Button primary>Bewerberpool ({(this.props.requesterNumber)})</Button>

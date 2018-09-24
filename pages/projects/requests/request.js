@@ -44,23 +44,21 @@ class Request extends Component {
             // console.log(manager);
             // console.log(accounts[0]);
 
-
-            if (manager === accounts[0]) {
-                this.setState({ errorMessage: 'Sie können sich nicht für Ihr eigenes Projekt bewerben.', incorrectInput: true });
-            }
-
-            if (alreadyRequester) {
-                this.setState({ errorMessage: 'Ihre Bewerbung liegt bereits vor.', incorrectInput: true });
+            if (this.state.email === '') {
+                this.setState({ errorMessage: 'Eingaben unvollständig.', incorrectInput: true });
             }
 
             if (profileAddress === userHasNoProfile) {
                 this.setState({ errorMessage: 'Bitte erstellen Sie vorher ein Profil.', incorrectInput: true });
             }
 
-            if (this.state.email === '') {
-                this.setState({ errorMessage: 'Eingaben unvollständig.', incorrectInput: true });
+            if (alreadyRequester) {
+                this.setState({ errorMessage: 'Ihre Bewerbung liegt bereits vor.', incorrectInput: true });
             }
 
+            if (manager === accounts[0]) {
+                this.setState({ errorMessage: 'Sie können sich nicht für Ihr eigenes Projekt bewerben.', incorrectInput: true });
+            }
 
             if (!this.state.incorrectInput) {
                 await project.methods.setRequest(this.state.email, this.state.info)

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Form, Input, Message, TextArea } from 'semantic-ui-react';
+import { Button, Form, Input, Message } from 'semantic-ui-react';
 import { DateInput } from 'semantic-ui-calendar-react';
 import Layout from '../../components/Layout';
 import factory from '../../ethereum/factory';
@@ -21,20 +21,31 @@ class ProjectNew extends Component {
     onSubmit = async (event) => {
         event.preventDefault();
 
+        console.log(this.state.wage);
+
         this.setState({ loading: true, errorMessage: '' });
 
         try {
             const accounts = await web3.eth.getAccounts();
+            const profileAddress = await factory.methods.profileDeployedAddress(accounts[0]).call();
+            const userHasNoProfile = '0x0000000000000000000000000000000000000000';
+
+            console.log(this.state.wage);
 
             if (this.state.startup === '' || this.state.title === '' || this.state.wage === '') {
                 this.setState({ inputIncomplete: true, errorMessage: 'Eingaben unvollständig.' });
             }
 
+            if (profileAddress === userHasNoProfile) {
+                this.setState({ errorMessage: 'Bitte erstellen Sie vorher ein Profil.', incorrectInput: true });
+            }
+
             if (!this.state.inputIncomplete) {
                 await factory.methods
-                    .createProject(this.state.startup, this.state.title, this.state.deadline, this.state.description, this.state.wage)
+                    .createProject(this.state.startup, this.state.title, this.state.deadline, this.state.description)
                     .send({
-                        from: accounts[0]
+                        from: accounts[0],
+                        value: web3.utils.toWei(this.state.wage, 'ether')
                     });
                 Router.pushRoute('/');
             }
@@ -55,6 +66,7 @@ class ProjectNew extends Component {
         return (
             <Layout>
                 <h3>Erstelle ein neues Projekt</h3>
+                {console.log(this.state.wage)}
                 <Form onSubmit={this.onSubmit} error={!!this.state.errorMessage}>
                     <Form.Field>
                         <label>Name des Startups</label>
@@ -99,8 +111,8 @@ class ProjectNew extends Component {
                         <label>Vergütung</label>
                         <small>* erforderlich</small>
                         <Input
-                            placeholder='20000'
-                            label='wei'
+                            placeholder='0.05'
+                            label='ETH'
                             labelPosition='right'
                             value={this.state.wage}
                             onChange={event => this.setState({ wage: event.target.value })}

@@ -7,8 +7,12 @@ import { Link } from '../../routes';
 
 class GetProfile extends Component {
     static async getInitialProps(props) {
-        console.log(props);
         const managerAddress = props.query.address;
+        // console.log(props.query.address);
+
+        let previousPage = window.location.href.split('/');
+        // console.log(previousPage[4]);
+
         const profileAddress = await factory.methods.profileDeployedAddress(managerAddress).call();
         const profile = Profile(profileAddress);
         const profileData = await profile.methods.getInstructor().call();
@@ -21,6 +25,12 @@ class GetProfile extends Component {
             experience: profileData[4],
             skills: profileData[5]
         };
+    }
+
+    getPreviousPageUrl = () => {
+        let previousPage = window.location.href.split('/');
+        return previousPage[4];
+
     }
 
     renderProfile() {
@@ -66,7 +76,7 @@ class GetProfile extends Component {
                 <Grid>
                     <Grid.Row>
                         <Grid.Column width={16}>
-                            <Link to={`/projekt/${this.props.manager}`}>
+                            <Link to={`/projekt/${getPreviousPageUrl}`}>
                                 <a>
                                     <Button size='mini'>Zurück</Button>
                                 </a>

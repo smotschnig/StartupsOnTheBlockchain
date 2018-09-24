@@ -5,6 +5,7 @@ import { Link } from '../routes';
 import moment from 'moment';
 import _ from 'lodash';
 import factory from '../ethereum/factory';
+import web3 from '../ethereum/web3';
 
 class StartupIndex extends Component {
     static async getInitialProps() {
@@ -37,12 +38,12 @@ class StartupIndex extends Component {
 
     renderProjects() {
         const items = this.props.projects.slice(0).reverse().map(project => {
-            const { startup, title, date } = project.projects;
+            const { startup, title, date, wage } = project.projects;
             const { address } = project;
             return {
                 key: address + date,
                 header: title,
-                meta: startup,
+                meta: startup + " " + web3.utils.fromWei(wage, 'ether') + " (ETH)",
                 description: (
                     <Link route={`/projekt/${address}`}>
                         <a>Projekt ansehen</a>
