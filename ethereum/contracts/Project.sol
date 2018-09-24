@@ -3,9 +3,9 @@ pragma solidity ^0.4.2;
 contract Factory {
     address[] private deployedProjects;
     address[] private deployedProfiles;
-    
+
     /* lists the struct infos oft the initialized project */
-    mapping(address => ProjectInitializer) private projects;
+    mapping(address => ProjectInitializer) public projects;
     
     /* lists if someone has already created a profile */
     mapping(address => bool) public profileAlreadyExists;
@@ -17,17 +17,21 @@ contract Factory {
     struct ProjectInitializer {
         string startup;
         string title;
+        uint wage;
         uint date;
+        address manager;
     }
 
     /* creates new project by calling the constructor and also adds the same data to the initializer for the landing page */
-    function createProject(string _startup, string _title, string _deadline, string _description, uint _wage) public {
-        address newProject = new ProjectInstance(_startup, _title, _deadline, _description, _wage, now, msg.sender);
-        
+    function createProject(string _startup, string _title, string _deadline, string _description) public payable {
+        address newProject = (new ProjectInstance).value(msg.value)(_startup, _title, _deadline, _description, now, msg.sender);
+
         ProjectInitializer memory newProjectInitializer = ProjectInitializer({
-           startup: _startup,
-           title: _title,
-           date: now
+            startup: _startup,
+            title: _title,
+            wage: msg.value,
+            date: now,
+            manager: msg.sender
         });
 
         projects[newProject] = newProjectInitializer;
@@ -40,11 +44,13 @@ contract Factory {
     }
     
     /* gets all projects to list on the landing page */
-    function getProjects(address _address) view public returns(string startup, string title, uint date) {
+    function getProjects(address _address) view public returns(string startup, string title, uint wage, uint date, address manager) {
         return (
             projects[_address].startup,
             projects[_address].title,
-            projects[_address].date
+            projects[_address].wage,
+            projects[_address].date,
+            projects[_address].manager
         );
     }
     
@@ -70,7 +76,7 @@ contract ProjectInstance {
     mapping(address => bool) public requester;
     uint public requesterCount;
     Project public project;
-        
+
     address[] public requesterList;
     mapping(address => Requester) private requests;
 
@@ -79,11 +85,12 @@ contract ProjectInstance {
         string title;
         string deadline;
         string description;
-        uint wage;
         uint date;
         bool finalizedByFreelancer;
         bool finalizedByStartup;
+        bool isFinished;
         mapping(address => bool) requests;
+        address chosenFreelancer;
     }
     
     struct Requester {
@@ -98,30 +105,33 @@ contract ProjectInstance {
         _;
     }
 
-    constructor(string _startup, string _title, string _deadline, string _description, uint _wage, uint _date, address _manager) public {
+    constructor(string _startup, string _title, string _deadline, string _description, uint _date, address _manager) public payable {
         manager = _manager;
         Project memory newProject = Project({
             startup: _startup,
             title: _title,
             deadline: _deadline,
             description: _description,
-            wage: _wage,
             date: _date,
             finalizedByFreelancer: false,
-            finalizedByStartup: false
+            finalizedByStartup: false,
+            isFinished: false,
+            chosenFreelancer: 0
         });
         project = newProject;
     }
     
     /* returns all information about the project */
-    function getSummary() view public returns(string, string, string, string, uint, uint, address) {
+    function getSummary() view public returns(string, string, string, string, uint, bool, uint, address, address) {
         return (
             project.startup,
             project.title,
             project.deadline,
             project.description,
-            project.wage,
             project.date,
+            project.isFinished,
+            address(this).balance,
+            project.chosenFreelancer,
             manager
         );
     }
@@ -166,6 +176,7 @@ contract ProjectInstance {
         Requester storage requesterByAddress = requests[_address];
         require(!requesterByAddress.hasBeenChosen);
         requesterByAddress.hasBeenChosen = true;
+        project.chosenFreelancer = _address;
     }
         
     /* returns the requester (freelancer) list as an array */
@@ -179,7 +190,7 @@ contract ProjectInstance {
         ProfileInstance profileInstance;
         profileInstance = ProfileInstance(_address);
         
-        Requester storage requesterByAddress = requests[_address];
+        Requester storage requesterByAddress = requests[msg.sender];
         require(requesterByAddress.hasBeenChosen);
         
         Project storage storedProject = project;
@@ -203,6 +214,8 @@ contract ProjectInstance {
         profileInstance.setRating(_rating);
         
         storedProject.finalizedByStartup = true;
+        project.isFinished = true;
+        project.chosenFreelancer.transfer(address(this).balance);
     }
 }
 
