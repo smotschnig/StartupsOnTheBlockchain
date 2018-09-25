@@ -91,6 +91,7 @@ contract ProjectInstance {
         bool isFinished;
         mapping(address => bool) requests;
         address chosenFreelancer;
+        bool underInvestigation;
     }
     
     struct Requester {
@@ -116,13 +117,14 @@ contract ProjectInstance {
             finalizedByFreelancer: false,
             finalizedByStartup: false,
             isFinished: false,
-            chosenFreelancer: 0
+            chosenFreelancer: 0,
+            underInvestigation: false
         });
         project = newProject;
     }
     
     /* returns all information about the project */
-    function getSummary() view public returns(string, string, string, string, uint, bool, uint, address, address) {
+    function getSummary() view public returns(string, string, string, string, uint, bool, uint, address, address, bool) {
         return (
             project.startup,
             project.title,
@@ -132,10 +134,11 @@ contract ProjectInstance {
             project.isFinished,
             address(this).balance,
             project.chosenFreelancer,
-            manager
+            manager,
+            project.underInvestigation
         );
     }
-    
+
     /* returns all information about the project */
     function getApplicantInfo(address _address) view public returns(string, string, bool) {
         return (
@@ -168,7 +171,18 @@ contract ProjectInstance {
         });
         
         requests[msg.sender] = newRequest;
-     
+    }
+    
+    /* startup or freelancer can set project to under investigation */
+    function callInvestigator() public {
+        require(msg.sender == manager || msg.sender == project.chosenFreelancer);
+        project.underInvestigation = true;
+    }
+    
+    /* startup can cancel project and gets wage back */
+    function cancelProject() public restricted {
+        project.isFinished = true;
+        manager.transfer(address(this).balance);
     }
     
     /* allows startup to choose a freelancer out of the applicant list for the project */
@@ -255,7 +269,7 @@ contract ProfileInstance {
         profile = newProfileInstructor;
     }
     
-    /* allows user to change or/and to update profile informations */
+    /* allows user to change or/and to update profile information */
     function setInstructor(string _fName, string _lName, string _birthDate, string _education, string _experience, string _skills) restricted public {
         ProfileInstructor memory newProfileInstructor = ProfileInstructor({
             fName: _fName, 
@@ -280,6 +294,7 @@ contract ProfileInstance {
         );
     }
     
+    /* sets rating for user evaluation scheme (called in ProjectInstance) */
     function setRating(uint _rating) public {
         require(msg.sender != manager);
                 

@@ -1,3 +1,3 @@
 module.exports = {
-    address: '0x4B4433DAfE0b41525201eA3bbD5024b1927FEDF6'
+    address: '0x31c7CeCc6F9859c5728A6cEBC4468c3e12cDD288'
 };

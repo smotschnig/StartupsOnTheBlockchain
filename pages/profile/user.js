@@ -17,7 +17,11 @@ class UserProfile extends Component {
 
             const profileAddress = await factory.methods.profileDeployedAddress(accounts[0]).call();
             const profile = Profile(profileAddress);
+            console.log(profile);
             const profileData = await profile.methods.getInstructor().call();
+            const rating = await profile.methods.rating().call();
+            const ratingsCounter = await profile.methods.ratingsCounter().call();
+            const ratingAverage = Math.floor(rating / ratingsCounter);
 
             this.setState({
                 fName: profileData[0],
@@ -25,7 +29,9 @@ class UserProfile extends Component {
                 birthDate: profileData[2],
                 education: profileData[3],
                 experience: profileData[4],
-                skills: profileData[5]
+                skills: profileData[5],
+                rating: ratingAverage,
+                ratingsCounter: ratingsCounter
             });
         } else {
             this.setState({ showUpdateButton: false, showCreateButton: true });
@@ -159,6 +165,7 @@ class UserProfile extends Component {
                     {this.state.showCreateButton ? <Button loading={this.state.loading} type='submit' content='Create Account' icon='check' primary /> : null}
                     {this.state.showUpdateButton ? <Button loading={this.state.loading} type='submit' content='Update' icon='check' primary /> : null}
                 </Form>
+                <p>Rating: {this.state.rating} ({this.state.ratingsCounter})</p>
             </Layout>
         );
     }
