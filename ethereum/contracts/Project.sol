@@ -12,7 +12,7 @@ contract Factory {
    
     /* lists the profile address of the profile manager */
     mapping(address => address) public profileDeployedAddress;
-
+    
     /* don't repeat yourself - no better solution found yet */
     struct ProjectInitializer {
         string startup;
@@ -176,12 +176,16 @@ contract ProjectInstance {
     /* startup or freelancer can set project to under investigation */
     function callInvestigator() public {
         require(msg.sender == manager || msg.sender == project.chosenFreelancer);
+        require(!project.isFinished);
+        require(project.chosenFreelancer != 0);
         project.underInvestigation = true;
     }
     
     /* startup can cancel project and gets wage back */
     function cancelProject() public restricted {
         project.isFinished = true;
+        require(!project.underInvestigation);
+        require(!project.underInvestigation);
         manager.transfer(address(this).balance);
     }
     
@@ -204,6 +208,8 @@ contract ProjectInstance {
         ProfileInstance profileInstance;
         profileInstance = ProfileInstance(_address);
         
+        require(!project.underInvestigation);
+        
         Requester storage requesterByAddress = requests[msg.sender];
         require(requesterByAddress.hasBeenChosen);
         
@@ -220,6 +226,8 @@ contract ProjectInstance {
         /* creates a temporary profile class with the address of the freelancer */
         ProfileInstance profileInstance;
         profileInstance = ProfileInstance(_address);
+        
+        require(!project.underInvestigation);
 
         Project storage storedProject = project;
         require(storedProject.finalizedByFreelancer);

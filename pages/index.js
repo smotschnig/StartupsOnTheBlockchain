@@ -1,28 +1,46 @@
 import React, { Component } from 'react';
 import Layout from '../components/Layout';
-import { Card } from 'semantic-ui-react';
-import { Link } from '../routes';
-import moment from 'moment';
+import { Table } from 'semantic-ui-react';
 import _ from 'lodash';
 import factory from '../ethereum/factory';
+import Project from '../ethereum/project';
+import Profile from '../ethereum/profile';
 import web3 from '../ethereum/web3';
+
+import ProjectRow from '../components/ProjectRow';
 
 class StartupIndex extends Component {
     static async getInitialProps() {
-        const addresses = await factory.methods.getDeployedProjects().call();
+        const projectAddresses = await factory.methods.getDeployedProjects().call();
+        const profileAddresses = await factory.methods.getDeployedProfiles().call();
         let projects = [];
 
-        // Iteration über alle addresses
-        // getProjects returns (string, string, uint, uint)
-        // z.B.
-        // 0: string: Startup300 // Name des Startups
-        // 1: string: Webdeveloper (m/w) // Title der Berufsbezeichnung
-        // 2: uint: 1312312 // Deadline als Integer
-        // 3: uint: 1231233 // Date als Integer (Erstelldatum des Contracts)
-        for (let i = 0; i < addresses.length; i++) {
+        for (let i = 0; i < projectAddresses.length; i++) {
+            const project = Project(projectAddresses[i]);
+            const summary = await project.methods.getSummary().call();
+
+            let rating;
+            let ratingsCounter;
+
+            for (let j = 0; j < profileAddresses.length; j++) {
+                const profile = Profile(profileAddresses[j]);
+                const profileManager = await profile.methods.manager().call();
+                if (profileManager === summary[8]) {
+                    rating = await profile.methods.rating().call();
+                    ratingsCounter = await profile.methods.ratingsCounter().call();
+                }
+            }
+
             projects.push({
-                address: addresses[i],
-                projects: await factory.methods.getProjects(addresses[i]).call()
+                address: projectAddresses[i],
+                startup: summary[0],
+                title: summary[1],
+                wage: summary[6],
+                date: summary[4],
+                isFinished: summary[5],
+                underInvestigation: summary[9],
+                rating: rating,
+                ratingsCounter: ratingsCounter
             });
         }
 
@@ -31,38 +49,46 @@ class StartupIndex extends Component {
         };
     }
 
-    timeConverter(timestamp) {
-        var date = moment.unix(timestamp);
-        return date.format("DD.MM.YYYY - HH:mm");
-    }
-
-    renderProjects() {
-        const items = this.props.projects.slice(0).reverse().map(project => {
-            const { startup, title, date, wage } = project.projects;
-            const { address } = project;
-            return {
-                key: address + date,
-                header: title,
-                meta: startup + " " + web3.utils.fromWei(wage, 'ether') + " (ETH)",
-                description: (
-                    <Link route={`/projekt/${address}`}>
-                        <a>Projekt ansehen</a>
-                    </Link>
-                ),
-                extra: this.timeConverter(date),
-                color: 'green',
-                fluid: true,
-                style: { overflowWrap: 'break-word' }
-            };
+    renderRows() {
+        return this.props.projects.slice(0).reverse().map((project, index) => {
+            const { startup, title, wage, date, address, isFinished, underInvestigation, rating, ratingsCounter } = project;
+            return (
+                <ProjectRow
+                    key={index}
+                    startup={startup}
+                    title={title}
+                    wage={wage}
+                    date={date}
+                    address={address}
+                    isFinished={isFinished}
+                    underInvestigation={underInvestigation}
+                    rating={rating}
+                    ratingsCounter={ratingsCounter}
+                />
+            );
         });
-        return <Card.Group items={items} />
     }
 
     render() {
+        const { Header, Row, HeaderCell, Body } = Table;
+
         return (
             <Layout>
-                <h3>Offene Projekte</h3>
-                {this.renderProjects()}
+                <Table>
+                    <Header>
+                        <Row>
+                            <HeaderCell>Startup</HeaderCell>
+                            <HeaderCell>Bewertung</HeaderCell>
+                            <HeaderCell>Berufsbezeichnung</HeaderCell>
+                            <HeaderCell>Ether</HeaderCell>
+                            <HeaderCell>Datum</HeaderCell>
+                            <HeaderCell>Details</HeaderCell>
+                        </Row>
+                    </Header>
+                    <Body>
+                        {this.renderRows()}
+                    </Body>
+                </Table>
             </Layout >
         );
     }
