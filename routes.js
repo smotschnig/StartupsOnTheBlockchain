@@ -7,9 +7,9 @@ routes
     .add('/projekt/:address/bewerberpool', '/projects/requests/requesterlist')
     .add('/projekte/offen/:address', '/projects/status/open')
     .add('/projekte/offen/:address/beenden', '/projects/status/finalize')
-    .add('/bewerberpool/:address', '/profile/getprofile')
-    .add('/profil/:address', '/profile/user')
-    .add('/profil/benutzer/:address', '/profile/getprofile')
+    .add('/bewerberpool/:address', '/profile/showuserprofile')
+    .add('/profil/:address', '/profile/userprofile')
+    .add('/profil/benutzer/:address', '/profile/showuserprofile')
     .add('/informationen', '/information')
 
 module.exports = routes;

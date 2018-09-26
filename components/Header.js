@@ -7,6 +7,9 @@ class Header extends Component {
         super(props);
     }
 
+    /**
+     * 'Neues Projekt, 'Offene Projekte' and 'Profil' only visible when user is logged in to metamask
+     */
     render() {
         return (
             <Grid>

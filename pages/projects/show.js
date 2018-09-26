@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { Card, Grid, Button, TextArea, Form, Label, Icon, Rating } from 'semantic-ui-react';
+import { Card, Grid, Button, TextArea, Form } from 'semantic-ui-react';
 import Layout from '../../components/Layout';
 import Project from '../../ethereum/project';
 import { Link } from '../../routes';
 import moment from 'moment';
 import web3 from '../../ethereum/web3';
+import LinkConnector from '../../components/LinkConnector';
 
 class ProjectShow extends Component {
     state = {
@@ -23,8 +24,8 @@ class ProjectShow extends Component {
             deadline: summary[2],
             description: summary[3],
             date: summary[4],
-            wage: summary[6],
-            manager: summary[8],
+            wage: summary[5],
+            manager: summary[7],
             requesterNumber: requesterNumber
         };
     }
@@ -56,7 +57,7 @@ class ProjectShow extends Component {
 
         // check if deadline is set
         const validatedDeadline = (deadline === '') ? 'keine Angabe' : deadline;
-        
+
         const items = [
             {
                 header: title,
@@ -112,22 +113,18 @@ class ProjectShow extends Component {
                         <Grid.Column width={16}>
                             <h4>Projektbeschreibung:</h4>
                             <Form>
-                                <TextArea readOnly disabled autoHeight defaultValue=
-                                    {(this.props.description === '') ? 'keine Angabe' : this.props.description}
+                                <TextArea
+                                    readOnly
+                                    disabled
+                                    autoHeight
+                                    defaultValue={(this.props.description === '') ? 'keine Angabe' : this.props.description}
                                 />
                             </Form>
                         </Grid.Column>
                     </Grid.Row>
                     <Grid.Row>
                         <Grid.Column width={8}>
-                            <Label>
-                                <Icon name='address card' />
-                                <Link route={`/profil/benutzer/${this.props.manager}`}>
-                                    <a>
-                                        {this.props.manager}
-                                    </a>
-                                </Link>
-                            </Label>
+                            <LinkConnector route={`/profil/benutzer/${this.props.manager}`} text={this.props.manager} label={true} icon='address card' />
                         </Grid.Column>
                     </Grid.Row>
                     <Grid.Row>

@@ -3,8 +3,8 @@ import { Container, Grid } from 'semantic-ui-react';
 import Head from 'next/head';
 import Header from './Header';
 import Footer from './Footer';
-// import RenderLoading from './Loader';
 import web3 from '../ethereum/web3';
+// import RenderLoading from './Loader';
 
 class Layout extends Component {
     constructor(props) {

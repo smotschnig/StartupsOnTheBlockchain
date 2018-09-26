@@ -1,5 +1,7 @@
 .next
 node_modules
 package-lock.json
+package_now.json
+package_temp.json
 _bak
 _div

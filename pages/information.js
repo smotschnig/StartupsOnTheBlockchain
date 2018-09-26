@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import Layout from '../components/Layout';
 
+/**
+ * '/Informationen'
+ * informs the user about some details
+ */
 class Information extends Component {
     render() {
         return (

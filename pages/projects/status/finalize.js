@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import Layout from '../../../components/Layout';
-import RatingStars from '../../../components/Rating';
+import RatingStars from '../../../components/RatingStars';
 import { Input, Form, Message, Button } from 'semantic-ui-react';
 import { Link } from '../../../routes';
 import web3 from '../../../ethereum/web3';

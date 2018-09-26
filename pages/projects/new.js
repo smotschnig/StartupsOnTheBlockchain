@@ -3,9 +3,14 @@ import { Button, Form, Input, Message } from 'semantic-ui-react';
 import { DateInput } from 'semantic-ui-calendar-react';
 import Layout from '../../components/Layout';
 import factory from '../../ethereum/factory';
+import Profile from '../../ethereum/profile';
 import web3 from '../../ethereum/web3';
 import { Router } from '../../routes';
 
+/**
+ * '/projekt/neu'
+ * user can create a new project as startup
+ */
 class ProjectNew extends Component {
     state = {
         startup: '',
@@ -13,30 +18,33 @@ class ProjectNew extends Component {
         deadline: '',
         description: '',
         wage: '',
+        userHasNoProfile: false,
         errorMessage: '',
         loading: false,
         inputIncomplete: false
     };
 
+    async componentDidMount() {
+        const accounts = await web3.eth.getAccounts();
+        const profileAddress = await factory.methods.profileDeployedAddress(accounts[0]).call();
+        const noProfileAddress = '0x0000000000000000000000000000000000000000';
+        if (profileAddress === noProfileAddress) {
+            this.setState({ userHasNoProfile: true });
+        }
+    }
+
     onSubmit = async (event) => {
         event.preventDefault();
-
-        console.log(this.state.wage);
-
         this.setState({ loading: true, errorMessage: '' });
 
         try {
             const accounts = await web3.eth.getAccounts();
-            const profileAddress = await factory.methods.profileDeployedAddress(accounts[0]).call();
-            const userHasNoProfile = '0x0000000000000000000000000000000000000000';
-
-            console.log(this.state.wage);
 
             if (this.state.startup === '' || this.state.title === '' || this.state.wage === '') {
                 this.setState({ inputIncomplete: true, errorMessage: 'Eingaben unvollständig.' });
             }
 
-            if (profileAddress === userHasNoProfile) {
+            if (this.state.userHasNoProfile) {
                 this.setState({ errorMessage: 'Bitte erstellen Sie vorher ein Profil.', incorrectInput: true });
             }
 
@@ -63,63 +71,79 @@ class ProjectNew extends Component {
     }
 
     render() {
+        const { Field } = Form;
+        const {
+            startup,
+            title,
+            deadline,
+            description,
+            wage,
+            userHasNoProfile,
+            errorMessage,
+            loading,
+        } = this.state;
+
         return (
             <Layout>
-                <h3>Erstelle ein neues Projekt</h3>
-                {console.log(this.state.wage)}
-                <Form onSubmit={this.onSubmit} error={!!this.state.errorMessage}>
-                    <Form.Field>
+                <h3>Neues Projekt</h3>
+                {!userHasNoProfile ? null :
+                    <Message warning>
+                        <Message.Header>Profil erforderlich!</Message.Header>
+                        <p>Bitte erstellen Sie zunächst ein Profil, um ein neues Projekt erstellen zu können.</p>
+                    </Message>
+                }
+                <Form onSubmit={this.onSubmit} error={!!errorMessage}>
+                    <Field>
                         <label>Name des Startups</label>
                         <small>* erforderlich</small>
                         <Input
                             placeholder='Firma XY'
-                            value={this.state.startup}
+                            value={startup}
                             onChange={event => this.setState({ startup: event.target.value })}
                         />
-                    </Form.Field>
-                    <Form.Field>
+                    </Field>
+                    <Field>
                         <label>Gesuchte Berufsbezeichnung</label>
                         <small>* erforderlich</small>
                         <Input
                             placeholder='Webentwickler (m/w)'
-                            value={this.state.title}
+                            value={title}
                             onChange={event => this.setState({ title: event.target.value })}
                         />
-                    </Form.Field>
-                    <Form.Field>
-                        {/* TODO: Datum nur in Zukunft || Vergleich mit moment now */}
+                    </Field>
+                    <Field>
                         <label>Deadline</label>
                         <small>DD.MM.YYYY</small>
                         <DateInput
                             placeholder='01.01.2030'
                             name="deadline"
-                            value={this.state.deadline}
+                            value={deadline}
                             iconPosition="left"
                             onChange={this.handleChange}
                             dateFormat="DD.MM.YYYY"
                         />
-                    </Form.Field>
-                    <Form.Field>
+                    </Field>
+                    <Field>
                         <label>Projektbeschreibung</label>
                         <textarea
                             placeholder='Ort, Voraussetzungen, Details,...'
-                            value={this.state.description}
+                            value={description}
                             onChange={event => this.setState({ description: event.target.value })}
                         />
-                    </Form.Field>
-                    <Form.Field>
+                    </Field>
+                    <Field>
                         <label>Vergütung</label>
                         <small>* erforderlich</small>
                         <Input
                             placeholder='0.05'
                             label='ETH'
                             labelPosition='right'
-                            value={this.state.wage}
+                            value={wage}
                             onChange={event => this.setState({ wage: event.target.value })}
                         />
-                    </Form.Field>
-                    <Message error header='Fehler!' content={this.state.errorMessage.split('\n')[0]} />
-                    <Button loading={this.state.loading} primary type='submit' icon='add circle' content='Projekt erstellen' />
+                    </Field>
+                    <Message error header='Fehler!' content={errorMessage.split('\n')[0]} />
+                    <Button loading={loading} primary type='submit' icon='add circle' content='Projekt erstellen' />
                 </Form>
             </Layout>
         );

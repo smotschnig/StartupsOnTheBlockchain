@@ -59,3 +59,4 @@ If there are problems with npm install on Windows, you have to install additiona
 * "code aufräumen", Wiederholungen in Components packen
 * Gas-Limit der Smart Contracts minimieren
 * Pagination implementieren, um Anzahl der angezeigten Projekte zu limitieren
+* Ausbildungsinformationen und Erfahrungen bei Profilansicht formatieren (Zeilenumbruch)

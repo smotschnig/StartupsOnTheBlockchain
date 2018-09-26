@@ -3,16 +3,38 @@ pragma solidity ^0.4.2;
 contract Factory {
     address[] private deployedProjects;
     address[] private deployedProfiles;
-   
+
+    /* lists the struct infos oft the initialized project */
+    mapping(address => ProjectInitializer) public projects;
+    
     /* lists if someone has already created a profile */
     mapping(address => bool) public profileAlreadyExists;
    
     /* lists the profile address of the profile manager */
     mapping(address => address) public profileDeployedAddress;
+    
+    /* don't repeat yourself - no better solution found yet */
+    struct ProjectInitializer {
+        string startup;
+        string title;
+        uint wage;
+        uint date;
+        address manager;
+    }
 
     /* creates new project by calling the constructor and also adds the same data to the initializer for the landing page */
     function createProject(string _startup, string _title, string _deadline, string _description) public payable {
         address newProject = (new ProjectInstance).value(msg.value)(_startup, _title, _deadline, _description, now, msg.sender);
+
+        ProjectInitializer memory newProjectInitializer = ProjectInitializer({
+            startup: _startup,
+            title: _title,
+            wage: msg.value,
+            date: now,
+            manager: msg.sender
+        });
+
+        projects[newProject] = newProjectInitializer;
         deployedProjects.push(newProject);
     }
     
@@ -20,11 +42,22 @@ contract Factory {
     function getDeployedProjects() public view returns (address[]) {
         return deployedProjects;
     }
-
+    
+    /* gets all projects to list on the landing page */
+    function getProjects(address _address) view public returns(string startup, string title, uint wage, uint date, address manager) {
+        return (
+            projects[_address].startup,
+            projects[_address].title,
+            projects[_address].wage,
+            projects[_address].date,
+            projects[_address].manager
+        );
+    }
+    
     /* creates new profile for new user */
-    function createProfile(string _fName, string _lName, string _birthDate, string _education, string _experience) public {
-        require(profileAlreadyExists[msg.sender] == false); 
-        address newProfile = new ProfileInstance(_fName, _lName, _birthDate, _education, _experience, msg.sender);
+    function createProfile(string _fName, string _lName, string _birthDate, string _education, string _experience, string _skills) public {
+        require(profileAlreadyExists[msg.sender] == false);
+        address newProfile = new ProfileInstance(_fName, _lName, _birthDate, _education, _experience, _skills, msg.sender);
         deployedProfiles.push(newProfile);
         profileDeployedAddress[msg.sender] = newProfile;
         profileAlreadyExists[msg.sender] = true;
@@ -46,12 +79,6 @@ contract ProjectInstance {
 
     address[] public requesterList;
     mapping(address => Requester) private requests;
-    
-    bool public finalizedByFreelancer = false;
-    bool public finalizedByStartup = false;
-    bool public isFinished = false;
-    bool public isOpen = true;
-    bool public underInvestigation = false;
 
     struct Project {
         string startup;
@@ -59,8 +86,12 @@ contract ProjectInstance {
         string deadline;
         string description;
         uint date;
+        bool finalizedByFreelancer;
+        bool finalizedByStartup;
+        bool isFinished;
         mapping(address => bool) requests;
         address chosenFreelancer;
+        bool underInvestigation;
     }
     
     struct Requester {
@@ -83,22 +114,28 @@ contract ProjectInstance {
             deadline: _deadline,
             description: _description,
             date: _date,
-            chosenFreelancer: 0
+            finalizedByFreelancer: false,
+            finalizedByStartup: false,
+            isFinished: false,
+            chosenFreelancer: 0,
+            underInvestigation: false
         });
         project = newProject;
     }
     
     /* returns all information about the project */
-    function getSummary() view public returns(string, string, string, string, uint, uint, address, address) {
+    function getSummary() view public returns(string, string, string, string, uint, bool, uint, address, address, bool) {
         return (
             project.startup,
             project.title,
             project.deadline,
             project.description,
             project.date,
+            project.isFinished,
             address(this).balance,
             project.chosenFreelancer,
-            manager
+            manager,
+            project.underInvestigation
         );
     }
 
@@ -117,8 +154,8 @@ contract ProjectInstance {
         
         require(manager != msg.sender);
         require(!requester[msg.sender]);
-        require(!finalizedByFreelancer);
-        require(!finalizedByStartup);
+        require(!storedProject.finalizedByFreelancer);
+        require(!storedProject.finalizedByStartup);
         
         requester[msg.sender] = true;
         storedProject.requests[msg.sender] = true;
@@ -139,30 +176,25 @@ contract ProjectInstance {
     /* startup or freelancer can set project to under investigation */
     function callInvestigator() public {
         require(msg.sender == manager || msg.sender == project.chosenFreelancer);
-        require(!isFinished);
-        require(!isOpen);
+        require(!project.isFinished);
         require(project.chosenFreelancer != 0);
-        underInvestigation = true;
-        isOpen = false;
+        project.underInvestigation = true;
     }
     
     /* startup can cancel project and gets wage back */
     function cancelProject() public restricted {
-        isFinished = true;
-        require(!underInvestigation);
-        require(isOpen);
+        project.isFinished = true;
+        require(!project.underInvestigation);
+        require(!project.underInvestigation);
         manager.transfer(address(this).balance);
-        isOpen = false;
     }
     
     /* allows startup to choose a freelancer out of the applicant list for the project */
     function chooseRequester(address _address) public restricted {
         Requester storage requesterByAddress = requests[_address];
         require(!requesterByAddress.hasBeenChosen);
-        require(isOpen);
         requesterByAddress.hasBeenChosen = true;
         project.chosenFreelancer = _address;
-        isOpen = false;
     }
         
     /* returns the requester (freelancer) list as an array */
@@ -176,18 +208,17 @@ contract ProjectInstance {
         ProfileInstance profileInstance;
         profileInstance = ProfileInstance(_address);
         
-        require(!isOpen);
-        require(!underInvestigation);
+        require(!project.underInvestigation);
         
         Requester storage requesterByAddress = requests[msg.sender];
         require(requesterByAddress.hasBeenChosen);
         
-        require(!finalizedByFreelancer);
-
+        Project storage storedProject = project;
+        require(!storedProject.finalizedByFreelancer);
+        
         profileInstance.setRating(_rating);
         
-        finalizedByFreelancer = true;
-        isOpen = false;
+        storedProject.finalizedByFreelancer = true;
     }
     
     /* allows startup to finalize the open project */
@@ -196,17 +227,16 @@ contract ProjectInstance {
         ProfileInstance profileInstance;
         profileInstance = ProfileInstance(_address);
         
-        require(!isOpen);
-        require(!underInvestigation);
+        require(!project.underInvestigation);
 
-        require(finalizedByFreelancer);
-        require(!finalizedByStartup);
+        Project storage storedProject = project;
+        require(storedProject.finalizedByFreelancer);
+        require(!storedProject.finalizedByStartup);
         
         profileInstance.setRating(_rating);
         
-        finalizedByStartup = true;
-        isFinished = true;
-        isOpen = false;
+        storedProject.finalizedByStartup = true;
+        project.isFinished = true;
         project.chosenFreelancer.transfer(address(this).balance);
     }
 }
@@ -224,6 +254,7 @@ contract ProfileInstance {
         string birthDate;
         string education;
         string experience;
+        string skills;
     }
     
     modifier restricted {
@@ -231,40 +262,43 @@ contract ProfileInstance {
         _;
     }
     
-    constructor(string _fName, string _lName, string _birthDate, string _education, string _experience, address _manager) public {
+    constructor(string _fName, string _lName, string _birthDate, string _education, string _experience, string _skills, address _manager) public {
         manager = _manager;
         date = now;
         
         ProfileInstructor memory newProfileInstructor = ProfileInstructor({
             fName: _fName, 
             lName: _lName, 
-            birthDate: _birthDate,
+            birthDate: _birthDate, 
             education: _education, 
-            experience: _experience 
+            experience: _experience, 
+            skills: _skills
         });
         profile = newProfileInstructor;
     }
     
     /* allows user to change or/and to update profile information */
-    function setInstructor(string _fName, string _lName, string _birthDate, string _education, string _experience) restricted public {
+    function setInstructor(string _fName, string _lName, string _birthDate, string _education, string _experience, string _skills) restricted public {
         ProfileInstructor memory newProfileInstructor = ProfileInstructor({
             fName: _fName, 
             lName: _lName, 
             birthDate: _birthDate, 
             education: _education, 
-            experience: _experience
+            experience: _experience, 
+            skills: _skills
         });
         profile = newProfileInstructor;
     }
     
     /* returns all information about the user profile */
-    function getInstructor() view public returns(string, string, string, string, string) {
+    function getInstructor() view public returns(string, string, string, string, string, string) {
         return (
             profile.fName,
             profile.lName,
             profile.birthDate,
             profile.education,
-            profile.experience
+            profile.experience,
+            profile.skills
         );
     }
     
