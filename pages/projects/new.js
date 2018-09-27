@@ -3,7 +3,6 @@ import { Button, Form, Input, Message } from 'semantic-ui-react';
 import { DateInput } from 'semantic-ui-calendar-react';
 import Layout from '../../components/Layout';
 import factory from '../../ethereum/factory';
-import Profile from '../../ethereum/profile';
 import web3 from '../../ethereum/web3';
 import { Router } from '../../routes';
 

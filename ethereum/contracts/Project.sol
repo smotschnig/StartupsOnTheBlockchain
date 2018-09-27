@@ -53,6 +53,7 @@ contract ProjectInstance {
     bool public isOpen = true;
     bool public underInvestigation = false;
 
+
     struct Project {
         string startup;
         string title;
@@ -140,7 +141,7 @@ contract ProjectInstance {
     function callInvestigator() public {
         require(msg.sender == manager || msg.sender == project.chosenFreelancer);
         require(!isFinished);
-        require(!isOpen);
+        require(!underInvestigation);
         require(project.chosenFreelancer != 0);
         underInvestigation = true;
         isOpen = false;

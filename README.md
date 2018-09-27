@@ -51,12 +51,20 @@ If there are problems with npm install on Windows, you have to install additiona
 * Code kommentieren
 
 ##### *should-have*:
-* Loader während Rendering anpassen (aktuell nicht richtig, ComponentDidMount macht Schwierigkeiten)
-* Wenn Freelancer von Startup ausgewählt, Kommunikationsplattform bieten und Projekt nicht als offen (grün) auf Startseite anzeigen
+* Loader während Rendering erstellen (Seite im Hintergrund erst vollständig laden und erst anschließend anzeigen)
+* Wenn Freelancer von Startup ausgewählt, Kommunikationsplattform bieten und Projekt nicht als offen auf Startseite anzeigen
+* Pop-Ups bzw. Benachrichtigungen an jeweiligen Benutzer (z.B. Nachricht an Freelancer, wenn dieser für Projekt ausgewählt worden ist)
+* Freelancer die Möglichkeit bieten, von einem Projekt zurückzutreten (Projekt beenden und ETH zurück an Startup)
+* Sicherheitsaspekte: teilweise Validationen nur im Front-End, könnten u. U. ausgehebelt werden
 
 ##### *could-have*:
-* Front-End anpassen, Semantic UI React optimieren -> Verschönerungen durchführen
-* "code aufräumen", Wiederholungen in Components packen
+* Front-End anpassen, Semantic UI React optimieren -> Design-Optimierung
+* CSS anders einbinden, Next.js ist da etwas speziell
+* "Code aufräumen", Wiederholungen in Components packen
 * Gas-Limit der Smart Contracts minimieren
-* Pagination implementieren, um Anzahl der angezeigten Projekte zu limitieren
+* Pagination implementieren, um u.a. Anzahl der angezeigten Projekte zu limitieren
 * Ausbildungsinformationen und Erfahrungen bei Profilansicht formatieren (Zeilenumbruch)
+* Bei nicht allen Seiten ist ein Aktualisiern der Seite (F5) im Browser möglich -> 404 Fehler
+* Console-Ausgabe deaktivieren, Webpack listet durchgehend Informationen
+* verschiedene Validationen: z.B. E-Mail-Überprüfung
+* Dropdowns und sonstige Vorlagen für Forms erstellen

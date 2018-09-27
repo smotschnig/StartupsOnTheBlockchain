@@ -7,7 +7,10 @@ import { Router } from '../../../routes';
 import Project from '../../../ethereum/project';
 import factory from '../../../ethereum/factory';
 
-
+/**
+ * '/projekt/:address/bewerbung'
+ * user can create a new project as startup
+ */
 class Request extends Component {
     constructor(props) {
         super(props);
@@ -41,9 +44,6 @@ class Request extends Component {
             const profileAddress = await factory.methods.profileDeployedAddress(accounts[0]).call();
             const userHasNoProfile = '0x0000000000000000000000000000000000000000';
 
-            // console.log(manager);
-            // console.log(accounts[0]);
-
             if (this.state.email === '') {
                 this.setState({ errorMessage: 'Eingaben unvollständig.', incorrectInput: true });
             }
@@ -66,24 +66,34 @@ class Request extends Component {
                         from: accounts[0]
                     });
 
-                Router.pushRoute('/');
+                Router.pushRoute(`/projekt/${this.props.url.query.address}`);
             }
 
         } catch (err) {
             this.setState({ errorMessage: err.message });
         }
 
-
         this.setState({ loading: false, incorrectInput: false });
     }
 
     render() {
+        const {
+            email,
+            info,
+            errorMessage,
+            loading
+        } = this.state;
+
+        const {
+            url
+        } = this.props;
+
         return (
             <Layout>
                 <Grid>
                     <Grid.Row>
                         <Grid.Column width={16}>
-                            <Link to={`/projekt/${this.props.url.query.address}`}>
+                            <Link to={`/projekt/${url.query.address}`}>
                                 <a>
                                     <Button size='mini'>Zurück</Button>
                                 </a>
@@ -92,13 +102,13 @@ class Request extends Component {
                     </Grid.Row>
                 </Grid>
                 <h3>Bewerbungsdetails</h3>
-                <Form onSubmit={this.onSubmit} error={!!this.state.errorMessage}>
+                <Form onSubmit={this.onSubmit} error={!!errorMessage}>
                     <Form.Field>
                         <label>Email-Adresse</label>
                         <small>* erforderlich</small>
                         <Input
                             placeholder="johndoe@xyz.de"
-                            value={this.state.email}
+                            value={email}
                             onChange={event => this.setState({ email: event.target.value })}
                         />
                     </Form.Field>
@@ -106,12 +116,12 @@ class Request extends Component {
                         <label>Informationen</label>
                         <textarea
                             placeholder='Fragen, Anregungen, Hinweise,...'
-                            value={this.state.info}
+                            value={info}
                             onChange={event => this.setState({ info: event.target.value })}
                         />
                     </Form.Field>
-                    <Message error header='Fehler!' content={this.state.errorMessage.split('\n')[0]} />
-                    <Button loading={this.state.loading} type='submit' content='Bewerbung versenden' icon='check' primary />
+                    <Message error header='Fehler!' content={errorMessage.split('\n')[0]} />
+                    <Button loading={loading} type='submit' content='Bewerbung versenden' icon='check' primary />
                 </Form>
             </Layout>
         );

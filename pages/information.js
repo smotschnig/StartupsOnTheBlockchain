@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Layout from '../components/Layout';
 
 /**
- * '/Informationen'
+ * '/informationen'
  * informs the user about some details
  */
 class Information extends Component {

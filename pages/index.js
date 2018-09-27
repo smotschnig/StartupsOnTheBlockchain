@@ -8,15 +8,16 @@ import Profile from '../ethereum/profile';
 import ProjectRow from '../components/ProjectRow';
 
 /**
- * landing page
+ * '/'
+ * listing all projects
  */
 class StartupIndex extends Component {
     state = {
         hasMetaMask: undefined,
         showOpenProjects: true,
-        showAssignedProjects: true,
-        showUnderInvestigation: true,
-        showFinishedProjects: true
+        showAssignedProjects: false,
+        showUnderInvestigation: false,
+        showFinishedProjects: false
     };
 
     async componentDidMount() {
@@ -73,7 +74,7 @@ class StartupIndex extends Component {
         } catch (err) {
             console.log(err);
         }
-        
+
         return {
             projects
         };
@@ -127,7 +128,11 @@ class StartupIndex extends Component {
     }
 
     render() {
-        const { Header, Row, HeaderCell } = Table;
+        const {
+            Header,
+            Row,
+            HeaderCell
+        } = Table;
 
         return (
             <Layout>
@@ -143,13 +148,13 @@ class StartupIndex extends Component {
                     <Checkbox label='Offene Projekte' onChange={() => this.setState({ showOpenProjects: !this.state.showOpenProjects })} defaultChecked />
                 </span>
                 <span className="filter_checkbox">
-                    <Checkbox label='Vergebene Projekte' onChange={() => this.setState({ showAssignedProjects: !this.state.showAssignedProjects })} defaultChecked />
+                    <Checkbox label='Vergebene Projekte' onChange={() => this.setState({ showAssignedProjects: !this.state.showAssignedProjects })} />
                 </span>
                 <span className="filter_checkbox">
-                    <Checkbox label='Abgeschlossenene Projekte' onChange={() => this.setState({ showFinishedProjects: !this.state.showFinishedProjects })} defaultChecked />
+                    <Checkbox label='Abgeschlossenene Projekte' onChange={() => this.setState({ showFinishedProjects: !this.state.showFinishedProjects })} />
                 </span>
                 <span className="filter_checkbox">
-                    <Checkbox label='Gemeldete Projekte' onChange={() => this.setState({ showUnderInvestigation: !this.state.showUnderInvestigation })} defaultChecked />
+                    <Checkbox label='Gemeldete Projekte' onChange={() => this.setState({ showUnderInvestigation: !this.state.showUnderInvestigation })} />
                 </span>
                 <Table>
                     <Header>

@@ -8,7 +8,7 @@ import Profile from '../../../ethereum/profile';
 import factory from '../../../ethereum/factory';
 
 /**
- * 'Offene Projekte'
+ * '/projekte/:offen/:address'
  * user can see the projects which are not finished yet
  */
 class OpenProjects extends Component {
@@ -137,7 +137,12 @@ class OpenProjects extends Component {
     }
 
     render() {
-        const { Header, Row, HeaderCell, Body } = Table;
+        const {
+            Header,
+            Row,
+            HeaderCell
+        } = Table;
+        
         return (
             <Layout>
                 <h3>Eigene Projekte</h3>

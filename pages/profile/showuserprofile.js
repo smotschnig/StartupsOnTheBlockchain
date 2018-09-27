@@ -18,8 +18,15 @@ class ShowUserProfile extends Component {
         const managerAddress = props.query.address;
 
         /* gets project address from url */
-        const previousPage = window.location.href.split('/');
+        const previousPage = await window.location.href.split('/');
         const page = previousPage[4];
+
+        let checkedPreviousPage;
+        checkedPreviousPage = "/projekt/" + previousPage[4];
+
+        if (previousPage.length > 5) {
+            checkedPreviousPage = "/projekt/" + previousPage[4] + "/bewerberpool";
+        }
 
         const project = Project(page);
         const summary = await project.methods.getSummary().call();
@@ -40,7 +47,7 @@ class ShowUserProfile extends Component {
             memberSince: memberSince,
             rating: rating,
             ratingsCounter: ratingsCounter,
-            page: page
+            checkedPreviousPage: checkedPreviousPage
         };
     }
 
@@ -65,10 +72,10 @@ class ShowUserProfile extends Component {
             <Card.Group itemsPerRow={2}>
                 <ProfileCard header={fName + ' ' + lName} extra='Vorname' icon='user' />
                 <ProfileCard header={birthDate} extra='Geburtsdatum' icon='calendar' />
-                <ProfileCard header={<TimeConverter date={memberSince} isCard={true} />} extra='Mitglied seit' icon='calendar' />
+                <ProfileCard header={<TimeConverter date={memberSince} isCard={true} showTime={true} />} extra='Mitglied seit' icon='calendar' />
                 {startup != '' ? <ProfileCard header={startup} extra='Startup' icon='rocket' /> : null}
-                {education != '' ? <ProfileCard header={education} isTextArea={true} extra='Ausbildung' icon='book' /> : null}
-                {experience != '' ? <ProfileCard header={experience} isTextArea={true} extra='Erfahrung' icon='suitcase' /> : null}
+                {education != '' ? <ProfileCard header={education} extra='Ausbildung' icon='book' /> : null}
+                {experience != '' ? <ProfileCard header={experience} extra='Erfahrung' icon='suitcase' /> : null}
                 <ProfileCard header={<div><RatingStars averageRating={Math.floor(rating / ratingsCounter)} /> ({ratingsCounter})</div>} extra='Bewertung' icon='star' />
             </Card.Group>
         );
@@ -80,7 +87,7 @@ class ShowUserProfile extends Component {
                 <Grid>
                     <Grid.Row>
                         <Grid.Column width={16}>
-                            <Link to={`/projekt/${this.props.page}`}>
+                            <Link to={this.props.checkedPreviousPage}>
                                 <a>
                                     <Button size='mini'>Zurück</Button>
                                 </a>

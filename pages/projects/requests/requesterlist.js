@@ -1,81 +1,42 @@
 import React, { Component } from 'react';
 import Layout from '../../../components/Layout';
-import { Grid, Button, Form } from 'semantic-ui-react';
+import { Grid, Button, Table } from 'semantic-ui-react';
 import { Link } from '../../../routes';
-import { Card, Rating } from 'semantic-ui-react';
 import Project from '../../../ethereum/project';
 import factory from '../../../ethereum/factory';
 import Profile from '../../../ethereum/profile';
+import RequesterRow from '../../../components/RequesterRow';
 import web3 from '../../../ethereum/web3';
 
+/**
+ * '/projekt/:address/bebwerberpool'
+ * listing all applicants for the current project
+ * shows more information if user is applicant himself oder startup-manager
+ */
 class RequesterList extends Component {
-    // constructor(props) {
-    //     super(props);
-
-    //     this.state = {
-    //         requesterList: []
-    //     }
-    // }
-
-    // async componentDidMount() {
-    //     const project = Project(this.props.url.query.address);
-    //     const addresses = await project.methods.getRequesterList().call();
-    //     const requesterList = [];
-
-    //     for (let i = 0; i < addresses.length; i++) {
-    //         const profileAddress = await factory.methods.profileDeployedAddress(addresses[i]).call();
-    //         const profile = Profile(profileAddress);
-    //         console.log(profileAddress);
-
-    //         requesterList.push({
-    //             address: addresses[i],
-    //             rating:  await profile.methods.rating().call()
-    //         });
-    //     }
-
-
-    //     this.setState({ requesterList: requesterList });
-    // }
+    state = {
+        isManager: false,
+        hasRequester: false
+    }
 
     static async getInitialProps(props) {
         const project = Project(props.query.address);
         const addresses = await project.methods.getRequesterList().call();
-        console.log("addresses", addresses);
         let requesterList = [];
-
-        const projectManager = await project.methods.manager().call();
-        const accounts = await web3.eth.getAccounts();
-        let isManager = false;
-
-        // check if projectManager is current user (MetaMask)
-        if (projectManager === accounts[0]) {
-            isManager = true;
-        }
 
         for (let i = 0; i < addresses.length; i++) {
             const profileAddress = await factory.methods.profileDeployedAddress(addresses[i]).call();
             const profile = Profile(profileAddress);
             const getApplicantInformation = await project.methods.getApplicantInfo(addresses[i]).call();
-            const getProfileInfos = await profile.methods.getInstructor().call();
-
-            console.log(getApplicantInformation);
-            console.log(getApplicantInformation[2]);
-
-            let hasBeenChosen = 'false';
-            if (getApplicantInformation[2]) {
-                hasBeenChosen = 'true';
-            }
 
             requesterList.push({
                 address: addresses[i],
                 rating: await profile.methods.rating().call(),
                 ratingsCounter: await profile.methods.ratingsCounter().call(),
                 profile: profileAddress,
-                skills: getProfileInfos[5],
-                isManager: isManager,
                 email: getApplicantInformation[0],
                 info: getApplicantInformation[1],
-                chosen: hasBeenChosen
+                project: project
             });
         }
 
@@ -84,64 +45,90 @@ class RequesterList extends Component {
         };
     }
 
-    chooseRequester = async (address) => {
-        const project = Project(this.props.url.query.address);
+    async componentDidMount() {
         const accounts = await web3.eth.getAccounts();
-        await project.methods
-            .chooseRequester(address)
-            .send({
-                from: accounts[0]
-            });
+        const project = Project(this.props.url.query.address);
+        const projectManager = await project.methods.manager().call();
+        const addresses = await project.methods.getRequesterList().call();
+
+        if (addresses.length !== 0) {
+            this.setState({ hasRequester: true });
+        }
+
+        if (accounts[0] === projectManager) {
+            this.setState({ isManager: true });
+        }
     }
 
-    renderRequesterList() {
-        const requester = this.props.requesterList.map(requester => {
-            return {
-                key: requester.address,
-                header: requester.address,
-                description:
-                    (requester.isManager) ?
-                        <div>
-                            <p>Skills: {requester.skills}</p>
-                            <p>Email: {requester.email}</p>
-                            <p>Info: {requester.info}</p>
-                            <p>HasBeenChosen: {requester.chosen}</p>
-                        </div>
-                        : <p>Skills: {requester.skills}</p>,
-                meta:
-                    (<div>
-                        <Rating
-                            defaultRating={requester.rating}
-                            maxRating={5}
-                            disabled
-                        /><span>({requester.ratingsCounter})</span>
-                    </div>),
-                extra:
-                    (requester.isManager) ?
-                        <div className="requesterlist">
-                            <Link
-                                route={`/bewerberpool/${requester.address}`}>
-                                <a><Button primary type='submit' icon='eye' content='Profil ansehen' /></a>
-                            </Link>
+    renderVisitorRows() {
+        return this.props.requesterList.slice(0).reverse().map((applicant, index) => {
+            const {
+                address,
+                rating,
+                ratingsCounter
+            } = applicant;
 
-                            <Form onSubmit={() => this.chooseRequester(requester.address)}>
-                                <Button primary type='submit' icon='add circle' content='Bewerber auswählen' />
-                            </Form>
-                        </div>
-                        : '',
-                style: { overflowWrap: 'break-word' }
-            };
+            const { isManager } = this.state;
+
+            return (
+                <RequesterRow
+                    key={index}
+                    address={address}
+                    rating={rating}
+                    ratingsCounter={ratingsCounter}
+                    isManager={isManager}
+                />
+            );
         });
-        return <Card.Group items={requester} itemsPerRow={1} />
+    }
+
+    renderManagerRows() {
+        return this.props.requesterList.slice(0).reverse().map((applicant, index) => {
+            const {
+                address,
+                rating,
+                ratingsCounter,
+                profile,
+                email,
+                info,
+                project
+            } = applicant;
+
+            const { isManager } = this.state;
+
+            return (
+                <RequesterRow
+                    key={index}
+                    address={address}
+                    rating={rating}
+                    ratingsCounter={ratingsCounter}
+                    isManager={isManager}
+                    profile={profile}
+                    email={email}
+                    info={info}
+                    project={project}
+                />
+            );
+        });
     }
 
     render() {
+        const {
+            Header,
+            Row,
+            HeaderCell
+        } = Table;
+
+        const { isManager, hasRequester } = this.state;
+
+        const { url } = this.props;
+
         return (
             <Layout>
                 <Grid>
                     <Grid.Row>
                         <Grid.Column width={16}>
-                            <Link to={`/projekt/${this.props.url.query.address}`}>
+                            <Link to={`/projekt/${url.query.address}`}>
                                 <a>
                                     <Button size='mini'>Zurück</Button>
                                 </a>
@@ -150,7 +137,33 @@ class RequesterList extends Component {
                     </Grid.Row>
                 </Grid>
                 <h3>Bewerberpool</h3>
-                {this.renderRequesterList()}
+                {hasRequester ?
+                    isManager ?
+                        <Table>
+                            <Header>
+                                <Row>
+                                    <HeaderCell>Bewerber</HeaderCell>
+                                    <HeaderCell>Bewertung</HeaderCell>
+                                    <HeaderCell>Email</HeaderCell>
+                                    <HeaderCell>Info</HeaderCell>
+                                    <HeaderCell>Details</HeaderCell>
+                                </Row>
+                            </Header>
+                            {this.renderManagerRows()}
+                        </Table>
+                        :
+                        <Table>
+                            <Header>
+                                <Row>
+                                    <HeaderCell>Bewerber</HeaderCell>
+                                    <HeaderCell>Bewertung</HeaderCell>
+                                </Row>
+                            </Header>
+                            {this.renderVisitorRows()}
+                        </Table>
+                    :
+                    <p>Es liegt noch keine Bewerbung vor.</p>
+                }
             </Layout>
         );
     }

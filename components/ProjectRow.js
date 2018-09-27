@@ -1,29 +1,12 @@
 import React, { Component } from 'react';
 import { Table, Button, Icon, Label } from 'semantic-ui-react';
 import web3 from '../ethereum/web3';
-import moment from 'moment';
 import { Link } from '../routes';
 import RatingStars from './RatingStars';
 import LinkConnector from './LinkConnector';
 import TimeConverter from './TimeConverter';
 
 class ProjectRow extends Component {
-    /**
-     * if project is not finished yet or under investigation, user can view some details
-     */
-    viewProject(address) {
-        <Link route={`/projekt/${address}`}>
-            <a>Projekt ansehen</a>
-        </Link>
-    };
-
-    /**
-     * formatted date (german style)
-     */
-    timeConverter(timestamp) {
-        var date = moment.unix(timestamp);
-        return date.format("DD.MM.YYYY");
-    }
 
     renderIndexRow() {
         const { Row, Cell } = Table;
@@ -51,19 +34,27 @@ class ProjectRow extends Component {
         if ((showUnderInvestigation && underInvestigation) ||
             (showFinishedProjects && isFinished) ||
             (showOpenProjects && !isFinished && isOpen) ||
-            (showAssignedProjects && !isOpen)) {
+            (showAssignedProjects && !isOpen && !underInvestigation && !isFinished)) {
             return (
-                <Row disabled={isFinished} negative={underInvestigation}>
+                <Row disabled={isFinished} negative={underInvestigation} positive={isOpen}>
                     <Cell>{startup}</Cell>
                     <Cell><RatingStars averageRating={Math.floor(rating / ratingsCounter)} /> ({ratingsCounter})</Cell>
                     <Cell>{title}</Cell>
                     <Cell>{web3.utils.fromWei(wage, 'ether')}</Cell>
                     <Cell><TimeConverter date={date} /></Cell>
-                    <Cell>
-                        {isFinished || !hasMetaMask ? null :
-                            <LinkConnector button={true} route={`/projekt/${address}`} text='Projekt ansehen' />
-                        }
-                    </Cell>
+                    {isOpen ?
+                        <Cell>
+                            {isFinished || !hasMetaMask ? null :
+                                <LinkConnector button={true} color={'green'} route={`/projekt/${address}`} text='Projekt ansehen' />
+                            }
+                        </Cell>
+                        :
+                        <Cell>
+                            {isFinished || !hasMetaMask ? null :
+                                <LinkConnector button={true} color={'grey'} route={`/projekt/${address}`} text='Projekt ansehen' />
+                            }
+                        </Cell>
+                    }
                 </Row>
             );
         }
@@ -96,24 +87,22 @@ class ProjectRow extends Component {
         if ((showUnderInvestigation && underInvestigation) ||
             (showFinishedProjects && isFinished) ||
             (showOpenProjects && !isFinished && isOpen) ||
-            (showAssignedProjects && !isOpen)) {
+            (showAssignedProjects && !isOpen && !underInvestigation && !isFinished)) {
             return (
-                <Row disabled={isFinished} negative={underInvestigation} >
+                <Row disabled={isFinished} negative={underInvestigation} positive={isOpen}>
                     <Cell>{startup}</Cell>
                     <Cell><RatingStars averageRating={Math.floor(rating / ratingsCounter)} /> ({ratingsCounter})</Cell>
                     <Cell>{title}</Cell>
                     <Cell>{web3.utils.fromWei(wage, 'ether')}</Cell>
-                    <Cell>{this.timeConverter(date)}</Cell>
-                    <Cell>{finalizedByFreelancer ? <Icon name="check" /> : <Label size="tiny" >pending...</Label>}</Cell>
-                    <Cell>{finalizedByStartup ? <Icon name="check" centered /> : <Label size="tiny" >pending...</Label>}</Cell>
+                    <Cell><TimeConverter date={date} /></Cell>
+                    <Cell>{finalizedByFreelancer ? <Icon name="check" /> : null}</Cell>
+                    <Cell>{finalizedByStartup ? <Icon name="check" /> : null}</Cell>
                     <Cell>
-                        {isFinished ? null :
-                            <Link route={`/projekt/${address}`}>
-                                <a>
-                                    <Button color="green" basic>Projekt ansehen</Button>
-                                </a>
-                            </Link>
-                        }
+                        <Cell>
+                            {isFinished ? null :
+                                <LinkConnector button={true} color={'green'} route={`/projekt/${address}`} text='Projekt ansehen' />
+                            }
+                        </Cell>
                     </Cell>
                 </Row>
             );
