@@ -3,7 +3,7 @@ a blockchain-based startup webplatform
 
 ---
 
-#### Demo (Live-Preview - 05/09/2018)
+#### Demo (Live-Preview - 28/09/2018)
 <https://startupsontheblockchain-izigzfhyzn.now.sh/>
 
 ---
