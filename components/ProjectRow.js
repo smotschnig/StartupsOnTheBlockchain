@@ -98,11 +98,9 @@ class ProjectRow extends Component {
                     <Cell>{finalizedByFreelancer ? <Icon name="check" /> : null}</Cell>
                     <Cell>{finalizedByStartup ? <Icon name="check" /> : null}</Cell>
                     <Cell>
-                        <Cell>
-                            {isFinished ? null :
-                                <LinkConnector button={true} color={'green'} route={`/projekt/${address}`} text='Projekt ansehen' />
-                            }
-                        </Cell>
+                        {isFinished ? null :
+                            <LinkConnector button={true} color={'green'} route={`/projekt/${'eigenes'}/${address}`} text='Projekt ansehen' />
+                        }
                     </Cell>
                 </Row>
             );

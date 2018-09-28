@@ -77,6 +77,7 @@ class RequesterList extends Component {
                     rating={rating}
                     ratingsCounter={ratingsCounter}
                     isManager={isManager}
+                    projectAddress={this.props.url.query.address}
                 />
             );
         });
@@ -107,6 +108,7 @@ class RequesterList extends Component {
                     email={email}
                     info={info}
                     project={project}
+                    projectAddress={this.props.url.query.address}
                 />
             );
         });

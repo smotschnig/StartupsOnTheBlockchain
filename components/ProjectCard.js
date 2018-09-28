@@ -11,14 +11,14 @@ const {
 const ProjectCard = ({ startup, title, deadline, wage, date }) => (
     <Group itemsPerRow={3}>
         <Card>
-            <Content header={startup} />
+            <Content header={title} />
             <Content extra>
                 Gesuchte Berufsbezeichnung
         </Content>
         </Card>
 
         <Card>
-            <Content header={title} />
+            <Content header={startup} />
             <Content extra>
                 Name des Startups
         </Content>

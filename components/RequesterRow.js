@@ -57,12 +57,13 @@ class RequesterRow extends Component {
             rating,
             ratingsCounter,
             email,
-            info
+            info,
+            projectAddress
         } = this.props;
 
         return (
             <Row>
-                <Cell><LinkConnector route={`/profil/benutzer/${address}`} text={address} label={true} icon='address card' /></Cell>
+                <Cell><LinkConnector route={`/projekt/${projectAddress}/${'bewerber'}/${address}`} text={address} label={true} icon='address card' /></Cell>
                 <Cell><RatingStars averageRating={Math.floor(rating / ratingsCounter)} /> ({ratingsCounter})</Cell>
                 <Cell>{email}</Cell>
                 <Cell>{info}</Cell>

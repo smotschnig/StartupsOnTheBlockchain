@@ -1,10 +1,7 @@
 import React, { Component } from 'react'
 import Layout from '../../../components/Layout';
-import RatingStars from '../../../components/RatingStars';
 import { Input, Form, Message, Button } from 'semantic-ui-react';
-import { Link } from '../../../routes';
 import web3 from '../../../ethereum/web3';
-import moment from 'moment';
 import Project from '../../../ethereum/project';
 import Profile from '../../../ethereum/profile';
 import factory from '../../../ethereum/factory';
@@ -84,10 +81,12 @@ class FinalizeProject extends Component {
     render() {
         return (
             <Layout>
+                <h3>Projekt beenden</h3>
                 <Form onSubmit={this.onSubmit} error={!!this.state.errorMessage}>
                     <Form.Field>
-                        <label>Bewertung</label>
-                        <small>* erforderlich</small>
+                        <label>Bewerten Sie die Zusammenarbeit im Projekt</label>
+                        <small>* erforderlich</small><br />
+                        <small>0 = sehr schlecht, 5 = sehr gut</small>
                         <Input
                             placeholder="1"
                             value={this.state.rating}

@@ -15,20 +15,27 @@ import TimeConverter from '../../components/TimeConverter';
  */
 class ShowUserProfile extends Component {
     static async getInitialProps(props) {
+
+        console.log(props);
+
         const managerAddress = props.query.address;
 
         /* gets project address from url */
-        const previousPage = await window.location.href.split('/');
-        const page = previousPage[4];
+        const projectAddress = props.query.projectaddress;
+        let fromApplicantPool = false;
 
-        let checkedPreviousPage;
-        checkedPreviousPage = "/projekt/" + previousPage[4];
-
-        if (previousPage.length > 5) {
-            checkedPreviousPage = "/projekt/" + previousPage[4] + "/bewerberpool";
+        if (props.query.bewerber === '' || props.query.bewerber === null) {
+            fromApplicantPool = true;
         }
 
-        const project = Project(page);
+        // let checkedPreviousPage;
+        // checkedPreviousPage = "/projekt/" + previousPage[4];
+
+        // if (previousPage.length > 5) {
+        //     checkedPreviousPage = "/projekt/" + previousPage[4] + "/bewerberpool";
+        // }
+
+        const project = Project(projectAddress);
         const summary = await project.methods.getSummary().call();
         const profileAddress = await factory.methods.profileDeployedAddress(managerAddress).call();
         const profile = Profile(profileAddress);
@@ -47,7 +54,8 @@ class ShowUserProfile extends Component {
             memberSince: memberSince,
             rating: rating,
             ratingsCounter: ratingsCounter,
-            checkedPreviousPage: checkedPreviousPage
+            projectAddress: projectAddress,
+            fromApplicantPool: fromApplicantPool
         };
     }
 
@@ -87,11 +95,19 @@ class ShowUserProfile extends Component {
                 <Grid>
                     <Grid.Row>
                         <Grid.Column width={16}>
-                            <Link to={this.props.checkedPreviousPage}>
-                                <a>
-                                    <Button size='mini'>Zurück</Button>
-                                </a>
-                            </Link>
+                            {this.props.fromApplicantPool ?
+                                <Link to={`/projekt/${this.props.projectAddress}/bewerberpool`}>
+                                    <a>
+                                        <Button size='mini'>Zurück</Button>
+                                    </a>
+                                </Link>
+                                :
+                                <Link to={`/projekt/${this.props.projectAddress}`}>
+                                    <a>
+                                        <Button size='mini'>Zurück</Button>
+                                    </a>
+                                </Link>
+                            }
                         </Grid.Column>
                     </Grid.Row>
                 </Grid>

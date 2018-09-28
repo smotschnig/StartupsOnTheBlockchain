@@ -31,6 +31,13 @@ class ProjectShow extends Component {
         const projectIsOpen = await project.methods.isOpen().call();
         const projectIsFinished = await project.methods.isFinished().call();
         const projectUnderInvestigation = await project.methods.underInvestigation().call();
+        const accounts = await web3.eth.getAccounts();
+        const visitorAddress = accounts[0];
+
+        let fromOpen = false;
+        if (props.query.eigenes !== '' || props.query.eigenes !== null) {
+            fromOpen = true;
+        }
 
         return {
             address: props.query.address,
@@ -45,7 +52,9 @@ class ProjectShow extends Component {
             projectIsOpen: projectIsOpen,
             projectIsFinished: projectIsFinished,
             projectUnderInvestigation: projectUnderInvestigation,
-            requesterNumber: requesterNumber
+            requesterNumber: requesterNumber,
+            fromOpen: fromOpen,
+            visitorAddress: visitorAddress
         };
     }
 
@@ -194,7 +203,7 @@ class ProjectShow extends Component {
                 <div className="interaction_button">
                     <Form error={!!errorMessage}>
                         <Message error content={errorMessage.split('\n')[0]} />
-                        <Link route={`/projekt/${address}/beenden`}>
+                        <Link route={`/projekte/offen/${address}/beenden`}>
                             <a><Button color='green' basic>Projekt beenden</Button></a>
                         </Link>
                         <Button
@@ -212,7 +221,8 @@ class ProjectShow extends Component {
 
     managerButtons() {
         const {
-            address
+            address,
+            requesterNumber
         } = this.props;
 
         const {
@@ -227,7 +237,10 @@ class ProjectShow extends Component {
                 <div className="interaction_button">
                     <Form error={!!errorMessage}>
                         <Message error content={errorMessage.split('\n')[0]} />
-                        <Link route={`/projekt/${address}/beenden`}>
+                        <Link route={`/projekt/${address}/bewerberpool`}>
+                            <a><Button color='green' basic>Bewerberpool ({(requesterNumber)})</Button></a>
+                        </Link>
+                        <Link route={`/projekte/offen/${address}/beenden`}>
                             <a><Button color='green' basic>Projekt beenden</Button></a>
                         </Link>
                         <Button
@@ -238,7 +251,7 @@ class ProjectShow extends Component {
                             onClick={() => this.callInvestigator()} />
                         <Popup
                             trigger={<Button loading={cancelLoading} negative content='Projekt abbrechen' />}
-                            content={<Button color='red' content='Sind Sie sicher?' onClick={() => this.cancelProject()} error={!!errorMessage} />}
+                            content={<Button color='red' content='Sind Sie sicher?' onClick={() => this.cancelProject()} />}
                             on='click'
                             position='top center'
                         />
@@ -285,7 +298,9 @@ class ProjectShow extends Component {
     render() {
         const {
             description,
-            manager
+            manager,
+            fromOpen,
+            visitorAddress
         } = this.props;
 
         const {
@@ -298,9 +313,15 @@ class ProjectShow extends Component {
                 <Grid>
                     <Grid.Row>
                         <Grid.Column width={16}>
-                            <Link to="/">
-                                <a><Button size='mini'>Zurück</Button></a>
-                            </Link>
+                            {fromOpen ?
+                                <Link to={`/projekte/offen/${visitorAddress}`} >
+                                    <a><Button size='mini'>Zurück</Button></a>
+                                </Link>
+                                :
+                                <Link to="/">
+                                    <a><Button size='mini'>Zurück</Button></a>
+                                </Link>
+                            }
                         </Grid.Column>
                     </Grid.Row>
                 </Grid>
@@ -326,7 +347,7 @@ class ProjectShow extends Component {
                     </Grid.Row>
                     <Grid.Row>
                         <Grid.Column width={8}>
-                            <LinkConnector route={`/profil/benutzer/${manager}`} text={manager} label={true} icon='address card' />
+                            <LinkConnector route={`/projekt/${this.props.url.query.address}/${manager}`} text={manager} label={true} icon='address card' />
                         </Grid.Column>
                     </Grid.Row>
                     <Grid.Row>
