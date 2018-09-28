@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { Table, Button, Icon, Label } from 'semantic-ui-react';
+import { Table, Icon } from 'semantic-ui-react';
 import web3 from '../ethereum/web3';
-import { Link } from '../routes';
 import RatingStars from './RatingStars';
 import LinkConnector from './LinkConnector';
 import TimeConverter from './TimeConverter';
@@ -99,7 +98,7 @@ class ProjectRow extends Component {
                     <Cell>{finalizedByStartup ? <Icon name="check" /> : null}</Cell>
                     <Cell>
                         {isFinished ? null :
-                            <LinkConnector button={true} color={'green'} route={`/projekt/${'eigenes'}/${address}`} text='Projekt ansehen' />
+                            <LinkConnector button={true} color={'green'} route={`/projekt/${address}`} text='Projekt ansehen' />
                         }
                     </Cell>
                 </Row>

@@ -15,9 +15,6 @@ import TimeConverter from '../../components/TimeConverter';
  */
 class ShowUserProfile extends Component {
     static async getInitialProps(props) {
-
-        console.log(props);
-
         const managerAddress = props.query.address;
 
         /* gets project address from url */
@@ -27,13 +24,6 @@ class ShowUserProfile extends Component {
         if (props.query.bewerber === '' || props.query.bewerber === null) {
             fromApplicantPool = true;
         }
-
-        // let checkedPreviousPage;
-        // checkedPreviousPage = "/projekt/" + previousPage[4];
-
-        // if (previousPage.length > 5) {
-        //     checkedPreviousPage = "/projekt/" + previousPage[4] + "/bewerberpool";
-        // }
 
         const project = Project(projectAddress);
         const summary = await project.methods.getSummary().call();

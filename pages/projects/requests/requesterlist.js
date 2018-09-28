@@ -16,7 +16,8 @@ import web3 from '../../../ethereum/web3';
 class RequesterList extends Component {
     state = {
         isManager: false,
-        hasRequester: false
+        hasRequester: false,
+        projectIsOpen: true
     }
 
     static async getInitialProps(props) {
@@ -50,6 +51,10 @@ class RequesterList extends Component {
         const project = Project(this.props.url.query.address);
         const projectManager = await project.methods.manager().call();
         const addresses = await project.methods.getRequesterList().call();
+
+        if (!await project.methods.isOpen().call()) {
+            this.setState({ projectIsOpen: false });
+        }
 
         if (addresses.length !== 0) {
             this.setState({ hasRequester: true });
@@ -95,7 +100,10 @@ class RequesterList extends Component {
                 project
             } = applicant;
 
-            const { isManager } = this.state;
+            const {
+                isManager,
+                projectIsOpen
+            } = this.state;
 
             return (
                 <RequesterRow
@@ -109,6 +117,7 @@ class RequesterList extends Component {
                     info={info}
                     project={project}
                     projectAddress={this.props.url.query.address}
+                    projectIsOpen={projectIsOpen}
                 />
             );
         });

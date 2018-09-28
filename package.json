@@ -2,10 +2,6 @@
   "name": "startupsontheblockchain",
   "version": "1.0.0",
   "description": "a blockchain-based startup webplatform",
-  "engines": {
-    "node": "8.9.4",
-    "npm": "6.2.0"
-  },
   "now": {
     "alias": "sotb-uni-siegen"
   },
@@ -14,7 +10,7 @@
     "test": "mocha",
     "dev": "node server.js",
     "build": "next build",
-    "start": "SET NODE_ENV=production && node server.js"
+    "start": "NODE_ENV=production node server.js"
   },
   "keywords": [
     "react",

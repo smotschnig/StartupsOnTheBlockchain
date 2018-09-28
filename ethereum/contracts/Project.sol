@@ -142,7 +142,6 @@ contract ProjectInstance {
         require(msg.sender == manager || msg.sender == project.chosenFreelancer);
         require(!isFinished);
         require(!underInvestigation);
-        require(project.chosenFreelancer != 0);
         underInvestigation = true;
         isOpen = false;
     }

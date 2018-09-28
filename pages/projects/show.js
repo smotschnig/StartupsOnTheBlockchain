@@ -3,6 +3,7 @@ import { Grid, Button, TextArea, Form, Message, Popup } from 'semantic-ui-react'
 import Layout from '../../components/Layout';
 import Project from '../../ethereum/project';
 import { Link } from '../../routes';
+import { Router } from '../../routes';
 import web3 from '../../ethereum/web3';
 import LinkConnector from '../../components/LinkConnector';
 import ProjectCard from '../../components/ProjectCard';
@@ -15,13 +16,12 @@ import ProjectCard from '../../components/ProjectCard';
  */
 class ProjectShow extends Component {
     state = {
-        address: undefined,
         isFreelancer: false,
         isManager: false,
         loading: false,
         cancelLoading: false,
         errorMessage: '',
-        errorOccured: false
+        errorOccured: false,
     }
 
     static async getInitialProps(props) {
@@ -34,9 +34,14 @@ class ProjectShow extends Component {
         const accounts = await web3.eth.getAccounts();
         const visitorAddress = accounts[0];
 
-        let fromOpen = false;
-        if (props.query.eigenes !== '' || props.query.eigenes !== null) {
-            fromOpen = true;
+        let fromLandingPage = true;
+        if (props.query.eigenes !== undefined) {
+            fromLandingPage = false;
+        }
+
+        let freelancerChosen = false;
+        if (summary[6] !== '0x0000000000000000000000000000000000000000') {
+            freelancerChosen = true;
         }
 
         return {
@@ -53,8 +58,9 @@ class ProjectShow extends Component {
             projectIsFinished: projectIsFinished,
             projectUnderInvestigation: projectUnderInvestigation,
             requesterNumber: requesterNumber,
-            fromOpen: fromOpen,
-            visitorAddress: visitorAddress
+            fromLandingPage: fromLandingPage,
+            visitorAddress: visitorAddress,
+            freelancerChosen: freelancerChosen
         };
     }
 
@@ -177,10 +183,10 @@ class ProjectShow extends Component {
             return (
                 <div className="interaction_button">
                     <Link route={`/projekt/${address}/bewerbung`}>
-                        <a><Button primary>Bewerbung einreichen</Button></a>
+                        <a><Button color='green' basic>Bewerbung einreichen</Button></a>
                     </Link>
                     <Link route={`/projekt/${address}/bewerberpool`}>
-                        <a><Button primary>Bewerberpool ({(requesterNumber)})</Button></a>
+                        <a><Button color='green' basic>Bewerberpool ({(requesterNumber)})</Button></a>
                     </Link>
                 </div>
             );
@@ -189,7 +195,8 @@ class ProjectShow extends Component {
 
     freelancerButtons() {
         const {
-            address
+            address,
+            projectUnderInvestigation
         } = this.props;
 
         const {
@@ -203,9 +210,13 @@ class ProjectShow extends Component {
                 <div className="interaction_button">
                     <Form error={!!errorMessage}>
                         <Message error content={errorMessage.split('\n')[0]} />
-                        <Link route={`/projekte/offen/${address}/beenden`}>
-                            <a><Button color='green' basic>Projekt beenden</Button></a>
-                        </Link>
+                        {!projectUnderInvestigation ?
+                            <Link route={`/projekte/${address}/beenden`}>
+                                <a><Button color='green' basic>Projekt beenden</Button></a>
+                            </Link>
+                            :
+                            null
+                        }
                         <Button
                             loading={loading}
                             color="orange"
@@ -222,7 +233,9 @@ class ProjectShow extends Component {
     managerButtons() {
         const {
             address,
-            requesterNumber
+            requesterNumber,
+            freelancerChosen,
+            projectUnderInvestigation
         } = this.props;
 
         const {
@@ -240,7 +253,7 @@ class ProjectShow extends Component {
                         <Link route={`/projekt/${address}/bewerberpool`}>
                             <a><Button color='green' basic>Bewerberpool ({(requesterNumber)})</Button></a>
                         </Link>
-                        <Link route={`/projekte/offen/${address}/beenden`}>
+                        <Link route={`/projekte/${address}/beenden`}>
                             <a><Button color='green' basic>Projekt beenden</Button></a>
                         </Link>
                         <Button
@@ -299,7 +312,7 @@ class ProjectShow extends Component {
         const {
             description,
             manager,
-            fromOpen,
+            fromLandingPage,
             visitorAddress
         } = this.props;
 
@@ -313,8 +326,8 @@ class ProjectShow extends Component {
                 <Grid>
                     <Grid.Row>
                         <Grid.Column width={16}>
-                            {fromOpen ?
-                                <Link to={`/projekte/offen/${visitorAddress}`} >
+                            {!fromLandingPage ?
+                                <Link to={`/projekte/${visitorAddress}`} >
                                     <a><Button size='mini'>Zurück</Button></a>
                                 </Link>
                                 :

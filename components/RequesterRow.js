@@ -58,11 +58,12 @@ class RequesterRow extends Component {
             ratingsCounter,
             email,
             info,
-            projectAddress
+            projectAddress,
+            projectIsOpen
         } = this.props;
 
         return (
-            <Row>
+            <Row disabled={!projectIsOpen}>
                 <Cell><LinkConnector route={`/projekt/${projectAddress}/${'bewerber'}/${address}`} text={address} label={true} icon='address card' /></Cell>
                 <Cell><RatingStars averageRating={Math.floor(rating / ratingsCounter)} /> ({ratingsCounter})</Cell>
                 <Cell>{email}</Cell>
@@ -83,6 +84,7 @@ class RequesterRow extends Component {
         return (
             <Body>
                 {isManager ? this.renderManagerRequesterRow() : this.renderVisitorRequesterRow()}
+                {console.log("asd", this.props.projectIsOpen)}
             </Body>
         );
     }

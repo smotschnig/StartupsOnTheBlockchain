@@ -4,7 +4,7 @@ a blockchain-based startup webplatform
 ---
 
 #### Demo (Live-Preview - 05/09/2018)
-<https://startupsontheblockchain-aimlcxvwnl.now.sh/>
+<https://startupsontheblockchain-izigzfhyzn.now.sh/>
 
 ---
 
@@ -47,15 +47,15 @@ If there are problems with npm install on Windows, you have to install additiona
 * ~~Möglichkeit bieten, Projekt zu melden (Schlechtleistung, keine Rückmeldungen, etc., gemeldetes Projekt markieren)~~
 * ~~Abgeschlossene Projekte markieren (entweder ausblenden oder seperate Liste)~~
 * ~~Bewertungssystem im Front-End implementieren und Durchschnitt berechnen (mit Sternbewertung darstellen)~~
-* Zurück-Button anpassen beim Betrachten des Manager-Profils im jeweiligen Projekt (Problem: Prop funktioniert bei next-routes nicht, daher wird Profil-Adresse übergeben, nicht aber Projekt-Adresse (Mapping nicht möglich, wenn Startup mehrere Projekte erstellt hat))
+* ~~Zurück-Button anpassen beim Betrachten des Manager-Profils im jeweiligen Projekt (Problem: Prop funktioniert bei next-routes nicht, daher wird Profil-Adresse übergeben, nicht aber Projekt-Adresse (Mapping nicht möglich, wenn Startup mehrere Projekte erstellt hat))~~
 * Code kommentieren
 
 ##### *should-have*:
 * Loader während Rendering erstellen (Seite im Hintergrund erst vollständig laden und erst anschließend anzeigen)
 * Wenn Freelancer von Startup ausgewählt, Kommunikationsplattform bieten und Projekt nicht als offen auf Startseite anzeigen
 * Pop-Ups bzw. Benachrichtigungen an jeweiligen Benutzer (z.B. Nachricht an Freelancer, wenn dieser für Projekt ausgewählt worden ist)
-* Freelancer die Möglichkeit bieten, von einem Projekt zurückzutreten (Projekt beenden und ETH zurück an Startup)
 * Sicherheitsaspekte: teilweise Validationen nur im Front-End, könnten u. U. ausgehebelt werden
+* Geschwindigkeit optimieren
 
 ##### *could-have*:
 * Front-End anpassen, Semantic UI React optimieren -> Design-Optimierung
@@ -68,3 +68,4 @@ If there are problems with npm install on Windows, you have to install additiona
 * Console-Ausgabe deaktivieren, Webpack listet durchgehend Informationen
 * verschiedene Validationen: z.B. E-Mail-Überprüfung
 * Dropdowns und sonstige Vorlagen für Forms erstellen
+* Link-Zurück über "Offene Projekte" optimieren, bisher landet man auf Landing Page

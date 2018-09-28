@@ -3,11 +3,13 @@ const routes = require('next-routes')();
 routes
     .add('/projekt/neu', '/projects/new')
     .add('/projekt/:address', '/projects/show')
-    .add('/projekt/:eigenes/:address', '/projects/show')
+    // irgendwas crash hier wenn aktiviert ist...
+    // soll zurück-button in show zu eigenen projekten weiterleiten
+    // .add('/projekt/:eigenes/:address', '/projects/show')
     .add('/projekt/:address/bewerbung', '/projects/requests/request')
     .add('/projekt/:address/bewerberpool', '/projects/requests/requesterlist')
-    .add('/projekte/offen/:address', '/projects/status/open')
-    .add('/projekte/offen/:address/beenden', '/projects/status/finalize')
+    .add('/projekte/:address', '/projects/status/open')
+    .add('/projekte/:address/beenden', '/projects/status/finalize')
     .add('/bewerberpool/:address', '/profile/showuserprofile')
     .add('/profil/:address', '/profile/userprofile')
     .add('/profil/benutzer/:address', '/profile/showuserprofile')
@@ -16,3 +18,4 @@ routes
     .add('/informationen', '/information')
 
 module.exports = routes;
+

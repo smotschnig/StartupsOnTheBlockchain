@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import { Card } from 'semantic-ui-react';
 import TimeConverter from './TimeConverter';
 import web3 from '../ethereum/web3';

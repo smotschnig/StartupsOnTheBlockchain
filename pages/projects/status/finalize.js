@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import Layout from '../../../components/Layout';
-import { Input, Form, Message, Button } from 'semantic-ui-react';
+import { Input, Form, Message, Button, Dropdown } from 'semantic-ui-react';
+import { Router } from '../../../routes';
 import web3 from '../../../ethereum/web3';
 import Project from '../../../ethereum/project';
 import Profile from '../../../ethereum/profile';
@@ -8,93 +9,158 @@ import factory from '../../../ethereum/factory';
 
 class FinalizeProject extends Component {
     state = {
-        rating: 0,
+        rating: '',
         errorMessage: '',
+        successMessage: '',
+        errorOccured: false,
         loading: false
     };
 
     static async getInitialProps(props) {
-        const project = Project(props.query.address);
-
+        const projectAddress = props.query.address;
+        const project = Project(projectAddress);
         const accounts = await web3.eth.getAccounts();
         const currentUser = accounts[0];
         const manager = await project.methods.manager().call();
-        console.log("m", manager);
         const summary = await project.methods.getSummary().call();
-        const freelancer = summary[7];
+        const wage = summary[5];
+        const finalizedByFreelancer = await project.methods.finalizedByFreelancer().call();
+        const finalizedByStartup = await project.methods.finalizedByStartup().call();
+        const freelancer = summary[6];
         const noFreelancerChosen = '0x0000000000000000000000000000000000000000';
+
         let freelancerProfileAddress;
-        if (summary[7] !== noFreelancerChosen) {
-            console.log("f", freelancer);
+        if (summary[6] !== noFreelancerChosen) {
             const profileFreelancerAddress = await factory.methods.profileDeployedAddress(freelancer).call();
             const freelancerProfile = Profile(profileFreelancerAddress);
             freelancerProfileAddress = freelancerProfile._address;
-            console.log("freelancerProfileAddress", freelancerProfileAddress);
         }
 
         const profileManagerAddress = await factory.methods.profileDeployedAddress(manager).call();
         const managerProfile = Profile(profileManagerAddress);
         const managerProfileAddress = managerProfile._address;
-        console.log("managerProfileAddress", managerProfileAddress);
 
         return {
             accounts,
             project,
             currentUser,
             manager,
+            wage,
             freelancer,
             freelancerProfileAddress,
-            managerProfileAddress
+            finalizedByFreelancer,
+            finalizedByStartup,
+            managerProfileAddress,
+            projectAddress
         };
     }
 
     onSubmit = async event => {
         event.preventDefault();
 
-        this.setState({ loading: true, errorMessage: '' });
+        this.setState({ loading: true, errorMessage: '', successMessage: '' });
+
+        const {
+            projectAddress,
+            finalizedByFreelancer,
+            finalizedByStartup,
+            wage
+        } = this.props;
 
         try {
             if (this.props.currentUser === this.props.manager) {
-                console.log(this.state.rating);
-                console.log("freelancerAdd", this.props.freelancerProfileAddress);
-                await this.props.project.methods.finalizeProjectAsStartup(this.props.freelancerProfileAddress, this.state.rating).send({
-                    from: this.props.accounts[0]
-                });
+
+                if (finalizedByStartup) {
+                    this.setState({ errorMessage: 'Sie haben das Projekt bereits beendet.', errorOccured: true });
+                }
+
+                if (!finalizedByFreelancer) {
+                    this.setState({ errorMessage: 'Der ausgewählte Freelancer muss das Projekt erst beenden.', errorOccured: true });
+                }
+
+                if (!this.state.errorOccured) {
+                    await this.props.project.methods.finalizeProjectAsStartup(this.props.freelancerProfileAddress, this.state.rating).send({
+                        from: this.props.accounts[0]
+                    });
+                    this.setState({ successMessage: `Dem Freelancer wird eine Vergütung in Höhe von ${web3.utils.fromWei(wage, 'ether')} ETH gutgeschrieben.` });
+                }
             }
 
             if (this.props.currentUser === this.props.freelancer) {
-                console.log(this.state.rating);
-                console.log("managerAdd", this.props.managerProfileAddress);
-                await this.props.project.methods.finalizeProjectAsFreelancer(this.props.managerProfileAddress, this.state.rating).send({
-                    from: this.props.accounts[0]
-                });
+                if (finalizedByFreelancer) {
+                    this.setState({ errorMessage: 'Sie haben das Projekt bereits beendet.', errorOccured: true });
+                }
+
+                if (!this.state.errorOccured) {
+                    await this.props.project.methods.finalizeProjectAsFreelancer(this.props.managerProfileAddress, this.state.rating).send({
+                        from: this.props.accounts[0]
+                    });
+                    Router.pushRoute(`/projekt/${projectAddress}`);
+                }
             }
-
-
         } catch (err) {
             this.setState({ errorMessage: err.message });
         }
 
-        this.setState({ loading: false, inputIncomplete: false });
+        this.setState({ loading: false, errorOccured: false });
     };
 
+    onChange = (e, { value }) => this.setState({ rating: value })
+
     render() {
+        const {
+            errorMessage,
+            successMessage,
+            loading
+        } = this.state;
+
+
+        const ratingValues = [
+            {
+                value: 0,
+                text: '0  -  sehr schlecht'
+            },
+            {
+                value: 1,
+                text: '1  -  schlecht'
+            },
+            {
+                value: 2,
+                text: '2  -  akzeptabel'
+            },
+            {
+                value: 3,
+                text: '3  -  mittel'
+            },
+            {
+                value: 4,
+                text: '4  -  gut'
+            },
+            {
+                value: 5,
+                text: '5  -  sehr gut'
+            }
+        ];
+
         return (
             <Layout>
                 <h3>Projekt beenden</h3>
-                <Form onSubmit={this.onSubmit} error={!!this.state.errorMessage}>
+                <Form onSubmit={this.onSubmit} error={!!errorMessage} success={!!successMessage} >
                     <Form.Field>
                         <label>Bewerten Sie die Zusammenarbeit im Projekt</label>
                         <small>* erforderlich</small><br />
-                        <small>0 = sehr schlecht, 5 = sehr gut</small>
-                        <Input
-                            placeholder="1"
+                        <Dropdown
+                            placeholder={ratingValues[0].text}
+                            search
+                            selection
+                            options={ratingValues}
                             value={this.state.rating}
-                            onChange={event => this.setState({ rating: event.target.value })}
+                            onChange={this.onChange}
                         />
                     </Form.Field>
-                    <Message error header='Fehler!' content={this.state.errorMessage.split('\n')[0]} />
-                    <Button loading={this.state.loading} type='submit' content='Projekt abschließen' icon='check' primary />
+                    <Message error header='Fehler!' content={errorMessage.split('\n')[0]} />
+                    <Message success header='Projekt erfolgreich abgeschlossen!' content={successMessage.split('\n')[0]} />
+                    <Button loading={loading} type='submit' content='Projekt beenden' icon='check' primary />
                 </Form>
             </Layout>
         );
