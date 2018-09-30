@@ -9,7 +9,7 @@ import factory from '../../../ethereum/factory';
 
 /**
  * '/projekt/:address/bewerbung'
- * user can create a new project as startup
+ * user can submit his application
  */
 class Request extends Component {
     state = {
@@ -21,6 +21,9 @@ class Request extends Component {
         loading: false
     }
 
+    /**
+    * gettung project data from props
+    */
     async componentDidMount() {
         const project = Project(this.props.url.query.address);
         this.setState({ project: project });
@@ -40,22 +43,37 @@ class Request extends Component {
             const profileAddress = await factory.methods.profileDeployedAddress(accounts[0]).call();
             const userHasNoProfile = '0x0000000000000000000000000000000000000000';
 
+            /**
+             * user musst fill in his email address
+             */
             if (this.state.email === '') {
                 this.setState({ errorMessage: 'Eingaben unvollständig.', incorrectInput: true });
             }
 
+            /**
+             * user must have a profile first
+             */
             if (profileAddress === userHasNoProfile) {
                 this.setState({ errorMessage: 'Bitte erstellen Sie vorher ein Profil.', incorrectInput: true });
             }
 
+            /**
+             * user can only submit his application once
+             */
             if (alreadyRequester) {
                 this.setState({ errorMessage: 'Ihre Bewerbung liegt bereits vor.', incorrectInput: true });
             }
 
+            /**
+             * project manager can not submit an application to his own project
+             */
             if (manager === accounts[0]) {
                 this.setState({ errorMessage: 'Sie können sich nicht für Ihr eigenes Projekt bewerben.', incorrectInput: true });
             }
 
+            /**
+            * if there is no error, the application will be submitted
+            */
             if (!this.state.incorrectInput) {
                 await project.methods.setRequest(this.state.email, this.state.info)
                     .send({
@@ -72,6 +90,9 @@ class Request extends Component {
         this.setState({ loading: false, incorrectInput: false });
     }
 
+    /**
+     * showing forms (email and info) and submit button
+     */
     render() {
         const {
             email,

@@ -11,7 +11,7 @@ import web3 from '../../../ethereum/web3';
 /**
  * '/projekt/:address/bebwerberpool'
  * listing all applicants for the current project
- * shows more information if user is applicant himself oder startup-manager
+ * shows more information if user == project manager
  */
 class RequesterList extends Component {
     state = {
@@ -20,6 +20,9 @@ class RequesterList extends Component {
         projectIsOpen: true
     }
 
+    /**
+     * getting all applicants for the current project from smart contract / blockchain
+     */
     static async getInitialProps(props) {
         const project = Project(props.query.address);
         const addresses = await project.methods.getRequesterList().call();
@@ -52,19 +55,31 @@ class RequesterList extends Component {
         const projectManager = await project.methods.manager().call();
         const addresses = await project.methods.getRequesterList().call();
 
+        /**
+         * checking if project is open (freelancer has not been chosen yet)
+         */
         if (!await project.methods.isOpen().call()) {
             this.setState({ projectIsOpen: false });
         }
 
+        /**
+         * checking if there are any applicants
+         */
         if (addresses.length !== 0) {
             this.setState({ hasRequester: true });
         }
 
+        /**
+        * checking if user is project manager
+        */
         if (accounts[0] === projectManager) {
             this.setState({ isManager: true });
         }
     }
 
+    /**
+     * calling the component 'RequesterRow' with several props as visitor
+     */
     renderVisitorRows() {
         return this.props.requesterList.slice(0).reverse().map((applicant, index) => {
             const {
@@ -88,6 +103,9 @@ class RequesterList extends Component {
         });
     }
 
+    /**
+     * calling the component 'RequesterRow' with several props as project manager
+     */
     renderManagerRows() {
         return this.props.requesterList.slice(0).reverse().map((applicant, index) => {
             const {
@@ -123,6 +141,11 @@ class RequesterList extends Component {
         });
     }
 
+    /**
+     * showing all requester in form of a table
+     * if project manager, there are a few more details 
+     * if project manager, applicant for project can be chosen
+     */
     render() {
         const {
             Header,

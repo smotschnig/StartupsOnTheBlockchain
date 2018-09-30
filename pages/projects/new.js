@@ -24,6 +24,10 @@ class ProjectNew extends Component {
         inputIncomplete: false
     };
 
+    /**
+     * checking if user has already created a profile
+     * getting balance of current MetaMask account
+     */
     async componentDidMount() {
         const accounts = await web3.eth.getAccounts();
         const balance = await web3.eth.getBalance(accounts[0]);
@@ -44,18 +48,33 @@ class ProjectNew extends Component {
         try {
             const accounts = await web3.eth.getAccounts();
 
+            /**
+             * user has to fill in:
+             * name for startup
+             * title of searched job
+             * wage as ETH
+             */
             if (this.state.startup === '' || this.state.title === '' || this.state.wage === '') {
                 this.setState({ errorMessage: 'Eingaben unvollständig.', inputIncomplete: true });
             }
 
+            /**
+             * user must create profile first
+             */
             if (this.state.userHasNoProfile) {
                 this.setState({ errorMessage: 'Bitte erstellen Sie vorher ein Profil.', inputIncomplete: true });
             }
 
+            /**
+             * MetaMask account balance must be higher than wage
+             */
             if (this.state.profileBalance < this.state.wage) {
                 this.setState({ errorMessage: 'Nicht genügend Guthaben.', inputIncomplete: true });
             }
 
+            /**
+             * if there is no error, project will be created and wage belongs to the project
+             */
             if (!this.state.inputIncomplete) {
                 await factory.methods
                     .createProject(this.state.startup, this.state.title, this.state.deadline, this.state.description)
@@ -72,12 +91,18 @@ class ProjectNew extends Component {
         this.setState({ loading: false, inputIncomplete: true });
     }
 
+    /**
+     * setting change handler for calendar
+     */
     handleChange = (event, { name, value }) => {
         if (this.state.hasOwnProperty(name)) {
             this.setState({ [name]: value });
         }
     }
 
+    /**
+     * showing serveral form for creating new project
+     */
     render() {
         const { Field } = Form;
         const {

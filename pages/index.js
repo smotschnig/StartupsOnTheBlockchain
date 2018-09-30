@@ -9,7 +9,7 @@ import ProjectRow from '../components/ProjectRow';
 
 /**
  * '/'
- * listing all projects
+ * landing page: listing all projects
  */
 class StartupIndex extends Component {
     state = {
@@ -20,6 +20,9 @@ class StartupIndex extends Component {
         showFinishedProjects: false
     };
 
+    /**
+     * checking if visitor is logged in to MetaMask
+     */
     async componentDidMount() {
         const address = await web3.eth.getAccounts();
         this.setState({
@@ -28,14 +31,17 @@ class StartupIndex extends Component {
     }
 
     static async getInitialProps() {
+        /** 
+         * getting all projects and profiles from smart contract / blockchain 
+         */
         const projectAddresses = await factory.methods.getDeployedProjects().call();
         const profileAddresses = await factory.methods.getDeployedProfiles().call();
         let projects = [];
 
-        /**
-         * iteration over all projects
-         */
         try {
+            /**
+             * iteration over all projects
+             */
             for (let i = 0; i < projectAddresses.length; i++) {
                 const project = Project(projectAddresses[i]);
                 const summary = await project.methods.getSummary().call();
@@ -44,12 +50,11 @@ class StartupIndex extends Component {
                 const isOpen = await project.methods.isOpen().call();
                 const projectWage = await project.methods.projectWage().call();
 
+                /**
+                 * iteration over all profileAddresses to check the manager's profile for the rating calculation
+                 */
                 let rating;
                 let ratingsCounter;
-
-                /**
-                 * iteration over all profiles to check the manager's profile for the rating calculation
-                 */
                 for (let j = 0; j < profileAddresses.length; j++) {
                     const profile = Profile(profileAddresses[j]);
                     const profileManager = await profile.methods.manager().call();
@@ -81,6 +86,9 @@ class StartupIndex extends Component {
         };
     }
 
+    /**
+     * calling the component 'ProjectRow' with several props
+     */
     renderRows() {
         return this.props.projects.slice(0).reverse().map((project, index) => {
             const {
@@ -128,6 +136,9 @@ class StartupIndex extends Component {
         });
     }
 
+    /**
+     * showing all projects in form of a table with filtering function
+     */
     render() {
         const {
             Header,

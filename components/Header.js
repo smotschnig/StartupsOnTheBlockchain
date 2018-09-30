@@ -8,7 +8,7 @@ class Header extends Component {
     }
 
     /**
-     * 'Neues Projekt, 'Offene Projekte' and 'Profil' only visible when user is logged in to metamask
+     * 'Neues Projekt, 'Offene Projekte' and 'Profil' only visible when user is logged in to MetaMask
      */
     render() {
         return (

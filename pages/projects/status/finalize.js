@@ -8,6 +8,10 @@ import Project from '../../../ethereum/project';
 import Profile from '../../../ethereum/profile';
 import factory from '../../../ethereum/factory';
 
+/**
+ * '/projekte/:address/beenden'
+ * freelancer and manager can finalize project
+ */
 class FinalizeProject extends Component {
     state = {
         rating: '',
@@ -19,6 +23,9 @@ class FinalizeProject extends Component {
         loading: false
     };
 
+    /**
+     * getting current project and project data
+     */
     async componentDidMount() {
         const projectAddress = this.props.url.query.address;
         const project = Project(projectAddress);
@@ -34,6 +41,9 @@ class FinalizeProject extends Component {
         this.setState({ loading: true, errorMessage: '', successMessage: '' });
 
         try {
+            /**
+             * getting information about the project, the freelancer and the project manager
+             */
             const project = this.state.project;
             const accounts = await web3.eth.getAccounts();
             const currentUser = accounts[0];
@@ -45,6 +55,9 @@ class FinalizeProject extends Component {
             const freelancer = summary[6];
             const noFreelancerChosen = '0x0000000000000000000000000000000000000000';
 
+            /**
+             * getting the freelancer profileAddress for the rating system
+             */
             let freelancerProfileAddress;
             if (summary[6] !== noFreelancerChosen) {
                 const profileFreelancerAddress = await factory.methods.profileDeployedAddress(freelancer).call();
@@ -52,25 +65,42 @@ class FinalizeProject extends Component {
                 freelancerProfileAddress = freelancerProfile._address;
             }
 
+            /**
+             * getting the manager profileAddress for the rating system
+             */
             const profileManagerAddress = await factory.methods.profileDeployedAddress(manager).call();
             const managerProfile = Profile(profileManagerAddress);
             const managerProfileAddress = managerProfile._address;
 
-
+            /**
+             * checking if current user is project manager
+             */
             if (currentUser === manager) {
-                console.log(this.state.rating)
+
+                /**
+                 * user must set a rating
+                 */
                 if (this.state.rating === '' || this.state.rating === undefined) {
                     this.setState({ errorMessage: 'Bitte bewerten Sie das Projekt.', errorOccured: true });
                 }
 
+                /**
+                 * freelancer must finalze project first
+                 */
                 if (!finalizedByFreelancer) {
                     this.setState({ errorMessage: 'Der ausgewählte Freelancer muss das Projekt erst beenden.', errorOccured: true });
                 }
 
+                /**
+                 * project can only finalized once by startup manager
+                 */
                 if (finalizedByStartup) {
                     this.setState({ errorMessage: 'Sie haben das Projekt bereits beendet.', errorOccured: true });
                 }
 
+                /**
+                 * if there is no error, project will be finalized and message about the wage for the freelancer appears
+                 */
                 if (!this.state.errorOccured) {
                     await project.methods.finalizeProjectAsStartup(freelancerProfileAddress, this.state.rating).send({
                         from: accounts[0]
@@ -79,16 +109,28 @@ class FinalizeProject extends Component {
                 }
             }
 
+            /**
+             * checking if current user is chosen freelancer of the project
+             */
             if (currentUser === freelancer) {
 
+                /**
+                 * user must set a rating
+                 */
                 if (this.state.rating === '' || this.state.rating === undefined) {
                     this.setState({ errorMessage: 'Bitte bewerten Sie das Projekt.', errorOccured: true });
                 }
 
+                /**
+                 * project can only finalized once by freelancer
+                 */
                 if (finalizedByFreelancer) {
                     this.setState({ errorMessage: 'Sie haben das Projekt bereits beendet.', errorOccured: true });
                 }
 
+                /**
+                 * if there is no error, variable finalizedByFreelancer gets set to true and freelancer gets send back to project overview
+                 */
                 if (!this.state.errorOccured) {
                     await project.methods.finalizeProjectAsFreelancer(managerProfileAddress, this.state.rating).send({
                         from: accounts[0]
@@ -103,14 +145,15 @@ class FinalizeProject extends Component {
         this.setState({ loading: false, errorOccured: false });
     };
 
+    /**
+     * showing rating dropdown and finalize button
+     */
     render() {
         const {
             errorMessage,
             successMessage,
             loading
         } = this.state;
-
-        const { projectAddress } = this.state;
 
         const ratingValues = [
             {

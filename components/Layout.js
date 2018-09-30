@@ -15,6 +15,9 @@ class Layout extends Component {
         };
     }
 
+    /**
+     * checking if visitor is logged in to MetaMask
+     */
     async componentDidMount() {
         const address = await web3.eth.getAccounts();
         this.setState({

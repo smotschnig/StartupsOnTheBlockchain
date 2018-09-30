@@ -15,16 +15,26 @@ import TimeConverter from '../../components/TimeConverter';
  */
 class ShowUserProfile extends Component {
     static async getInitialProps(props) {
+
+        /**
+         * getting managerAddress from props
+         */
         const managerAddress = props.query.address;
 
-        /* gets project address from url */
+        /**
+         * getting projectAddress from props
+         */
         const projectAddress = props.query.projectaddress;
+
         let fromApplicantPool = false;
 
         if (props.query.bewerber === '' || props.query.bewerber === null || props.query.bewerber === undefined) {
             fromApplicantPool = true;
         }
 
+        /**
+         * getting information about the current user from smart contract / blockchain
+         */
         const project = Project(projectAddress);
         const summary = await project.methods.getSummary().call();
         const profileAddress = await factory.methods.profileDeployedAddress(managerAddress).call();
@@ -64,7 +74,7 @@ class ShowUserProfile extends Component {
 
         /**
          * @return two cards in a row with user profile data
-         * hides card if user has not filled out
+         * hides card if user has not filled out form
          */
         return (
             <Card.Group itemsPerRow={2}>
@@ -79,6 +89,9 @@ class ShowUserProfile extends Component {
         );
     }
 
+    /**
+     * showing all user profile information and startup name
+     */
     render() {
         const { fromApplicantPool } = this.props;
         return (

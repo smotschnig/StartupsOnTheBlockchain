@@ -4,7 +4,7 @@ a blockchain-based startup webplatform
 ---
 
 #### Demo (Live-Preview - 30/09/2018)
-<https://startupsontheblockchain-gqhupspedl.now.sh/>
+<https://startupsontheblockchain-relqgdlixh.now.sh/>
 
 *Forwarding:*
 <http://sven.motschnig.de/>
@@ -53,7 +53,7 @@ If there are problems with npm install on Windows, you have to install additiona
 * ~~Abgeschlossene Projekte markieren (entweder ausblenden oder seperate Liste)~~
 * ~~Bewertungssystem im Front-End implementieren und Durchschnitt berechnen (mit Sternbewertung darstellen)~~
 * ~~Zurück-Button anpassen beim Betrachten des Manager-Profils im jeweiligen Projekt (Problem: Prop funktioniert bei next-routes nicht, daher wird Profil-Adresse übergeben, nicht aber Projekt-Adresse (Mapping nicht möglich, wenn Startup mehrere Projekte erstellt hat))~~
-* Code kommentieren
+* ~~Code kommentieren~~
 
 ##### *should-have*:
 * Loader während Rendering erstellen (Seite im Hintergrund erst vollständig laden und erst anschließend anzeigen)

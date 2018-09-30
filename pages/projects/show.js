@@ -12,7 +12,7 @@ import ProjectCard from '../../components/ProjectCard';
  * '/projekt/:address'
  * listing details about the project
  * if the project is open (no freelancer chosen), the freelancer can sumit an application
- * if there are applicants, the startup-manager can chose one from a applicationpool
+ * if there are applicants, the startup manager can chose one from the applicationpool
  */
 class ProjectShow extends Component {
     state = {
@@ -24,6 +24,9 @@ class ProjectShow extends Component {
         errorOccured: false,
     }
 
+    /**
+     * getting information about the current project from the smart contract / blockchain
+     */
     static async getInitialProps(props) {
         const project = Project(props.query.address);
         const summary = await project.methods.getSummary().call();
@@ -41,6 +44,9 @@ class ProjectShow extends Component {
             fromLandingPage = false;
         }
 
+        /**
+         * checking if a freelancer has been chosen
+         */
         let freelancerChosen = false;
         if (summary[6] !== '0x0000000000000000000000000000000000000000') {
             freelancerChosen = true;
@@ -70,17 +76,26 @@ class ProjectShow extends Component {
     async componentDidMount() {
         const accounts = await web3.eth.getAccounts();
         const project = Project(this.props.url.query.address);
-        const projectManager = await project.methods.getSummary().call();
+        const summary = await project.methods.getSummary().call();
 
-        if (accounts[0] === projectManager[6]) {
+        /**
+         * checking if current user is freelancer
+         */
+        if (accounts[0] === summary[6]) {
             this.setState({ isFreelancer: true });
         }
 
-        if (accounts[0] === projectManager[7]) {
+        /**
+         * checking if current user is project manager
+         */
+        if (accounts[0] === summary[7]) {
             this.setState({ isManager: true });
         }
     }
 
+    /**
+     * calling the component 'ProjectCard' with several props
+     */
     renderCards() {
         const {
             startup,
@@ -103,6 +118,9 @@ class ProjectShow extends Component {
         );
     }
 
+    /**
+     * user can call an investigator if something is incorrect with the project 
+     */
     callInvestigator = async () => {
         const {
             projectUnderInvestigation
@@ -118,10 +136,17 @@ class ProjectShow extends Component {
         const accounts = await web3.eth.getAccounts();
 
         try {
+
+            /**
+             * investigator can only called once
+             */
             if (projectUnderInvestigation) {
                 this.setState({ errorMessage: 'Das Projekt ist bereits gemeldet worden.', errorOccured: true });
             }
 
+            /**
+             * if there is no error, the project will be listed as under investigation
+             */
             if (!this.state.errorOccured) {
                 await project.methods.callInvestigator()
                     .send({
@@ -136,6 +161,9 @@ class ProjectShow extends Component {
         this.setState({ loading: false });
     }
 
+    /**
+     * manager can cancel the project, the wage of the project gets send back to the project managerAddress
+     */
     cancelProject = async () => {
         const {
             projectIsOpen,
@@ -147,14 +175,25 @@ class ProjectShow extends Component {
         const accounts = await web3.eth.getAccounts();
 
         try {
+
+            /**
+             * project can not be canceld if a freelancer has been chosen
+             */
             if (!projectIsOpen) {
                 await this.setState({ errorMessage: 'Das Projekt kann nicht abgebrochen werden, da bereits ein Freelancer zugeteilt worden ist.', errorOccured: true });
             }
 
+            /**
+             * project can not be cancled if project is marked as under investigation
+             */
             if (projectUnderInvestigation) {
                 await this.setState({ errorMessage: 'Das Projekt kann nicht abgebrochen werden, da das Projekt gemeldet worden ist.', errorOccured: true });
             }
 
+            /**
+             * if there is no error, the project will be marked as finisehd and canceled 
+             * the wage of the project gets send back to the project managerAddress
+             */
             if (!this.state.errorOccured) {
                 await project.methods.cancelProject()
                     .send({
@@ -169,6 +208,9 @@ class ProjectShow extends Component {
         this.setState({ cancelLoading: false, errorOccured: false });
     }
 
+    /**
+     * showing different buttons for the user, depending of the project status
+     */
     visitorButtons() {
         const {
             address,
@@ -203,11 +245,15 @@ class ProjectShow extends Component {
         }
     }
 
+    /**
+     * showing different buttons for the chosen freelancer, depending of the project status
+     */
     freelancerButtons() {
         const {
             address,
             projectUnderInvestigation,
-            projectFinalizedByFreelancer
+            projectFinalizedByFreelancer,
+            isFinished
         } = this.props;
 
         const {
@@ -229,19 +275,26 @@ class ProjectShow extends Component {
                             :
                             null
                         }
-                        <Button
-                            loading={loading}
-                            color="orange"
-                            type='submit'
-                            content='Problem melden'
-                            onClick={() => this.callInvestigator()}
-                        />
+                        {isFinished || !projectFinalizedByFreelancer ?
+                            <Button
+                                loading={loading}
+                                color="orange"
+                                type='submit'
+                                content='Problem melden'
+                                onClick={() => this.callInvestigator()}
+                            />
+                            :
+                            null
+                        }
                     </Form>
                 </div>
             );
         }
     }
 
+    /**
+     * showing different buttons for the project manager, depending of the project status
+     */
     managerButtons() {
         const {
             address,
@@ -300,6 +353,9 @@ class ProjectShow extends Component {
         }
     }
 
+    /**
+     * showing different messages on the top of the page, depending on the project status
+     */
     callMessage() {
         const {
             projectUnderInvestigation,
@@ -334,6 +390,9 @@ class ProjectShow extends Component {
         }
     }
 
+    /**
+     * showing serveral cards with information about the project
+     */
     render() {
         const {
             description,

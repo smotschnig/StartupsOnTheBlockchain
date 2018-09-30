@@ -26,6 +26,26 @@ class UserProfile extends Component {
         inputIncomplete: false
     };
 
+    /**
+     * getting profile rating by calling getInitialProps
+     */
+    static async getInitialProps() {
+        const accounts = await web3.eth.getAccounts();
+        const profileAddress = await factory.methods.profileDeployedAddress(accounts[0]).call();
+        const profile = Profile(profileAddress);
+        const rating = await profile.methods.rating().call();
+        const ratingsCounter = await profile.methods.ratingsCounter().call();
+        const calculatedRating = Math.floor(rating / ratingsCounter);
+
+        return {
+            ratingsCounter: ratingsCounter,
+            calculatedRating: calculatedRating
+        }
+    }
+
+    /**
+     * getting current user profile data
+     */
     async componentDidMount() {
         const accounts = await web3.eth.getAccounts();
         const profileExists = await factory.methods.profileAlreadyExists(accounts[0]).call();
@@ -36,17 +56,13 @@ class UserProfile extends Component {
             const profileAddress = await factory.methods.profileDeployedAddress(accounts[0]).call();
             const profile = Profile(profileAddress);
             const profileData = await profile.methods.getInstructor().call();
-            const rating = await profile.methods.rating().call();
-            const ratingsCounter = await profile.methods.ratingsCounter().call();
 
             this.setState({
                 fName: profileData[0],
                 lName: profileData[1],
                 birthDate: profileData[2],
                 education: profileData[3],
-                experience: profileData[4],
-                rating: rating,
-                ratingsCounter: ratingsCounter
+                experience: profileData[4]
             });
         } else {
             this.setState({ showUpdateFeatures: false, showCreateButton: true });
@@ -65,6 +81,9 @@ class UserProfile extends Component {
                 this.setState({ inputIncomplete: true, errorMessage: 'Eingaben unvollständig.' });
             }
 
+            /**
+             * creating new profile if user is new
+             */
             if (!profileExists && !this.state.inputIncomplete) {
                 await factory.methods
                     .createProfile(this.state.fName, this.state.lName, this.state.birthDate, this.state.education, this.state.experience)
@@ -74,6 +93,9 @@ class UserProfile extends Component {
                 Router.pushRoute('/');
             }
 
+            /**
+             * updating profile data if user has already a profile
+             */
             if (profileExists && !this.state.inputIncomplete) {
                 const profileAddress = await factory.methods.profileDeployedAddress(accounts[0]).call();
                 const profile = Profile(profileAddress);
@@ -89,12 +111,19 @@ class UserProfile extends Component {
         this.setState({ loading: false, inputIncomplete: false });
     };
 
+    /**
+     * setting change handler for calendar
+     */
     handleChange = (event, { name, value }) => {
         if (this.state.hasOwnProperty(name)) {
             this.setState({ [name]: value });
         }
     }
 
+    /**
+     * showing user profile data if available
+     * user can fill out form and update or create profile
+     */
     render() {
         const { Field } = Form;
         const {
@@ -103,13 +132,16 @@ class UserProfile extends Component {
             birthDate,
             education,
             experience,
-            rating,
-            ratingsCounter,
             showCreateButton,
             showUpdateFeatures,
             loading,
             errorMessage
         } = this.state;
+
+        const {
+            ratingsCounter,
+            calculatedRating
+        } = this.props;
 
         return (
             <Layout>
@@ -167,7 +199,7 @@ class UserProfile extends Component {
                             <label>Aktuelle Bewertung</label>
                             {
                                 <div>
-                                    <RatingStars averageRating={Math.floor(rating / ratingsCounter)} /> ({ratingsCounter})
+                                    <RatingStars averageRating={Math.floor(calculatedRating)} /> ({ratingsCounter})
                                 </div>
                             }
                         </Field> : null}

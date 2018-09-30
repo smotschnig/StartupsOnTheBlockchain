@@ -8,8 +8,8 @@ import Profile from '../../../ethereum/profile';
 import factory from '../../../ethereum/factory';
 
 /**
- * '/projekte/:offen/:address'
- * user can see the projects which are not finished yet
+ * '/projekte/:address'
+ * listing all project which belongs to the current user
  */
 class OpenProjects extends Component {
     state = {
@@ -28,8 +28,8 @@ class OpenProjects extends Component {
 
         /**
          * iteration over all projects, lists those where 
-         * current metamask account == manager (as startup)
-         * current metamask account == chosenFreelancer
+         * current MetaMask account == manager (as startup)
+         * current MetaMask account == chosenFreelancer
          */
         try {
             for (let i = 0; i < projectAddresses.length; i++) {
@@ -86,6 +86,9 @@ class OpenProjects extends Component {
         };
     }
 
+    /**
+     * calling the component 'ProjectRow' with several props
+     */
     renderRows() {
         return this.props.openProjects.slice(0).reverse().map((project, index) => {
             const {
@@ -135,6 +138,9 @@ class OpenProjects extends Component {
         });
     }
 
+    /**
+     * showing all projects for current user in form of a table with filtering function
+     */
     render() {
         const {
             Header,
