@@ -17,6 +17,7 @@ class ProjectNew extends Component {
         deadline: '',
         description: '',
         wage: '',
+        profileBalance: '',
         userHasNoProfile: false,
         errorMessage: '',
         loading: false,
@@ -25,11 +26,15 @@ class ProjectNew extends Component {
 
     async componentDidMount() {
         const accounts = await web3.eth.getAccounts();
+        const balance = await web3.eth.getBalance(accounts[0]);
         const profileAddress = await factory.methods.profileDeployedAddress(accounts[0]).call();
         const noProfileAddress = '0x0000000000000000000000000000000000000000';
+
         if (profileAddress === noProfileAddress) {
             this.setState({ userHasNoProfile: true });
         }
+
+        this.setState({ profileBalance: balance });
     }
 
     onSubmit = async (event) => {
@@ -45,6 +50,10 @@ class ProjectNew extends Component {
 
             if (this.state.userHasNoProfile) {
                 this.setState({ errorMessage: 'Bitte erstellen Sie vorher ein Profil.', inputIncomplete: true });
+            }
+
+            if (this.state.profileBalance < this.state.wage) {
+                this.setState({ errorMessage: 'Nicht genügend Guthaben.', inputIncomplete: true });
             }
 
             if (!this.state.inputIncomplete) {

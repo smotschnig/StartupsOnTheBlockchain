@@ -4,7 +4,7 @@ a blockchain-based startup webplatform
 ---
 
 #### Demo (Live-Preview - 30/09/2018)
-<https://startupsontheblockchain-zujubieker.now.sh/>
+<https://startupsontheblockchain-gqhupspedl.now.sh/>
 
 *Forwarding:*
 <http://sven.motschnig.de/>
