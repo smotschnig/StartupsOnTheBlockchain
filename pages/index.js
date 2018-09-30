@@ -42,6 +42,7 @@ class StartupIndex extends Component {
                 const isFinished = await project.methods.isFinished().call();
                 const underInvestigation = await project.methods.underInvestigation().call();
                 const isOpen = await project.methods.isOpen().call();
+                const projectWage = await project.methods.projectWage().call();
 
                 let rating;
                 let ratingsCounter;
@@ -63,7 +64,7 @@ class StartupIndex extends Component {
                     startup: summary[0],
                     title: summary[1],
                     date: summary[4],
-                    wage: summary[5],
+                    wage: projectWage,
                     isFinished: isFinished,
                     underInvestigation: underInvestigation,
                     isOpen: isOpen,

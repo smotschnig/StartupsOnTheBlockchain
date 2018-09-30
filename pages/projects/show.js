@@ -27,6 +27,8 @@ class ProjectShow extends Component {
     static async getInitialProps(props) {
         const project = Project(props.query.address);
         const summary = await project.methods.getSummary().call();
+        const projectWage = await project.methods.projectWage().call();
+        const projectFinalizedByFreelancer = await project.methods.finalizedByFreelancer().call();
         const requesterNumber = await project.methods.requesterCount().call();
         const projectIsOpen = await project.methods.isOpen().call();
         const projectIsFinished = await project.methods.isFinished().call();
@@ -51,7 +53,7 @@ class ProjectShow extends Component {
             deadline: summary[2],
             description: summary[3],
             date: summary[4],
-            wage: summary[5],
+            wage: projectWage,
             manager: summary[7],
             chosenFreelancer: summary[6],
             projectIsOpen: projectIsOpen,
@@ -60,7 +62,8 @@ class ProjectShow extends Component {
             requesterNumber: requesterNumber,
             fromLandingPage: fromLandingPage,
             visitorAddress: visitorAddress,
-            freelancerChosen: freelancerChosen
+            freelancerChosen: freelancerChosen,
+            projectFinalizedByFreelancer: projectFinalizedByFreelancer
         };
     }
 
@@ -130,7 +133,7 @@ class ProjectShow extends Component {
             this.setState({ errorMessage: err.message });
         }
 
-        this.setState({ loading: false, errorOccured: false });
+        this.setState({ loading: false });
     }
 
     cancelProject = async () => {
@@ -172,6 +175,8 @@ class ProjectShow extends Component {
             projectIsOpen,
             projectIsFinished,
             requesterNumber,
+            freelancerChosen,
+            projectUnderInvestigation
         } = this.props;
 
         const {
@@ -182,9 +187,14 @@ class ProjectShow extends Component {
         if (((projectIsOpen || !projectIsFinished) && !isManager) && !isFreelancer) {
             return (
                 <div className="interaction_button">
-                    <Link route={`/projekt/${address}/bewerbung`}>
-                        <a><Button color='green' basic>Bewerbung einreichen</Button></a>
-                    </Link>
+                    {!freelancerChosen && !projectUnderInvestigation
+                        ?
+                        <Link route={`/projekt/${address}/bewerbung`}>
+                            <a><Button color='green' basic>Bewerbung einreichen</Button></a>
+                        </Link>
+                        :
+                        null
+                    }
                     <Link route={`/projekt/${address}/bewerberpool`}>
                         <a><Button color='green' basic>Bewerberpool ({(requesterNumber)})</Button></a>
                     </Link>
@@ -196,7 +206,8 @@ class ProjectShow extends Component {
     freelancerButtons() {
         const {
             address,
-            projectUnderInvestigation
+            projectUnderInvestigation,
+            projectFinalizedByFreelancer
         } = this.props;
 
         const {
@@ -210,7 +221,8 @@ class ProjectShow extends Component {
                 <div className="interaction_button">
                     <Form error={!!errorMessage}>
                         <Message error content={errorMessage.split('\n')[0]} />
-                        {!projectUnderInvestigation ?
+                        {!projectUnderInvestigation && !projectFinalizedByFreelancer
+                            ?
                             <Link route={`/projekte/${address}/beenden`}>
                                 <a><Button color='green' basic>Projekt beenden</Button></a>
                             </Link>
@@ -235,7 +247,8 @@ class ProjectShow extends Component {
             address,
             requesterNumber,
             freelancerChosen,
-            projectUnderInvestigation
+            projectUnderInvestigation,
+            projectIsFinished
         } = this.props;
 
         const {
@@ -253,21 +266,34 @@ class ProjectShow extends Component {
                         <Link route={`/projekt/${address}/bewerberpool`}>
                             <a><Button color='green' basic>Bewerberpool ({(requesterNumber)})</Button></a>
                         </Link>
-                        <Link route={`/projekte/${address}/beenden`}>
-                            <a><Button color='green' basic>Projekt beenden</Button></a>
-                        </Link>
-                        <Button
-                            loading={loading}
-                            color="orange"
-                            type='submit'
-                            content='Problem melden'
-                            onClick={() => this.callInvestigator()} />
-                        <Popup
-                            trigger={<Button loading={cancelLoading} negative content='Projekt abbrechen' />}
-                            content={<Button color='red' content='Sind Sie sicher?' onClick={() => this.cancelProject()} />}
-                            on='click'
-                            position='top center'
-                        />
+                        {!projectUnderInvestigation && freelancerChosen && !projectIsFinished
+                            ?
+                            <Link route={`/projekte/${address}/beenden`}>
+                                <a><Button color='green' basic>Projekt beenden</Button></a>
+                            </Link>
+                            :
+                            null
+                        }
+                        {!projectUnderInvestigation ?
+                            <Button
+                                loading={loading}
+                                color="orange"
+                                type='submit'
+                                content='Problem melden'
+                                onClick={() => this.callInvestigator()} />
+                            :
+                            null
+                        }
+                        {!projectUnderInvestigation ?
+                            <Popup
+                                trigger={<Button loading={cancelLoading} negative content='Projekt abbrechen' />}
+                                content={<Button color='red' content='Sind Sie sicher?' onClick={() => this.cancelProject()} />}
+                                on='click'
+                                position='top center'
+
+                            />
+                            : null
+                        }
                     </Form>
                 </div>
             );
@@ -290,19 +316,19 @@ class ProjectShow extends Component {
             );
         }
 
+        if (projectIsFinished) {
+            return (
+                <Message info>
+                    <Message.Header>Projekt bereits abgeschlossen!</Message.Header>
+                </Message>
+            );
+        }
+
         if (!projectIsOpen) {
             return (
                 <Message info>
                     <Message.Header>Projekt bereits vergeben!</Message.Header>
                     <p>Freelancer: {chosenFreelancer}</p>
-                </Message>
-            );
-        }
-
-        if (projectIsFinished) {
-            return (
-                <Message info>
-                    <Message.Header>Projekt bereits abgeschlossen!</Message.Header>
                 </Message>
             );
         }

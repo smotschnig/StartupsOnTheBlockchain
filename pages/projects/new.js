@@ -40,11 +40,11 @@ class ProjectNew extends Component {
             const accounts = await web3.eth.getAccounts();
 
             if (this.state.startup === '' || this.state.title === '' || this.state.wage === '') {
-                this.setState({ inputIncomplete: true, errorMessage: 'Eingaben unvollständig.' });
+                this.setState({ errorMessage: 'Eingaben unvollständig.', inputIncomplete: true });
             }
 
             if (this.state.userHasNoProfile) {
-                this.setState({ errorMessage: 'Bitte erstellen Sie vorher ein Profil.', incorrectInput: true });
+                this.setState({ errorMessage: 'Bitte erstellen Sie vorher ein Profil.', inputIncomplete: true });
             }
 
             if (!this.state.inputIncomplete) {

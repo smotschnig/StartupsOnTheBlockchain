@@ -84,7 +84,6 @@ class RequesterRow extends Component {
         return (
             <Body>
                 {isManager ? this.renderManagerRequesterRow() : this.renderVisitorRequesterRow()}
-                {console.log("asd", this.props.projectIsOpen)}
             </Body>
         );
     }

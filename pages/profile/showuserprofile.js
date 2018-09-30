@@ -21,7 +21,7 @@ class ShowUserProfile extends Component {
         const projectAddress = props.query.projectaddress;
         let fromApplicantPool = false;
 
-        if (props.query.bewerber === '' || props.query.bewerber === null) {
+        if (props.query.bewerber === '' || props.query.bewerber === null || props.query.bewerber === undefined) {
             fromApplicantPool = true;
         }
 
@@ -80,12 +80,13 @@ class ShowUserProfile extends Component {
     }
 
     render() {
+        const { fromApplicantPool } = this.props;
         return (
             <Layout>
                 <Grid>
                     <Grid.Row>
                         <Grid.Column width={16}>
-                            {this.props.fromApplicantPool ?
+                            {!fromApplicantPool ?
                                 <Link to={`/projekt/${this.props.projectAddress}/bewerberpool`}>
                                     <a>
                                         <Button size='mini'>Zurück</Button>

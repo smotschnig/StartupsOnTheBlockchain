@@ -11,21 +11,49 @@ import factory from '../../../ethereum/factory';
 class FinalizeProject extends Component {
     state = {
         rating: '',
-        project: undefined,
-        projectAddress: undefined,
         errorMessage: '',
         successMessage: '',
         errorOccured: false,
         loading: false
     };
 
-    async componentDidMount() {
-        const projectAddress = this.props.url.query.address;
+    static async getInitialProps(props) {
+        const projectAddress = props.query.address;
         const project = Project(projectAddress);
-        this.setState({
-            project: project,
-            projectAddress: projectAddress
-        });
+        const accounts = await web3.eth.getAccounts();
+        const currentUser = accounts[0];
+        const manager = await project.methods.manager().call();
+        const summary = await project.methods.getSummary().call();
+        const wage = summary[5];
+        const finalizedByFreelancer = await project.methods.finalizedByFreelancer().call();
+        const finalizedByStartup = await project.methods.finalizedByStartup().call();
+        const freelancer = summary[6];
+        const noFreelancerChosen = '0x0000000000000000000000000000000000000000';
+
+        let freelancerProfileAddress;
+        if (summary[6] !== noFreelancerChosen) {
+            const profileFreelancerAddress = await factory.methods.profileDeployedAddress(freelancer).call();
+            const freelancerProfile = Profile(profileFreelancerAddress);
+            freelancerProfileAddress = freelancerProfile._address;
+        }
+
+        const profileManagerAddress = await factory.methods.profileDeployedAddress(manager).call();
+        const managerProfile = Profile(profileManagerAddress);
+        const managerProfileAddress = managerProfile._address;
+
+        return {
+            accounts,
+            project,
+            currentUser,
+            manager,
+            wage,
+            freelancer,
+            freelancerProfileAddress,
+            finalizedByFreelancer,
+            finalizedByStartup,
+            managerProfileAddress,
+            projectAddress
+        };
     }
 
     onSubmit = async event => {
@@ -33,75 +61,53 @@ class FinalizeProject extends Component {
 
         this.setState({ loading: true, errorMessage: '', successMessage: '' });
 
+        const {
+            projectAddress,
+            finalizedByFreelancer,
+            finalizedByStartup,
+            wage
+        } = this.props;
+
         try {
-            const project = this.state.project;
-            const accounts = await web3.eth.getAccounts();
-            const currentUser = accounts[0];
-            const manager = await project.methods.manager().call();
-            const summary = await project.methods.getSummary().call();
-            const wage = summary[5];
-            const finalizedByFreelancer = await project.methods.finalizedByFreelancer().call();
-            const finalizedByStartup = await project.methods.finalizedByStartup().call();
-            const freelancer = summary[6];
-            const noFreelancerChosen = '0x0000000000000000000000000000000000000000';
 
-            let freelancerProfileAddress;
-            if (summary[6] !== noFreelancerChosen) {
-                const profileFreelancerAddress = await factory.methods.profileDeployedAddress(freelancer).call();
-                const freelancerProfile = Profile(profileFreelancerAddress);
-                freelancerProfileAddress = freelancerProfile._address;
-            }
+            if (this.props.currentUser === this.props.manager) {
 
-            const profileManagerAddress = await factory.methods.profileDeployedAddress(manager).call();
-            const managerProfile = Profile(profileManagerAddress);
-            const managerProfileAddress = managerProfile._address;
-
-
-            if (currentUser === manager) {
-                console.log(this.state.rating)
-                if (this.state.rating === '' || this.state.rating === undefined) {
-                    this.setState({ errorMessage: 'Bitte bewerten Sie das Projekt.', errorOccured: true });
+                if (finalizedByStartup) {
+                    this.setState({ errorMessage: 'Sie haben das Projekt bereits beendet.', errorOccured: true });
                 }
 
                 if (!finalizedByFreelancer) {
                     this.setState({ errorMessage: 'Der ausgewählte Freelancer muss das Projekt erst beenden.', errorOccured: true });
                 }
 
-                if (finalizedByStartup) {
-                    this.setState({ errorMessage: 'Sie haben das Projekt bereits beendet.', errorOccured: true });
-                }
-
                 if (!this.state.errorOccured) {
-                    await project.methods.finalizeProjectAsStartup(freelancerProfileAddress, this.state.rating).send({
-                        from: accounts[0]
+                    await this.props.project.methods.finalizeProjectAsStartup(this.props.freelancerProfileAddress, this.state.rating).send({
+                        from: this.props.accounts[0]
                     });
                     this.setState({ successMessage: `Dem Freelancer wird eine Vergütung in Höhe von ${web3.utils.fromWei(wage, 'ether')} ETH gutgeschrieben.` });
                 }
             }
 
-            if (currentUser === freelancer) {
-
-                if (this.state.rating === '' || this.state.rating === undefined) {
-                    this.setState({ errorMessage: 'Bitte bewerten Sie das Projekt.', errorOccured: true });
-                }
-
+            if (this.props.currentUser === this.props.freelancer) {
                 if (finalizedByFreelancer) {
                     this.setState({ errorMessage: 'Sie haben das Projekt bereits beendet.', errorOccured: true });
                 }
 
                 if (!this.state.errorOccured) {
-                    await project.methods.finalizeProjectAsFreelancer(managerProfileAddress, this.state.rating).send({
-                        from: accounts[0]
+                    await this.props.project.methods.finalizeProjectAsFreelancer(this.props.managerProfileAddress, this.state.rating).send({
+                        from: this.props.accounts[0]
                     });
-                    Router.pushRoute(`/projekt/${this.state.projectAddress}`);
+                    Router.pushRoute(`/projekt/${projectAddress}`);
                 }
             }
         } catch (err) {
             this.setState({ errorMessage: err.message });
         }
 
-        this.setState({ loading: false, errorOccured: false });
+        this.setState({ loading: false, errorOccured: true });
     };
+
+    onChange = (e, { value }) => this.setState({ rating: value })
 
     render() {
         const {
@@ -110,7 +116,8 @@ class FinalizeProject extends Component {
             loading
         } = this.state;
 
-        const { projectAddress } = this.state;
+        const { projectAddress } = this.props;
+
 
         const ratingValues = [
             {
@@ -144,7 +151,7 @@ class FinalizeProject extends Component {
                 <Grid>
                     <Grid.Row>
                         <Grid.Column width={16}>
-                            <Link to={`/projekt/${this.state.projectAddress}`} >
+                            <Link to={`/projekt/${projectAddress}`} >
                                 <a><Button size='mini'>Zurück</Button></a>
                             </Link>
                         </Grid.Column>
@@ -161,9 +168,8 @@ class FinalizeProject extends Component {
                             selection
                             options={ratingValues}
                             value={this.state.rating}
-                            onChange={(e, { value }) => this.setState({ rating: value })}
+                            onChange={this.onChange}
                         />
-                        {console.log(this.state.rating)}
                     </Form.Field>
                     <Message error header='Fehler!' content={errorMessage.split('\n')[0]} />
                     <Message success header='Projekt erfolgreich abgeschlossen!' content={successMessage.split('\n')[0]} />

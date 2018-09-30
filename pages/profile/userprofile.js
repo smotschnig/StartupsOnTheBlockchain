@@ -13,6 +13,19 @@ import RatingStars from '../../components/RatingStars';
  * user or manager can create and / or update a profile
  */
 class UserProfile extends Component {
+    state = {
+        fName: '',
+        lName: '',
+        birthDate: '',
+        education: '',
+        experience: '',
+        errorMessage: '',
+        loading: false,
+        showCreateButton: false,
+        showUpdateFeatures: false,
+        inputIncomplete: false
+    };
+
     async componentDidMount() {
         const accounts = await web3.eth.getAccounts();
         const profileExists = await factory.methods.profileAlreadyExists(accounts[0]).call();
@@ -39,19 +52,6 @@ class UserProfile extends Component {
             this.setState({ showUpdateFeatures: false, showCreateButton: true });
         }
     }
-
-    state = {
-        fName: '',
-        lName: '',
-        birthDate: '',
-        education: '',
-        experience: '',
-        errorMessage: '',
-        loading: false,
-        showCreateButton: false,
-        showUpdateFeatures: false,
-        inputIncomplete: false
-    };
 
     onSubmit = async event => {
         event.preventDefault();

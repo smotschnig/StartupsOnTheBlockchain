@@ -39,6 +39,7 @@ class OpenProjects extends Component {
 
                 if (accounts[0] === manager || chosenFreelancer[2]) {
                     const summary = await project.methods.getSummary().call();
+                    const projectWage = await project.methods.projectWage().call();
                     const isFinished = await project.methods.isFinished().call();
                     const underInvestigation = await project.methods.underInvestigation().call();
                     const isOpen = await project.methods.isOpen().call();
@@ -60,22 +61,20 @@ class OpenProjects extends Component {
                         }
                     }
 
-                    if (!isFinished) {
-                        openProjects.push({
-                            address: projectAddresses[i],
-                            startup: summary[0],
-                            title: summary[1],
-                            wage: summary[5],
-                            date: summary[4],
-                            isFinished: isFinished,
-                            underInvestigation: underInvestigation,
-                            isOpen: isOpen,
-                            finalizedByFreelancer: finalizedByFreelancer,
-                            finalizedByStartup: finalizedByStartup,
-                            rating: rating,
-                            ratingsCounter: ratingsCounter
-                        });
-                    }
+                    openProjects.push({
+                        address: projectAddresses[i],
+                        startup: summary[0],
+                        title: summary[1],
+                        wage: projectWage,
+                        date: summary[4],
+                        isFinished: isFinished,
+                        underInvestigation: underInvestigation,
+                        isOpen: isOpen,
+                        finalizedByFreelancer: finalizedByFreelancer,
+                        finalizedByStartup: finalizedByStartup,
+                        rating: rating,
+                        ratingsCounter: ratingsCounter
+                    });
                 }
             }
         } catch (err) {
@@ -142,7 +141,7 @@ class OpenProjects extends Component {
             Row,
             HeaderCell
         } = Table;
-        
+
         return (
             <Layout>
                 <h3>Eigene Projekte</h3>

@@ -35,21 +35,21 @@ class ProjectRow extends Component {
             (showOpenProjects && !isFinished && isOpen) ||
             (showAssignedProjects && !isOpen && !underInvestigation && !isFinished)) {
             return (
-                <Row disabled={isFinished} negative={underInvestigation} positive={isOpen}>
+                <Row negative={underInvestigation} positive={isOpen} active={isFinished}>
                     <Cell>{startup}</Cell>
                     <Cell><RatingStars averageRating={Math.floor(rating / ratingsCounter)} /> ({ratingsCounter})</Cell>
                     <Cell>{title}</Cell>
                     <Cell>{web3.utils.fromWei(wage, 'ether')}</Cell>
                     <Cell><TimeConverter date={date} /></Cell>
-                    {isOpen ?
+                    {!isFinished && !underInvestigation ?
                         <Cell>
-                            {isFinished || !hasMetaMask ? null :
+                            {!hasMetaMask ? null :
                                 <LinkConnector button={true} color={'green'} route={`/projekt/${address}`} text='Projekt ansehen' />
                             }
                         </Cell>
                         :
                         <Cell>
-                            {isFinished || !hasMetaMask ? null :
+                            {!hasMetaMask ? null :
                                 <LinkConnector button={true} color={'grey'} route={`/projekt/${address}`} text='Projekt ansehen' />
                             }
                         </Cell>
@@ -88,7 +88,7 @@ class ProjectRow extends Component {
             (showOpenProjects && !isFinished && isOpen) ||
             (showAssignedProjects && !isOpen && !underInvestigation && !isFinished)) {
             return (
-                <Row disabled={isFinished} negative={underInvestigation} positive={isOpen}>
+                <Row negative={underInvestigation} positive={isOpen} active={isFinished}>
                     <Cell>{startup}</Cell>
                     <Cell><RatingStars averageRating={Math.floor(rating / ratingsCounter)} /> ({ratingsCounter})</Cell>
                     <Cell>{title}</Cell>
@@ -96,11 +96,15 @@ class ProjectRow extends Component {
                     <Cell><TimeConverter date={date} /></Cell>
                     <Cell>{finalizedByFreelancer ? <Icon name="check" /> : null}</Cell>
                     <Cell>{finalizedByStartup ? <Icon name="check" /> : null}</Cell>
-                    <Cell>
-                        {isFinished ? null :
+                    {!isFinished && !underInvestigation ?
+                        <Cell>
                             <LinkConnector button={true} color={'green'} route={`/projekt/${address}`} text='Projekt ansehen' />
-                        }
-                    </Cell>
+                        </Cell>
+                        :
+                        <Cell>
+                            <LinkConnector button={true} color={'grey'} route={`/projekt/${address}`} text='Projekt ansehen' />
+                        </Cell>
+                    }
                 </Row>
             );
         }

@@ -12,17 +12,13 @@ import factory from '../../../ethereum/factory';
  * user can create a new project as startup
  */
 class Request extends Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            email: '',
-            info: '',
-            project: undefined,
-            errorMessage: '',
-            incorrectInput: false,
-            loading: false
-        }
+    state = {
+        email: '',
+        info: '',
+        project: undefined,
+        errorMessage: '',
+        incorrectInput: false,
+        loading: false
     }
 
     async componentDidMount() {

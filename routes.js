@@ -3,8 +3,6 @@ const routes = require('next-routes')();
 routes
     .add('/projekt/neu', '/projects/new')
     .add('/projekt/:address', '/projects/show')
-    // irgendwas crash hier wenn aktiviert ist...
-    // soll zurück-button in show zu eigenen projekten weiterleiten
     // .add('/projekt/:eigenes/:address', '/projects/show')
     .add('/projekt/:address/bewerbung', '/projects/requests/request')
     .add('/projekt/:address/bewerberpool', '/projects/requests/requesterlist')

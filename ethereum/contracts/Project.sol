@@ -42,6 +42,7 @@ contract ProjectInstance {
     address public manager;
     mapping(address => bool) public requester;
     uint public requesterCount;
+    uint public projectWage;
     Project public project;
 
     address[] public requesterList;
@@ -52,7 +53,6 @@ contract ProjectInstance {
     bool public isFinished = false;
     bool public isOpen = true;
     bool public underInvestigation = false;
-
 
     struct Project {
         string startup;
@@ -86,6 +86,7 @@ contract ProjectInstance {
             date: _date,
             chosenFreelancer: 0
         });
+        projectWage = msg.value;
         project = newProject;
     }
     
