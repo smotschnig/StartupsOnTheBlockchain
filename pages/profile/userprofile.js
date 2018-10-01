@@ -31,15 +31,24 @@ class UserProfile extends Component {
      */
     static async getInitialProps() {
         const accounts = await web3.eth.getAccounts();
-        const profileAddress = await factory.methods.profileDeployedAddress(accounts[0]).call();
-        const profile = Profile(profileAddress);
-        const rating = await profile.methods.rating().call();
-        const ratingsCounter = await profile.methods.ratingsCounter().call();
-        const calculatedRating = Math.floor(rating / ratingsCounter);
+        const profileExists = await factory.methods.profileAlreadyExists(accounts[0]).call();
 
-        return {
-            ratingsCounter: ratingsCounter,
-            calculatedRating: calculatedRating
+        if (profileExists) {
+            const profileAddress = await factory.methods.profileDeployedAddress(accounts[0]).call();
+            const profile = Profile(profileAddress);
+            const rating = await profile.methods.rating().call();
+            const ratingsCounter = await profile.methods.ratingsCounter().call();
+            const calculatedRating = Math.floor(rating / ratingsCounter);
+
+            return {
+                ratingsCounter: ratingsCounter,
+                calculatedRating: calculatedRating
+            }
+        } else {
+            return {
+                ratingsCounter: '',
+                calculatedRating: ''
+            }
         }
     }
 
