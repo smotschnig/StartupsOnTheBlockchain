@@ -70,7 +70,7 @@ class RequesterRow extends Component {
                 <Cell>{info}</Cell>
                 <Cell>
                     <Form onSubmit={() => this.chooseRequester(address)}>
-                        <Button loading={this.state.loading} color="green" basic type='submit' content='Bewerber auswählen' />
+                        <Button loading={this.state.loading} primary type='submit' content='Bewerber auswählen' />
                     </Form>
                 </Cell>
             </Row>

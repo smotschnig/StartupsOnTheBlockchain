@@ -28,6 +28,7 @@ class UserProfile extends Component {
 
     /**
      * getting profile rating by calling getInitialProps
+     * checking if user already has a profile
      */
     static async getInitialProps() {
         const accounts = await web3.eth.getAccounts();

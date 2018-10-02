@@ -3,11 +3,10 @@ a blockchain-based startup webplatform
 
 ---
 
-#### Demo (Live-Preview - 30/09/2018)
-<https://startupsontheblockchain-spongvrwko.now.sh/>
+#### Demo (Live-Preview - 02/10/2018)
+<https://startupsontheblockchain-idkacziqwz.now.sh/>
 
-*Forwarding:*
-<http://sven.motschnig.de/>
+<http://sven.motschnig.de/> (*Forwarding*)
 
 Note: First start needs a little time, App is sleeping when unused.
 
