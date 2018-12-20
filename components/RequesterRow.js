@@ -34,22 +34,6 @@ class RequesterRow extends Component {
         this.setState({ loading: false });
     }
 
-    renderVisitorRequesterRow() {
-        const { Row, Cell } = Table;
-        const {
-            address,
-            rating,
-            ratingsCounter
-        } = this.props;
-
-        return (
-            <Row>
-                <Cell>{address}</Cell>
-                <Cell><RatingStars averageRating={Math.floor(rating / ratingsCounter)} /> ({ratingsCounter})</Cell>
-            </Row >
-        );
-    }
-
     renderManagerRequesterRow() {
         const { Row, Cell } = Table;
         const {
@@ -70,7 +54,12 @@ class RequesterRow extends Component {
                 <Cell>{info}</Cell>
                 <Cell>
                     <Form onSubmit={() => this.chooseRequester(address)}>
-                        <Button loading={this.state.loading} primary type='submit' content='Bewerber auswählen' />
+                        {projectIsOpen
+                            ?
+                            <Button loading={this.state.loading} primary type='submit' content='Bewerber auswählen' />
+                            :
+                            <Button disabled content='Bewerber auswählen' />
+                        }
                     </Form>
                 </Cell>
             </Row>
@@ -83,7 +72,7 @@ class RequesterRow extends Component {
 
         return (
             <Body>
-                {isManager ? this.renderManagerRequesterRow() : this.renderVisitorRequesterRow()}
+                {isManager ? this.renderManagerRequesterRow() : null}
             </Body>
         );
     }

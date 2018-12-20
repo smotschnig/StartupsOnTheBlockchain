@@ -12,7 +12,6 @@ contract Factory {
 
     /* creates new project by calling the constructor and also adds the same data to the initializer for the landing page */
     function createProject(string _startup, string _title, string _deadline, string _description) public payable {
-        require((msg.value) > 0);
         address newProject = (new ProjectInstance).value(msg.value)(_startup, _title, _deadline, _description, now, msg.sender);
         deployedProjects.push(newProject);
     }
@@ -173,7 +172,7 @@ contract ProjectInstance {
     }
     
     /* allows freelancer to finalize the open project */
-    function finalizeProjectAsFreelancer(address _address, uint _rating, string _comment) public {
+    function finalizeProjectAsFreelancer(address _address, uint _rating) public {
         /* creates a temporary profile class with the address of the startup-manager */
         ProfileInstance profileInstance;
         profileInstance = ProfileInstance(_address);
@@ -188,17 +187,12 @@ contract ProjectInstance {
 
         profileInstance.setRating(_rating);
         
-        bytes memory tempEmptyStringTest  = bytes(_comment);
-        if (tempEmptyStringTest.length != 0) {
-            profileInstance.setComment(_comment, now, msg.sender, _rating);
-        }
-        
         finalizedByFreelancer = true;
         isOpen = false;
     }
     
     /* allows startup to finalize the open project */
-    function finalizeProjectAsStartup(address _address, uint _rating, string _comment) public restricted {
+    function finalizeProjectAsStartup(address _address, uint _rating) public restricted {
         /* creates a temporary profile class with the address of the freelancer */
         ProfileInstance profileInstance;
         profileInstance = ProfileInstance(_address);
@@ -210,11 +204,6 @@ contract ProjectInstance {
         require(!finalizedByStartup);
         
         profileInstance.setRating(_rating);
-        
-        bytes memory tempEmptyStringTest  = bytes(_comment);
-        if (tempEmptyStringTest.length != 0) {
-            profileInstance.setComment(_comment, now, msg.sender, _rating);
-        }
         
         finalizedByStartup = true;
         isFinished = true;
@@ -229,12 +218,7 @@ contract ProfileInstance {
     uint public ratingsCounter;
     uint public date;
     ProfileInstructor private profile;
-    string[] arrComment;
-    uint[] arrDate;
-    address[] arrUser;
-    uint[] arrRating;
-    uint public commentsCounter;
-
+    
     struct ProfileInstructor {
         string fName;
         string lName;
@@ -291,26 +275,5 @@ contract ProfileInstance {
                 
         rating += _rating;
         ratingsCounter++;
-    }
-    
-    /* sets comment for user evaluation scheme (called in ProjectInstance) */
-    function setComment(string _comment, uint _date, address _user, uint _rating) public {
-        require(msg.sender != manager);
-        arrComment.push(_comment);
-        arrDate.push(_date);
-        arrUser.push(_user);
-        arrRating.push(_rating);
-        
-        commentsCounter++;
-    }
-
-    /* returns all information about the project */
-    function getComment(uint _number) view public returns(string, uint, address, uint) {
-        return (
-            arrComment[_number],
-            arrDate[_number],
-            arrUser[_number],
-            arrRating[_number]
-        );
     }
 }

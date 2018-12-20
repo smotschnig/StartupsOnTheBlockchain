@@ -237,23 +237,21 @@ class ProjectShow extends Component {
                         :
                         null
                     }
-                    <Link route={`/projekt/${address}/bewerberpool`}>
-                        <a><Button color='green' basic>Bewerberpool ({(requesterNumber)})</Button></a>
-                    </Link>
+                    <Button disabled>Bewerberpool ({(requesterNumber)})</Button>
                 </div>
             );
         }
     }
 
     /**
-     * showing different buttons for the chosen freelancer, depending of the project status
+     * showing different buttons for the chosen freelancer, depending on the project status
      */
     freelancerButtons() {
         const {
             address,
             projectUnderInvestigation,
             projectFinalizedByFreelancer,
-            isFinished
+            projectIsFinished
         } = this.props;
 
         const {
@@ -275,7 +273,7 @@ class ProjectShow extends Component {
                             :
                             null
                         }
-                        {isFinished || !projectFinalizedByFreelancer ?
+                        {!projectIsFinished ?
                             <Button
                                 loading={loading}
                                 color="orange"
@@ -327,7 +325,7 @@ class ProjectShow extends Component {
                             :
                             null
                         }
-                        {!projectUnderInvestigation ?
+                        {!projectUnderInvestigation && !projectIsFinished ?
                             <Button
                                 loading={loading}
                                 color="orange"
@@ -337,7 +335,7 @@ class ProjectShow extends Component {
                             :
                             null
                         }
-                        {!projectUnderInvestigation ?
+                        {!projectUnderInvestigation && !projectIsFinished ?
                             <Popup
                                 trigger={<Button loading={cancelLoading} negative content='Projekt abbrechen' />}
                                 content={<Button color='red' content='Sind Sie sicher?' onClick={() => this.cancelProject()} />}

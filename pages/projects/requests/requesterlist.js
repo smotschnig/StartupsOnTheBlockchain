@@ -78,32 +78,6 @@ class RequesterList extends Component {
     }
 
     /**
-     * calling the component 'RequesterRow' with several props as visitor
-     */
-    renderVisitorRows() {
-        return this.props.requesterList.slice(0).reverse().map((applicant, index) => {
-            const {
-                address,
-                rating,
-                ratingsCounter
-            } = applicant;
-
-            const { isManager } = this.state;
-
-            return (
-                <RequesterRow
-                    key={index}
-                    address={address}
-                    rating={rating}
-                    ratingsCounter={ratingsCounter}
-                    isManager={isManager}
-                    projectAddress={this.props.url.query.address}
-                />
-            );
-        });
-    }
-
-    /**
      * calling the component 'RequesterRow' with several props as project manager
      */
     renderManagerRows() {
@@ -172,29 +146,18 @@ class RequesterList extends Component {
                 </Grid>
                 <h3>Bewerberpool</h3>
                 {hasRequester ?
-                    isManager ?
-                        <Table>
-                            <Header>
-                                <Row>
-                                    <HeaderCell>Bewerber</HeaderCell>
-                                    <HeaderCell>Bewertung</HeaderCell>
-                                    <HeaderCell>Email</HeaderCell>
-                                    <HeaderCell>Info</HeaderCell>
-                                    <HeaderCell>Details</HeaderCell>
-                                </Row>
-                            </Header>
-                            {this.renderManagerRows()}
-                        </Table>
-                        :
-                        <Table>
-                            <Header>
-                                <Row>
-                                    <HeaderCell>Bewerber</HeaderCell>
-                                    <HeaderCell>Bewertung</HeaderCell>
-                                </Row>
-                            </Header>
-                            {this.renderVisitorRows()}
-                        </Table>
+                    <Table>
+                        <Header>
+                            <Row>
+                                <HeaderCell>Bewerber</HeaderCell>
+                                <HeaderCell>Bewertung</HeaderCell>
+                                <HeaderCell>Email</HeaderCell>
+                                <HeaderCell>Info</HeaderCell>
+                                <HeaderCell>Details</HeaderCell>
+                            </Row>
+                        </Header>
+                        {this.renderManagerRows()}
+                    </Table>
                     :
                     <p>Es liegt noch keine Bewerbung vor.</p>
                 }

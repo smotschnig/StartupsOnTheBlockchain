@@ -4,7 +4,7 @@ const compiledFactory = require('./build/Factory.json');
 
 const provider = new HDWalletProvider(
     'machine such viable circle gain quick under apology kind surge finish upgrade',
-    'https://rinkeby.infura.io/3gyFqy8jpggJCVKhMsAU'
+    'https://rinkeby.infura.io/v3/37ae9cd56f074c0190242deb63605e61'
 );
 
 const web3 = new Web3(provider);

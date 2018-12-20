@@ -49,3 +49,7 @@
 .interaction_button form {
     display: inline-block !important;
 }
+
+.commentcard > .description {
+    margin-bottom: 0 !important;
+}

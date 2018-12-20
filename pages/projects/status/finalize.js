@@ -17,6 +17,7 @@ class FinalizeProject extends Component {
         rating: '',
         project: undefined,
         projectAddress: undefined,
+        comment: '',
         errorMessage: '',
         successMessage: '',
         errorOccured: false,
@@ -102,7 +103,7 @@ class FinalizeProject extends Component {
                  * if there is no error, project will be finalized and message about the wage for the freelancer appears
                  */
                 if (!this.state.errorOccured) {
-                    await project.methods.finalizeProjectAsStartup(freelancerProfileAddress, this.state.rating).send({
+                    await project.methods.finalizeProjectAsStartup(freelancerProfileAddress, this.state.rating, this.state.comment).send({
                         from: accounts[0]
                     });
                     this.setState({ successMessage: `Dem Freelancer wird eine Vergütung in Höhe von ${web3.utils.fromWei(wage, 'ether')} ETH gutgeschrieben.` });
@@ -132,7 +133,7 @@ class FinalizeProject extends Component {
                  * if there is no error, variable finalizedByFreelancer gets set to true and freelancer gets send back to project overview
                  */
                 if (!this.state.errorOccured) {
-                    await project.methods.finalizeProjectAsFreelancer(managerProfileAddress, this.state.rating).send({
+                    await project.methods.finalizeProjectAsFreelancer(managerProfileAddress, this.state.rating, this.state.comment).send({
                         from: accounts[0]
                     });
                     Router.pushRoute(`/projekt/${this.state.projectAddress}`);
@@ -149,9 +150,12 @@ class FinalizeProject extends Component {
      * showing rating dropdown and finalize button
      */
     render() {
+        const { Field } = Form;
+
         const {
             errorMessage,
             successMessage,
+            comment,
             loading
         } = this.state;
 
@@ -195,7 +199,7 @@ class FinalizeProject extends Component {
                 </Grid>
                 <h3>Projekt beenden</h3>
                 <Form onSubmit={this.onSubmit} error={!!errorMessage} success={!!successMessage} >
-                    <Form.Field>
+                    <Field>
                         <label>Bewerten Sie die Zusammenarbeit im Projekt</label>
                         <small>* erforderlich</small><br />
                         <Dropdown
@@ -206,8 +210,15 @@ class FinalizeProject extends Component {
                             value={this.state.rating}
                             onChange={(e, { value }) => this.setState({ rating: value })}
                         />
-                        {console.log(this.state.rating)}
-                    </Form.Field>
+                    </Field>
+                    <Field>
+                        <label>Kommentar</label>
+                        <textarea
+                            placeholder="Positive / Negative Erfahrungen"
+                            value={comment}
+                            onChange={event => this.setState({ comment: event.target.value })}
+                        />
+                    </Field>
                     <Message error header='Fehler!' content={errorMessage.split('\n')[0]} />
                     <Message success header='Projekt erfolgreich abgeschlossen!' content={successMessage.split('\n')[0]} />
                     <Button loading={loading} type='submit' content='Projekt beenden' icon='check' primary />

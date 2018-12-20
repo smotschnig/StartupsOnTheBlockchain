@@ -15,9 +15,9 @@ class StartupIndex extends Component {
     state = {
         hasMetaMask: undefined,
         showOpenProjects: true,
-        showAssignedProjects: false,
-        showUnderInvestigation: false,
-        showFinishedProjects: false
+        showAssignedProjects: true,
+        showUnderInvestigation: true,
+        showFinishedProjects: true
     };
 
     /**
@@ -160,13 +160,13 @@ class StartupIndex extends Component {
                     <Checkbox label='Offene Projekte' onChange={() => this.setState({ showOpenProjects: !this.state.showOpenProjects })} defaultChecked />
                 </span>
                 <span className="filter_checkbox">
-                    <Checkbox label='Vergebene Projekte' onChange={() => this.setState({ showAssignedProjects: !this.state.showAssignedProjects })} />
+                    <Checkbox label='Vergebene Projekte' onChange={() => this.setState({ showAssignedProjects: !this.state.showAssignedProjects })} defaultChecked />
                 </span>
                 <span className="filter_checkbox">
-                    <Checkbox label='Abgeschlossenene Projekte' onChange={() => this.setState({ showFinishedProjects: !this.state.showFinishedProjects })} />
+                    <Checkbox label='Abgeschlossenene Projekte' onChange={() => this.setState({ showFinishedProjects: !this.state.showFinishedProjects })} defaultChecked />
                 </span>
                 <span className="filter_checkbox">
-                    <Checkbox label='Gemeldete Projekte' onChange={() => this.setState({ showUnderInvestigation: !this.state.showUnderInvestigation })} />
+                    <Checkbox label='Gemeldete Projekte' onChange={() => this.setState({ showUnderInvestigation: !this.state.showUnderInvestigation })} defaultChecked />
                 </span>
                 <Table>
                     <Header>
