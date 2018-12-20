@@ -3,8 +3,8 @@ a blockchain-based startup webplatform
 
 ---
 
-#### Demo (Live-Preview - 02/10/2018)
-<https://startupsontheblockchain-idkacziqwz.now.sh/>
+#### Demo (Live-Preview - 20/12/2018)
+<https://startupsontheblockchain-txprwrlznj.now.sh//>
 
 <http://sven.motschnig.de/> (*Forwarding*)
 
